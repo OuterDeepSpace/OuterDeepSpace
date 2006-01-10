@@ -18,12 +18,13 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-version = (0, 5, 53, '')
+version = (0, 5, 54, '')
+import time
 
 try:
-	import svnInfo
-	revision = svnInfo.revision
-	versionString = ("%d.%d.%d%s" % version) + " [Revision %s]" % revision
+    import buildInfo
+    revision = buildInfo.buildTime
+    versionString = ("%d.%d.%d%s" % version) + " [BUILD %s]" % time.strftime("%Y-%m-%d %H:%M", time.gmtime(buildInfo.buildTime))
 except ImportError:
-	revision = 0
-	versionString = ("%d.%d.%d%s" % version) + " [Work In Progress]"
+    revision = 0
+    versionString = ("%d.%d.%d%s" % version) + " [Work In Progress]"

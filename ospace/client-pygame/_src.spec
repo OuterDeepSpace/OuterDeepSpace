@@ -91,9 +91,9 @@ for file in glob.glob("%s/*.xml" % serverSpec):
 
 # copy other files
 ShellUtils.copy2("../ChangeLog.txt", os.path.join(targetDir, "ChangeLog.txt"))
-ShellUtils.copy2("../README_cz.txt", os.path.join(targetDir, "README_cz.txt"))
-ShellUtils.copy2("../README_en.txt", os.path.join(targetDir, "README_en.txt"))
-ShellUtils.copy2("../LICENSE.TXT", os.path.join(targetDir, "LICENSE.TXT"))
+ShellUtils.copy2("../README", os.path.join(targetDir, "README"))
+ShellUtils.copy2("../README_CZ", os.path.join(targetDir, "README_CZ"))
+ShellUtils.copy2("../COPYING", os.path.join(targetDir, "COPYING"))
 
 # create packages
 origDir = os.getcwd()

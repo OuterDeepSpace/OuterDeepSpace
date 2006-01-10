@@ -3,46 +3,46 @@ sys.path.append("../tools")
 
 import os, os.path, glob
 import ShellUtils
+import time
 
 baseDir = 'server/website/osclient/latest'
 
-import pysvn
-
-svn = pysvn.Client()
-
 # generate version info
-print "#\n# Generating version info\n#"
+print "#\n# Generating build info\n#"
 
-entry = svn.info(".")
 
-if entry.revision.kind == pysvn.opt_revision_kind.number:
-	print 'Revision:', entry.revision.number
-	fh = open("client-pygame/lib/osci/svnInfo.py", "w")
-	print >> fh, """\
+fh = open("client-pygame/lib/osci/buildInfo.py", "w")
+print >> fh, """\
 #
 # This is generated file, please, do not edit
 #
-revision = %d
+buildTime = %d
 """ % (
-	entry.revision.number
+	time.time()
 )
-	fh.close()
-else:
-	print "Cannot retrieve revision info"
-	sys.exit(1)
+fh.close()
 
 # check for modified files
-print "#\n# Checking for modified and unversioned files\n#"
-okToGo = True
-for status in svn.status(".", recurse = True):
-    if status.text_status not in (pysvn.wc_status_kind.normal, pysvn.wc_status_kind.ignored):
-        print "[%s] %s" % (status.text_status, status.path)
+if 0:
+    print "#\n# Checking for modified and unversioned files\n#"
+
+    fh = os.popen("cvs -nq upd -I *.pyc")
+
+    okToGo = True
+    for line in fh:
+        print line.rstrip()
         okToGo = False
 
-if not okToGo:
-    print
-    print "Fix problems displayed above and re-run deploy.py script"
-    sys.exit(1)
+    if not okToGo:
+        print
+        print "Fix problems displayed above and re-run deploy.py script"
+        sys.exit(1)
+
+# make directory
+try:
+    os.makedirs(baseDir)
+except OSError:
+    pass
 
 # compile client
 from compileall import compile_dir
@@ -81,9 +81,9 @@ for file in glob.glob("%s/*.spf" % serverSpec):
 # additional files
 ShellUtils.copy2('updater/update.exe', baseDir)
 ShellUtils.copy2('ChangeLog.txt', baseDir)
-ShellUtils.copy2('README_CZ.TXT', baseDir)
-ShellUtils.copy2('README_EN.TXT', baseDir)
-ShellUtils.copy2('license.txt', baseDir)
+ShellUtils.copy2('README', baseDir)
+ShellUtils.copy2('README_CZ', baseDir)
+ShellUtils.copy2('COPYING', baseDir)
 
 # delete binaries
 #ShellUtils.rmtree('client-sdl/buildosc')
@@ -193,7 +193,7 @@ ShellUtils.copy2('client-pygame/dist_src/OuterSpace.zip', "server/website/osclie
 
 # copy version
 ShellUtils.copy2('client-pygame/lib/osci/version.py', 'server/lib/ige/ospace/ClientVersion.py')
-ShellUtils.copy2('client-pygame/lib/osci/svnInfo.py', 'server/lib/ige/ospace/svnInfo.py')
+ShellUtils.copy2('client-pygame/lib/osci/buildInfo.py', 'server/lib/ige/ospace/buildInfo.py')
 
 # create tech tree
 os.chdir("tools")
