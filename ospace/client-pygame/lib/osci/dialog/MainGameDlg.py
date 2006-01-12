@@ -217,6 +217,7 @@ class MainGameDlg:
 
 	def createUI(self):
 		w, h = gdata.scrnSize
+		lw, lh = w / 20, h / 20
 		self.win = ui.Window(self.app,
 			modal = 1,
 			decorated = 0,
@@ -226,22 +227,24 @@ class MainGameDlg:
 			layoutManager = ui.SimpleGridLM(),
 		)
 		self.win.subscribeAction('*', self)
+		# map
 		mapWidget = StarMapWidget(self.win,
 			id = 'vStarMap',
 			action = 'onSelectMapObj',
-			layout = (0, 1, w / 20, h / 20 - 2)
+			layout = (0, 1, lw, lh - 2)
 		)
 		self.searchDlg.mapWidget = mapWidget
+		# bottom
 		ui.Label(self.win,
 			id = 'vStatus',
 			align = ui.ALIGN_W,
-			layout = (0, h / 20 - 1, w / 20 - 14, 1),
+			layout = (0, lh - 1, lw - 16, 1),
 		)
 		ui.ActiveLabel(self.win,
 			id = "vSponsor",
 			align = ui.ALIGN_W,
 			icons = [(pygame.image.load("res/sponsor_logo_small.png"), ui.ALIGN_E)],
-			layout = (w / 20 - 14, h / 20 - 1, 10, 1),
+			layout = (lw - 12, lh - 1, 8, 1),
 			action = "onSponsor",
 			statustip = _("Server sponsored by K2 Software"),
 		)
@@ -250,26 +253,27 @@ class MainGameDlg:
 			align = ui.ALIGN_E,
 			text = '????.??',
 			font = 'normal-bold',
-			layout = (w / 20 - 4, h / 20 - 1, 4, 1),
+			layout = (lw - 4, lh - 1, 4, 1),
 		)
+		# top
 		ui.Button(self.win, layout = (0, 0, 4, 1), text = _('Messages'),
 			action = 'onMessages', id = "vMessages")
 		ui.Button(self.win, layout = (4, 0, 4, 1), text = _('Research'),
 			action = 'onResearch')
 		ui.Button(self.win, layout = (8, 0, 4, 1), text = _('Diplomacy'),
 			id = "vDiplomacy", action = 'onDiplomacy', enabled = 0)
-		ui.Button(self.win, layout = (12, 0, 4, 1),	text = _('Constr'),
+		ui.Button(self.win, layout = (12, 0, 4, 1), text = _('Constr'),
 			id = "vConstruction", action = 'onConstruction', enabled = 0)
-		ui.Button(self.win, layout = (16, 0, 4, 1),	text = _('Planets'),
+		ui.Button(self.win, layout = (16, 0, 4, 1), text = _('Planets'),
 			id = "vPlanets", action = 'onPlanets', enabled = 1)
-		ui.Button(self.win, layout = (20, 0, 4, 1),	text = _('Fleets'),
+		ui.Button(self.win, layout = (20, 0, 4, 1), text = _('Fleets'),
 			id = "vFleets", action = 'onFleets', enabled = 1)
-		ui.Button(self.win, layout = (24, 0, 4, 1),	text = _('Overview'),
+		ui.Button(self.win, layout = (24, 0, 4, 1), text = _('Overview'),
 			id = "vOverview", action = 'onOverview', enabled = 1)
-		ui.Title(self.win, layout = (28, 0, w / 20 - 36, 1))
-		ui.Button(self.win, layout = (w / 20 - 8, 0, 4, 1), text = _('Problems'),
+		ui.Title(self.win, layout = (28, 0, lw - 36, 1))
+		ui.Button(self.win, layout = (lw - 8, 0, 4, 1), text = _('Problems'),
 			action = 'onProblems')
-		ui.Button(self.win, layout = (w / 20 - 4, 0, 4, 1), text = _('Menu'),
+		ui.Button(self.win, layout = (lw - 4, 0, 4, 1), text = _('Menu'),
 			action = 'onMenu')
 		self.app.statusBar = self.win.vStatus
 		self.app.setStatus(_('Ready.'))

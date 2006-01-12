@@ -155,6 +155,7 @@ class LoginDlg:
 			title = _('Outer Space Login'),
 			rect = ui.Rect((w - 424) / 2, (h - 124) / 2, 424, 124),
 			layoutManager = ui.SimpleGridLM(),
+			tabChange = True,
 		)
 		self.win.subscribeAction('*', self)
 		ui.Label(self.win,
@@ -165,6 +166,7 @@ class LoginDlg:
 		ui.Entry(self.win, id = 'vLogin',
 			align = ui.ALIGN_W,
 			layout = (11, 0, 10, 1),
+			orderNo = 1
 		)
 		ui.Label(self.win,
 			text = _('Password'),
@@ -175,6 +177,7 @@ class LoginDlg:
 			align = ui.ALIGN_W,
 			showChar = '*',
 			layout = (11, 1, 10, 1),
+			orderNo = 2
 		)
 		#ui.Label(self.win,
 		#	align = ui.ALIGN_E,

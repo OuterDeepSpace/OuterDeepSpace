@@ -40,6 +40,8 @@ class ColorDefinitionDlg:
 		log.debug("ColorDefinitionDlg(%s,%s,%s)" % (self.win.vR.text,self.win.vG.text,self.win.vB.text))
 		self.win.show()
 		self.app.setFocus(self.win.vR)
+		# colorbox
+		self.win.vColor.color = self.color
 		# register for updates
 		if self not in gdata.updateDlgs:
 			gdata.updateDlgs.append(self)
@@ -54,7 +56,7 @@ class ColorDefinitionDlg:
 	def update(self):
 		self.show()
 
- 	def onOK(self, widget, action, data):
+	def onOK(self, widget, action, data):
 		try:
 			r = int(self.win.vR.text,16)
 			g = int(self.win.vG.text,16)
@@ -85,7 +87,7 @@ class ColorDefinitionDlg:
 		cols = 10
 		rows = 5
 		width = cols * 20 + 5
-                height = rows * 20 + 4
+		height = rows * 20 + 4
 		self.win = ui.Window(self.app,
 			modal = 1,
 			escKeyClose = 1,
@@ -93,21 +95,36 @@ class ColorDefinitionDlg:
 			title = _('Color Definition'),
 			rect = ui.Rect((w - width) / 2, (h - height) / 2, width, height),
 			layoutManager = ui.SimpleGridLM(),
+			tabChange = True,
 		)
 		# creating dialog window
 		self.win.subscribeAction('*', self)
 
 		# R
-		ui.Label(self.win,text = _("Red:"),align = ui.ALIGN_E,layout = (2, 0, 3, 1))
-		ui.Entry(self.win, id = 'vR',align = ui.ALIGN_W,layout = (5, 0, 3, 1),)
-                # G
-                ui.Label(self.win,text = _("Green:"),align = ui.ALIGN_E,layout = (2, 1, 3, 1))
-                ui.Entry(self.win, id = 'vG',align = ui.ALIGN_W,layout = (5, 1, 3, 1),)
-                # B
-                ui.Label(self.win,text = _("Blue:"),align = ui.ALIGN_E,layout = (2, 2, 3, 1))
-                ui.Entry(self.win, id = 'vB',align = ui.ALIGN_W,layout = (5, 2, 3, 1),)
+		ui.Label(self.win,text = _("Red:"), align = ui.ALIGN_E, layout = (1, 0, 3, 1))
+		ui.Entry(self.win, id = 'vR',align = ui.ALIGN_W,layout = (4, 0, 3, 1), orderNo = 1, reportValueChanged = True,)
+		# G
+		ui.Label(self.win,text = _("Green:"),align = ui.ALIGN_E,layout = (1, 1, 3, 1))
+		ui.Entry(self.win, id = 'vG',align = ui.ALIGN_W,layout = (4, 1, 3, 1), orderNo = 2, reportValueChanged = True,)
+		# B
+		ui.Label(self.win,text = _("Blue:"),align = ui.ALIGN_E,layout = (1, 2, 3, 1))
+		ui.Entry(self.win, id = 'vB',align = ui.ALIGN_W,layout = (4, 2, 3, 1), orderNo = 3, reportValueChanged = True,)
+
+		# color example
+		ui.ColorBox(self.win, id = 'vColor', layout = (8, 0, 2, 3), margins = (4, 3, 4, 4))
 
 		#i.Title(self.win, layout = (0, 4, 2, 1))
 		ui.TitleButton(self.win, layout = (0, 3, 5, 1), text = _("Cancel"), action = "onCancel")
 		okBtn = ui.TitleButton(self.win, layout = (5, 3, 5, 1), text = _("OK"), action = 'onOK')
 		self.win.acceptButton = okBtn
+
+	def onValueChanged(self, widget, action, data):
+		try:
+			r = int(self.win.vR.text,16)
+			g = int(self.win.vG.text,16)
+			b = int(self.win.vB.text,16)
+		except:
+			return
+		if not r in range(0,256) or not g in range(0,256) or not b in range(0,256):
+			return
+		self.win.vColor.color = (r, g, b)

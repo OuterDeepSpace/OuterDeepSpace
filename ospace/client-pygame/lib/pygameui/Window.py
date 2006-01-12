@@ -47,6 +47,7 @@ class Window(MetaWidget):
 		self.acceptButton = None
 		self._dragging = 0
 		self._fullUpdate = True
+		self.tabChange = False
 		# register
 		self.app.registerWindow(self)
 		self.processKWArguments(kwargs)
@@ -143,9 +144,41 @@ class Window(MetaWidget):
 		if self.escKeyClose and evt.key == K_ESCAPE:
 			self.hide()
 			return NoEvent
+		elif self.tabChange and evt.key == K_TAB and self.widgets:
+			self.focusNext()
 		elif self.acceptButton != None and evt.key == K_RETURN:
 			if isinstance(self.acceptButton, Button) and self.acceptButton.action != None:
 				self.processAction(self.acceptButton.action)
 		return evt
+
+	def focusNext(self):
+		for widget in self.widgets:
+			if widget.focused:
+				lastFocus = widget.orderNo
+				break
+
+		nextFocus = None
+		minWidget = None
+
+		for widget in self.widgets:
+			if widget.orderNo == 0:
+				continue
+
+			if minWidget == None:
+				minWidget = widget
+			elif widget.orderNo < minWidget.orderNo:
+				minWidget = widget
+
+			if nextFocus == None:
+				if widget.orderNo > lastFocus:
+					nextFocus = widget
+			elif widget.orderNo > lastFocus and widget.orderNo < nextFocus.orderNo:
+				nextFocus = widget
+
+		if nextFocus:
+			self.app.setFocus(nextFocus)
+		elif minWidget:
+			self.app.setFocus(minWidget)
+
 
 registerWidget(Window, 'window')

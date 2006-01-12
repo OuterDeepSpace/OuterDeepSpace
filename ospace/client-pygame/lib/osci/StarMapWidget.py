@@ -162,6 +162,7 @@ class StarMapWidget(Widget):
 				speedBoost = 0
 				#owner2 = 0
 				ownerID = OID_NONE
+				explored = False
 				if hasattr(obj, 'planets'):
 					hasPirate = False
 					for planetID in obj.planets:
@@ -182,6 +183,12 @@ class StarMapWidget(Widget):
 							repairShip += planet.repairShip
 						if hasattr(planet, "fleetSpeedBoost"):
 							speedBoost = max(speedBoost, planet.fleetSpeedBoost)
+						# uncharted system
+						if hasattr(planet, 'plBio') and hasattr(planet, 'plEn'):
+							explored = True
+				if not explored and name != None:
+					name = "[%s]" %	(name)
+						
 				# pirates
 				dist = 10000
 				for pirX, pirY in pirates:
@@ -450,6 +457,201 @@ class StarMapWidget(Widget):
 		# self dirty flag
 		self.repaintMap = 1
 
+	def drawScanners(self):
+		# coordinates
+		centerX, centerY = self._mapSurf.get_rect().center
+		maxY = self._mapSurf.get_rect().height
+		currX = self.currX
+		currY = self.currY
+		scale = self.scale
+		# draw
+		for x, y, range in self._map[self.MAP_SCANNER1]:
+			sx = int((x - currX) * scale) + centerX
+			sy = maxY - (int((y - currY) * scale) + centerY)
+			pygame.draw.circle(self._mapSurf, (0x00, 0x00, 0x60), (sx, sy), int(range * scale + 2), 0)
+		for x, y, range in self._map[self.MAP_SCANNER1]:
+			sx = int((x - currX) * scale) + centerX
+			sy = maxY - (int((y - currY) * scale) + centerY)
+			pygame.draw.circle(self._mapSurf, (0x00, 0x00, 0x30), (sx, sy), int(range * scale), 0)
+		for x, y, range in self._map[self.MAP_SCANNER2]:
+			sx = int((x - currX) * scale) + centerX
+			sy = maxY - (int((y - currY) * scale) + centerY)
+			pygame.draw.circle(self._mapSurf, (0x00, 0x00, 0x40), (sx, sy), int(range * scale), 0)
+
+	def drawRedirects(self):
+		# coordinates
+		centerX, centerY = self._mapSurf.get_rect().center
+		maxY = self._mapSurf.get_rect().height
+		currX = self.currX
+		currY = self.currY
+		scale = self.scale
+		for sx, sy, tx, ty in self._map[self.MAP_FREDIRECTS]:
+			sx = int((sx - currX) * scale) + centerX
+			sy = maxY - (int((sy - currY) * scale) + centerY)
+			tx = int((tx - currX) * scale) + centerX
+			ty = maxY - (int((ty - currY) * scale) + centerY)
+			pygame.draw.line(self._mapSurf, (0x20, 0x20, 0x80), (sx, sy), (tx, ty), 1)
+			pygame.draw.line(self._mapSurf, (0x20, 0x20, 0x80), (sx + 2, sy), (tx, ty), 1)
+			pygame.draw.line(self._mapSurf, (0x20, 0x20, 0x80), (sx - 2, sy), (tx, ty), 1)
+			pygame.draw.line(self._mapSurf, (0x20, 0x20, 0x80), (sx, sy + 2), (tx, ty), 1)
+			pygame.draw.line(self._mapSurf, (0x20, 0x20, 0x80), (sx, sy - 2), (tx, ty), 1)
+			pygame.draw.line(self._mapSurf, (0x20, 0x20, 0x80), (sx + 1, sy), (tx, ty), 1)
+			pygame.draw.line(self._mapSurf, (0x20, 0x20, 0x80), (sx - 1, sy), (tx, ty), 1)
+			pygame.draw.line(self._mapSurf, (0x20, 0x20, 0x80), (sx, sy + 1), (tx, ty), 1)
+			pygame.draw.line(self._mapSurf, (0x20, 0x20, 0x80), (sx, sy - 1), (tx, ty), 1)
+			# pygame.draw.line(self._mapSurf, (0x00, 0x00, 0x80), (sx, sy), ((sx + tx) / 2, (sy + ty) / 2), 3)
+
+	def drawSystems(self):
+		# coordinates
+		centerX, centerY = self._mapSurf.get_rect().center
+		maxY = self._mapSurf.get_rect().height
+		currX = self.currX
+		currY = self.currY
+		scale = self.scale
+		if scale >= 30:
+			for objID, x, y, name, img, color, icons in self._map[self.MAP_SYSTEMS]:
+				sx = int((x - currX) * scale) + centerX
+				sy = maxY - (int((y - currY) * scale) + centerY)
+				w, h = img.get_size()
+				x = sx - w / 2
+				y = sy - h / 2
+				self._mapSurf.blit(img, (x, y))
+				# images are now smaller - TODO fix images of stars
+				w = 22
+				h = 22
+				if name:
+					img = renderText('small', name, 1, color)
+					self._mapSurf.blit(img, (sx - img.get_width() / 2, sy + h / 2))
+					buoy = self.getBuoy(objID)
+					if buoy != None:
+						lines = buoy[0].split("\n")
+						nSy = sy + h / 2 + img.get_height()
+						maxW = 0
+						hh = 0
+						for line in lines:
+							if len(line) == 0:
+								break
+							if len(line) > MAX_BOUY_DISPLAY_LEN:
+								line = u"%s..." % line[:MAX_BOUY_DISPLAY_LEN]
+							img = renderText('small', line, 1, buoyColors[buoy[1] - 1])
+							maxW = max(img.get_width(), maxW)
+							self._mapSurf.blit(img, (sx - img.get_width() / 2, nSy + hh))
+							hh += img.get_height()
+						if maxW > 0:
+							actRect = Rect(sx - maxW / 2, nSy, maxW, hh)
+							actRect.move_ip(self.rect.left, self.rect.top)
+							self._actBuoyAreas[objID] = actRect
+				for icon in icons:
+					self._mapSurf.blit(icon, (x, y))
+					x += icon.get_width() + 1
+				# active rectangle
+				actRect = Rect(sx - w / 2, sy - h / 2, w, h)
+				actRect.move_ip(self.rect.left, self.rect.top)
+				self._actAreas[objID] = actRect
+		else:
+			for objID, x, y, name, img, color, icons in self._map[self.MAP_SYSTEMS]:
+				sx = int((x - currX) * scale) + centerX
+				sy = maxY - (int((y - currY) * scale) + centerY)
+				pygame.draw.circle(self._mapSurf, color, (sx, sy), 5, 1)
+				pygame.draw.circle(self._mapSurf, color, (sx, sy), 4, 0)
+				if name and scale > 15:
+					img = renderText('small', name, 1, color)
+					self._mapSurf.blit(img, (sx - img.get_width() / 2, sy + 6 / 2))
+					buoy = self.getBuoy(objID)
+					if buoy != None:
+						lines = buoy[0].split("\n")
+						nSy = sy + 6 / 2 + img.get_height()
+						maxW = 0
+						hh = 0
+						for line in lines:
+							if len(line) == 0:
+								break
+							img = renderText('small', line, 1, buoyColors[buoy[1] - 1])
+							maxW = max(img.get_width(), maxW)
+							self._mapSurf.blit(img, (sx - img.get_width() / 2, nSy + hh))
+							hh += img.get_height()
+						if maxW > 0:
+							actRect = Rect(sx - maxW / 2, nSy, maxW, hh)
+							actRect.move_ip(self.rect.left, self.rect.top)
+							self._actBuoyAreas[objID] = actRect
+				# active rectangle
+				actRect = Rect(sx - 6 / 2, sy - 6 / 2, 6, 6)
+				actRect.move_ip(self.rect.left, self.rect.top)
+				self._actAreas[objID] = actRect
+
+	def drawPlanets(self):
+		# coordinates
+		centerX, centerY = self._mapSurf.get_rect().center
+		maxY = self._mapSurf.get_rect().height
+		currX = self.currX
+		currY = self.currY
+		scale = self.scale
+		if scale >= 30:
+			for objID, x, y, orbit, color in self._map[self.MAP_PLANETS]:
+				sx = int((x - currX) * scale) + centerX
+				sy = maxY - (int((y - currY) * scale) + centerY)
+				orbit -= 1
+				actRect = Rect(sx + (orbit % 8) * 6 + 13, sy + 6 * (orbit / 8) - 6, 5, 5)
+				self._mapSurf.fill(color, actRect)
+				actRect.move_ip(self.rect.left, self.rect.top)
+				self._actAreas[objID] = actRect
+		elif scale > 20:
+			for objID, x, y, orbit, color in self._map[self.MAP_PLANETS]:
+				sx = int((x - currX) * scale) + centerX
+				sy = maxY - (int((y - currY) * scale) + centerY)
+				orbit -= 1
+				actRect = Rect(sx + (orbit % 8) * 3 + 7, sy - 3 * (orbit / 8) - 1, 2, 2)
+				self._mapSurf.fill(color, actRect)
+				actRect.move_ip(self.rect.left, self.rect.top)
+				self._actAreas[objID] = actRect
+
+	def drawFleets(self):
+		# coordinates
+		centerX, centerY = self._mapSurf.get_rect().center
+		maxY = self._mapSurf.get_rect().height
+		currX = self.currX
+		currY = self.currY
+		scale = self.scale
+		# draw orders lines
+		for x1, y1, x2, y2, color in self._map[self.MAP_FORDERS]:
+			sx1 = int((x1 - currX) * scale) + centerX
+			sy1 = maxY - (int((y1 - currY) * scale) + centerY)
+			sx2 = int((x2 - currX) * scale) + centerX
+			sy2 = maxY - (int((y2 - currY) * scale) + centerY)
+			pygame.draw.line(self._mapSurf, color, (sx1, sy1), (sx2, sy2), 1)
+		# draw fleet symbol
+		for objID, x, y, oldX, oldY, orbit, eta, color, size, military in self._map[self.MAP_FLEETS]:
+			sx = int((x - currX) * scale) + centerX
+			sy = maxY - (int((y - currY) * scale) + centerY)
+			if orbit >= 0 and scale >= 30:
+				actRect = Rect(sx + (orbit % 8) * 6 + 13, sy + 6 * (orbit / 8) + 6, 4, 4)
+				# TODO this is a workaround - fix it when pygame gets fixed
+				pygame.draw.polygon(self._mapSurf, color,
+					(actRect.midleft, actRect.midtop, actRect.midright, actRect.midbottom), 1)
+				pygame.draw.polygon(self._mapSurf, color,
+					(actRect.midleft, actRect.midtop, actRect.midright, actRect.midbottom), 0)
+				actRect.move_ip(self.rect.left, self.rect.top)
+				self._actAreas[objID] = actRect
+			elif orbit < 0:
+				sox = int((oldX - currX) * scale) + centerX
+				soy = maxY - (int((oldY - currY) * scale) + centerY)
+				actRect = Rect(sx - 3, sy - 3, 6, 6)
+				if military:
+					mColor = color
+				else:
+					mColor = (0xff, 0xff, 0xff)
+				pygame.draw.line(self._mapSurf, mColor, (sx, sy), (sox, soy), size + 1)
+				# TODO rotate triangle
+				pygame.draw.polygon(self._mapSurf, color,
+					(actRect.midleft, actRect.midtop, actRect.midright, actRect.midbottom), 1)
+				pygame.draw.polygon(self._mapSurf, color,
+					(actRect.midleft, actRect.midtop, actRect.midright, actRect.midbottom), 0)
+				if eta and scale > 15:
+					img = renderText('small', eta, 1, color)
+					self._mapSurf.blit(img, actRect.topright)
+				actRect.move_ip(self.rect.left, self.rect.top)
+				self._actAreas[objID] = actRect
+
 	def draw(self, surface):
 		if not self._mapSurf:
 			self._mapSurf = pygame.Surface(self.rect.size, SWSURFACE | SRCALPHA, surface)
@@ -478,18 +680,7 @@ class StarMapWidget(Widget):
 			# scanners
 			# scanner ranges
 			if self.showScanners:
-				for x, y, range in self._map[self.MAP_SCANNER1]:
-					sx = int((x - currX) * scale) + centerX
-					sy = maxY - (int((y - currY) * scale) + centerY)
-					pygame.draw.circle(mapSurface, (0x00, 0x00, 0x60), (sx, sy), int(range * scale + 2), 0)
-				for x, y, range in self._map[self.MAP_SCANNER1]:
-					sx = int((x - currX) * scale) + centerX
-					sy = maxY - (int((y - currY) * scale) + centerY)
-					pygame.draw.circle(mapSurface, (0x00, 0x00, 0x30), (sx, sy), int(range * scale), 0)
-				for x, y, range in self._map[self.MAP_SCANNER2]:
-					sx = int((x - currX) * scale) + centerX
-					sy = maxY - (int((y - currY) * scale) + centerY)
-					pygame.draw.circle(mapSurface, (0x00, 0x00, 0x40), (sx, sy), int(range * scale), 0)
+				self.drawScanners()
 			# pirate area
 			if self.showPirateAreas:
 				pass # TODO
@@ -498,151 +689,16 @@ class StarMapWidget(Widget):
 				self.drawGrid()
 			# redirections
 			if self.showRedirects:
-				for sx, sy, tx, ty in self._map[self.MAP_FREDIRECTS]:
-					sx = int((sx - currX) * scale) + centerX
-					sy = maxY - (int((sy - currY) * scale) + centerY)
-					tx = int((tx - currX) * scale) + centerX
-					ty = maxY - (int((ty - currY) * scale) + centerY)
-					pygame.draw.line(mapSurface, (0x20, 0x20, 0x80), (sx, sy), (tx, ty), 1)
-					pygame.draw.line(mapSurface, (0x20, 0x20, 0x80), (sx + 2, sy), (tx, ty), 1)
-					pygame.draw.line(mapSurface, (0x20, 0x20, 0x80), (sx - 2, sy), (tx, ty), 1)
-					pygame.draw.line(mapSurface, (0x20, 0x20, 0x80), (sx, sy + 2), (tx, ty), 1)
-					pygame.draw.line(mapSurface, (0x20, 0x20, 0x80), (sx, sy - 2), (tx, ty), 1)
-					pygame.draw.line(mapSurface, (0x20, 0x20, 0x80), (sx + 1, sy), (tx, ty), 1)
-					pygame.draw.line(mapSurface, (0x20, 0x20, 0x80), (sx - 1, sy), (tx, ty), 1)
-					pygame.draw.line(mapSurface, (0x20, 0x20, 0x80), (sx, sy + 1), (tx, ty), 1)
-					pygame.draw.line(mapSurface, (0x20, 0x20, 0x80), (sx, sy - 1), (tx, ty), 1)
-					# pygame.draw.line(mapSurface, (0x00, 0x00, 0x80), (sx, sy), ((sx + tx) / 2, (sy + ty) / 2), 3)
+				self.drawRedirects()
 			# stars
 			if self.showSystems:
-				if scale >= 30:
-					for objID, x, y, name, img, color, icons in self._map[self.MAP_SYSTEMS]:
-						sx = int((x - currX) * scale) + centerX
-						sy = maxY - (int((y - currY) * scale) + centerY)
-						w, h = img.get_size()
-						x = sx - w / 2
-						y = sy - h / 2
-						mapSurface.blit(img, (x, y))
-						# images are now smaller - TODO fix images of stars
-						w = 22
-						h = 22
-						if name:
-							img = renderText('small', name, 1, color)
-							mapSurface.blit(img, (sx - img.get_width() / 2, sy + h / 2))
-							buoy = self.getBuoy(objID)
-							if buoy != None:
-								lines = buoy[0].split("\n")
-								nSy = sy + h / 2 + img.get_height()
-								maxW = 0
-								hh = 0
-								for line in lines:
-									if len(line) == 0:
-										break
-									if len(line) > MAX_BOUY_DISPLAY_LEN:
-										line = u"%s..." % line[:MAX_BOUY_DISPLAY_LEN]
-									img = renderText('small', line, 1, buoyColors[buoy[1] - 1])
-									maxW = max(img.get_width(), maxW)
-									mapSurface.blit(img, (sx - img.get_width() / 2, nSy + hh))
-									hh += img.get_height()
-								if maxW > 0:
-									actRect = Rect(sx - maxW / 2, nSy, maxW, hh)
-									actRect.move_ip(self.rect.left, self.rect.top)
-									self._actBuoyAreas[objID] = actRect
-						for icon in icons:
-							mapSurface.blit(icon, (x, y))
-							x += icon.get_width() + 1
-						# active rectangle
-						actRect = Rect(sx - w / 2, sy - h / 2, w, h)
-						actRect.move_ip(self.rect.left, self.rect.top)
-						self._actAreas[objID] = actRect
-				else:
-					for objID, x, y, name, img, color, icons in self._map[self.MAP_SYSTEMS]:
-						sx = int((x - currX) * scale) + centerX
-						sy = maxY - (int((y - currY) * scale) + centerY)
-						pygame.draw.circle(mapSurface, color, (sx, sy), 5, 1)
-						pygame.draw.circle(mapSurface, color, (sx, sy), 4, 0)
-						if name and scale > 15:
-							img = renderText('small', name, 1, color)
-							mapSurface.blit(img, (sx - img.get_width() / 2, sy + 6 / 2))
-							buoy = self.getBuoy(objID)
-							if buoy != None:
-								lines = buoy[0].split("\n")
-								nSy = sy + 6 / 2 + img.get_height()
-								maxW = 0
-								hh = 0
-								for line in lines:
-									if len(line) == 0:
-										break
-									img = renderText('small', line, 1, buoyColors[buoy[1] - 1])
-									maxW = max(img.get_width(), maxW)
-									mapSurface.blit(img, (sx - img.get_width() / 2, nSy + hh))
-									hh += img.get_height()
-								if maxW > 0:
-									actRect = Rect(sx - maxW / 2, nSy, maxW, hh)
-									actRect.move_ip(self.rect.left, self.rect.top)
-									self._actBuoyAreas[objID] = actRect
-						# active rectangle
-						actRect = Rect(sx - 6 / 2, sy - 6 / 2, 6, 6)
-						actRect.move_ip(self.rect.left, self.rect.top)
-						self._actAreas[objID] = actRect
+				self.drawSystems()
 			# planets
-			if self.showPlanets and scale >= 30:
-				for objID, x, y, orbit, color in self._map[self.MAP_PLANETS]:
-					sx = int((x - currX) * scale) + centerX
-					sy = maxY - (int((y - currY) * scale) + centerY)
-					orbit -= 1
-					actRect = Rect(sx + (orbit % 8) * 6 + 13, sy + 6 * (orbit / 8) - 6, 5, 5)
-					mapSurface.fill(color, actRect)
-					actRect.move_ip(self.rect.left, self.rect.top)
-					self._actAreas[objID] = actRect
-			elif self.showPlanets and scale > 20:
-				for objID, x, y, orbit, color in self._map[self.MAP_PLANETS]:
-					sx = int((x - currX) * scale) + centerX
-					sy = maxY - (int((y - currY) * scale) + centerY)
-					orbit -= 1
-					actRect = Rect(sx + (orbit % 8) * 3 + 7, sy - 3 * (orbit / 8) - 1, 2, 2)
-					mapSurface.fill(color, actRect)
-					actRect.move_ip(self.rect.left, self.rect.top)
-					self._actAreas[objID] = actRect
+			if self.showPlanets:
+				self.drawPlanets()
 			# fleets
 			if self.showFleets:
-				for x1, y1, x2, y2, color in self._map[self.MAP_FORDERS]:
-					sx1 = int((x1 - currX) * scale) + centerX
-					sy1 = maxY - (int((y1 - currY) * scale) + centerY)
-					sx2 = int((x2 - currX) * scale) + centerX
-					sy2 = maxY - (int((y2 - currY) * scale) + centerY)
-					pygame.draw.line(mapSurface, color, (sx1, sy1), (sx2, sy2), 1)
-				for objID, x, y, oldX, oldY, orbit, eta, color, size, military in self._map[self.MAP_FLEETS]:
-					sx = int((x - currX) * scale) + centerX
-					sy = maxY - (int((y - currY) * scale) + centerY)
-					if orbit >= 0 and scale >= 30:
-						actRect = Rect(sx + (orbit % 8) * 6 + 13, sy + 6 * (orbit / 8) + 6, 4, 4)
-						# TODO this is a workaround - fix it when pygame gets fixed
-						pygame.draw.polygon(mapSurface, color,
-							(actRect.midleft, actRect.midtop, actRect.midright, actRect.midbottom), 1)
-						pygame.draw.polygon(mapSurface, color,
-							(actRect.midleft, actRect.midtop, actRect.midright, actRect.midbottom), 0)
-						actRect.move_ip(self.rect.left, self.rect.top)
-						self._actAreas[objID] = actRect
-					elif orbit < 0:
-						sox = int((oldX - currX) * scale) + centerX
-						soy = maxY - (int((oldY - currY) * scale) + centerY)
-						actRect = Rect(sx - 3, sy - 3, 6, 6)
-						if military:
-							mColor = color
-						else:
-							mColor = (0xff, 0xff, 0xff)
-						pygame.draw.line(mapSurface, mColor, (sx, sy), (sox, soy), size + 1)
-						# TODO rotate triangle
-						pygame.draw.polygon(mapSurface, color,
-							(actRect.midleft, actRect.midtop, actRect.midright, actRect.midbottom), 1)
-						pygame.draw.polygon(mapSurface, color,
-							(actRect.midleft, actRect.midtop, actRect.midright, actRect.midbottom), 0)
-						if eta and scale > 15:
-							img = renderText('small', eta, 1, color)
-							mapSurface.blit(img, actRect.topright)
-						actRect.move_ip(self.rect.left, self.rect.top)
-						self._actAreas[objID] = actRect
+				self.drawFleets()
 			# clean up flag
 			self.repaintMap = 0
 		# blit cached map

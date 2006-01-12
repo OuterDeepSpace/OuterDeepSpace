@@ -57,6 +57,7 @@ class Widget:
 		self.__dict__['layout'] = None
 		self.__dict__['tags'] = []
 		self.__dict__['id'] = None
+		self.__dict__['orderNo'] = 0
 		self.__dict__['rect'] = Rect((0, 0, 0, 0))
 		self.__dict__['_handleMap'] = {'*': []}
 		self.__dict__['data'] = DataHolder()

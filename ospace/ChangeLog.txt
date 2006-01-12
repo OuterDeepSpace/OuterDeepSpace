@@ -1,5 +1,11 @@
 Change Log:
 
+[2006-01-12]
+- Enabled TAB key in Login, ColorDefinition and Split Fleet dialogs. [lord-silk]
+- Unexplored systems are marked with [system]. [lord-silk]
+- Construction dialog display number of ships in build queues. [lord-silk]
+- Refactored StarMapWidget. [lord-silk]
+
 [2005-12-30]
 - Changed licensing to GPL.
 

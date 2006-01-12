@@ -37,6 +37,7 @@ from TitleButton import TitleButton
 from ProgressBar import ProgressBar
 from Text import Text
 from Check import Check
+from ColorBox import ColorBox
 
 # Menu
 from Menu import Menu

@@ -477,6 +477,7 @@ class FleetSplitDlg:
 			title = _('Split Fleet'),
 			rect = ui.Rect((w - 800 - 4 * (w != 800)) / 2, (h - 600 - 4 * (h != 600)) / 2, 800 + 4 * (w != 800), 580 + 4 * (h != 600)),
 			layoutManager = ui.SimpleGridLM(),
+			tabChange = True,
 		)
 		self.win.subscribeAction('*', self)
 		# original fleet
@@ -514,7 +515,7 @@ class FleetSplitDlg:
 			align = ui.ALIGN_W, font = 'normal-bold')
 		ui.Label(self.win, layout = (0, 26, 5, 1), text = _('Fuel'), align = ui.ALIGN_W)
 		ui.Entry(self.win, layout = (5, 26, 5, 1), id = 'vOEn', action = 'onStorChng',
-			align = ui.ALIGN_E, data ='origEn')
+			align = ui.ALIGN_E, data ='origEn', orderNo = 15)
 		ui.Label(self.win, layout = (10, 26, 5, 1), id = 'vOEnMax', align = ui.ALIGN_W)
 
 		# new fleet
@@ -552,7 +553,7 @@ class FleetSplitDlg:
 			align = ui.ALIGN_W, font = 'normal-bold')
 		ui.Label(self.win, layout = (20, 26, 5, 1), text = _('Fuel'), align = ui.ALIGN_W)
 		ui.Entry(self.win, layout = (25, 26, 5, 1), id = 'vNEn', action = 'onStorChng',
-			align = ui.ALIGN_E, data ='newEn')
+			align = ui.ALIGN_E, data ='newEn', orderNo = 16)
 		ui.Label(self.win, layout = (30, 26, 5, 1), id = 'vNEnMax', align = ui.ALIGN_W)
 
 		# status bar + submit/cancel

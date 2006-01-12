@@ -37,6 +37,7 @@ class Entry(Widget):
 		self.__dict__['cursorPos'] = 0
 		self.__dict__['action'] = None
 		self.__dict__['showChar'] = None
+		self.__dict__['reportValueChanged'] = False
 		# flags
 		self.processKWArguments(kwargs)
 		parent.registerWidget(self)
@@ -89,6 +90,8 @@ class Entry(Widget):
 				self.text[:self.cursorPos], mapping[evt.key], self.text[self.cursorPos:]
 			)
 			self.cursorPos += 1
+		if (self.reportValueChanged):
+			self.processAction("onValueChanged")
 		return Widget.processKeyDown(self, NoEvent)
 
 	def onFocusGained(self):

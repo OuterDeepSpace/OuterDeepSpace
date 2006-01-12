@@ -70,19 +70,34 @@ class ConstructionDlg:
 		items = []
 		for designID in player.shipDesigns:
 			spec = player.shipDesigns[designID]
-			count = 0
+			# number of ships with this desing in fleet
+			countInService = 0
 			for fleetID in player.fleets:
 				fleet = client.get(fleetID)
 				for tmpDesignID, hp, shieldHP, exp in fleet.ships:
 					if tmpDesignID == designID:
-						count += 1
+						countInService += 1
 			hullTech = client.getFullTechInfo(spec.hullID)
+			# number of ships in build queue
+			countInBuild = 0
+			for planetID in client.db.keys():
+				planet = client.get(planetID, noUpdate = 1)
+				# skip non-planets
+				if not hasattr(planet, "type") or planet.type != T_PLANET \
+					or not hasattr(planet, 'owner') or not planet.owner == player.oid \
+					or not planet.prodQueue:
+					continue
+				for task in planet.prodQueue:
+					if task.isShip and task.techID == designID:
+						countInBuild += task.quantity
+			# ui list item
 			item = ui.Item(spec.name, tDesignID = designID,
 				tClass = "%s/TL%d" % (
-					_(gdata.shipClasses[spec.combatClass]),
+					_(gdata.shipClasses[spec.combatClass][:3]),
 					hullTech.level,
 				),
-				tNumber = count
+				tNumber = countInService,
+				tInBuild = countInBuild
 			)
 			if spec.upgradeTo:
 				item.foreground = gdata.sevColors[gdata.NONE]
@@ -386,8 +401,9 @@ class ConstructionDlg:
 		ui.Listbox(self.win, layout = (0, 1, 15, 25), id = 'vDesigns',
 			columns = (
 				(_('#'), 'tNumber', 2, ui.ALIGN_E),
+				(_('B'), 'tInBuild', 1, ui.ALIGN_E),
 				(_('Name'), 'text', 8, ui.ALIGN_W),
-				(_('Class'), 'tClass', 4, ui.ALIGN_W),
+				(_('Class'), 'tClass', 3, ui.ALIGN_W),
 			),
 			columnLabels = 1, action = "onSelectDesign",
 		)
