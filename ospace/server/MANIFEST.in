@@ -1,0 +1,4 @@
+include osclient
+include data/galaxy-Circle4P.xml
+include data/SystemNames.txt
+include lib/ige/ospace/Rules/*.xml
