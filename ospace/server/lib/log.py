@@ -44,11 +44,18 @@ else:
 
 def setErrorLog(filename):
 	global errorLog
+	ensureDirectoryExists(filename)
 	errorLog = open(filename, 'w')
 
 def setMessageLog(filename):
 	global msgLog
+	ensureDirectoryExists(filename)
 	msgLog = open(filename, 'w')
+
+def ensureDirectoryExists(filename):
+	directory = os.path.dirname(filename)
+	if not os.path.exists(directory):
+		os.makedirs(directory)
 
 def setLevel(aLevel):
 	global level
