@@ -40,14 +40,3 @@ import osci.main
 # close file handles
 sys.stdout.close()
 sys.stderr.close()
-
-sys.exit(0)
-
-# this is only for py2exe
-#import pygame, pygame.surflock, pygame.rwobject, pygame.imageext
-#import xml.sax.expatreader
-#import encodings, encodings.utf_8, encodings.cp1250, encodings.ascii
-# added (uknown encoding error)
-#import encodings.utf_16, encodings.mbcs, encodings.aliases, codecs
-#import encodings.undefined, encodings.unicode_escape, encodings.unicode_internal
-#import unicodedata

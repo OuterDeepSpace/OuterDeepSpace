@@ -1,8 +1,8 @@
 [Setup]
 AppName=Outer Space
-AppVerName=Outer Space 0.5.55
+AppVerName=Outer Space %(version)s
 AppPublisher=Ludek Smid
-AppVersion=0.5.55
+AppVersion=%(version)s
 AppPublisherURL=http://www.ospace.net
 AppSupportURL=http://www.ospace.net
 AppUpdatesURL=http://www.ospace.net
@@ -11,7 +11,7 @@ DefaultGroupName=Outer Space
 AllowNoIcons=yes
 ExtraDiskSpaceRequired=5242880
 DisableStartupPrompt=yes
-OutputBaseFilename=OuterSpace0.5.55
+OutputBaseFilename=OuterSpace%(version)s
 OutputDir=.
 InfoBeforeFile=license.rtf
 SolidCompression=no
