@@ -57,6 +57,7 @@ except:
 # make binary package - SDL client
 os.chdir('client-pygame')
 os.system('setup.py py2exe')
+os.system('setup.py sdist')
 os.chdir('..')
 
 shutil.copytree('client-pygame/dist_win32', baseDir)

@@ -1,5 +1,9 @@
 Change Log:
 
+[2006-02-11]
+- Greenhouse Farm's output is not so dependent on environment. [Qark]
+- Various build process related fixes. [Qark]
+
 VERSION 0.5.55
 
 [2006-02-05]

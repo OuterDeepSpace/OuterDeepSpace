@@ -20,8 +20,13 @@
 
 # tweak PYTHONPATH
 import sys
-sys.path.insert(0, 'lib')
-sys.path.insert(0, '../server/lib')
+import os
+sys.path.insert(0, "lib")
+
+for item in ("libsrvr", "../server/lib"):
+    if os.path.exists(item):
+        sys.path.insert(0, item)
+        break
 
 #configure gc
 #import gc
