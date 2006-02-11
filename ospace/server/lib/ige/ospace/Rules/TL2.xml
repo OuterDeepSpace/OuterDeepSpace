@@ -134,7 +134,7 @@
 			buildProd="480"
 			operWorkers="1000"
 			prodBio="200"
-			prodBioMod="0.5,0.0,0.0,0.5"
+			prodBioMod="0.3,0.0,0.0,0.7"
 			storBio="1200"
 			maxHP="400"
 			prodEnv="+15"
