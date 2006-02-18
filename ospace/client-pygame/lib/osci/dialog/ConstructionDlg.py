@@ -93,7 +93,7 @@ class ConstructionDlg:
 			# ui list item
 			item = ui.Item(spec.name, tDesignID = designID,
 				tClass = "%s/TL%d" % (
-					_(gdata.shipClasses[spec.combatClass][:3]),
+					_(gdata.shipClasses[spec.combatClass][:1].upper()),
 					hullTech.level,
 				),
 				tNumber = countInService,
@@ -401,9 +401,9 @@ class ConstructionDlg:
 		ui.Listbox(self.win, layout = (0, 1, 15, 25), id = 'vDesigns',
 			columns = (
 				(_('#'), 'tNumber', 2, ui.ALIGN_E),
-				(_('B'), 'tInBuild', 1, ui.ALIGN_E),
+				(_('B'), 'tInBuild', 2, ui.ALIGN_E),
 				(_('Name'), 'text', 8, ui.ALIGN_W),
-				(_('Class'), 'tClass', 3, ui.ALIGN_W),
+				(_('Class'), 'tClass', 2, ui.ALIGN_W),
 			),
 			columnLabels = 1, action = "onSelectDesign",
 		)
