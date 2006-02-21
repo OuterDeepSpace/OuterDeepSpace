@@ -1,5 +1,9 @@
 Change Log:
 
+[2006-02-21]
+- Fixem problem with Construction dialog. [Qark/Anderuso] (SF#1424616)
+- Added IUniverse.createGalaxy method.
+
 [2006-02-11]
 - Greenhouse Farm's output is not so dependent on environment. [Qark]
 - Various build process related fixes. [Qark]

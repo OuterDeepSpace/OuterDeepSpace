@@ -458,5 +458,28 @@ class IUniverse(IObject):
 		os.remove(galaxyFileName)
 		log.debug("Galaxy Restarting END")
 
+
 	restartGalaxy.public = 1
 	restartGalaxy.accLevel = AL_NONE
+
+
+	def createNewGalaxy(self, tran, obj, x, y, galaxyName):
+		log.message("Adding new galaxy '%s' to (%d, %d)" % (galaxyName, x, y))
+		fh, galaxyFileName = tempfile.mkstemp(text = True)
+		log.debug("Generating new galaxy to temporary file", galaxyFileName)
+		strGalaxyID = 'Circle42P'
+		GenerateGalaxy(strGalaxyID, os.fdopen(fh, "w+b"))
+		log.debug("Creating new galaxy")
+		newGalaxyID = self.createGalaxy(tran, obj)
+		log.debug("Created new galaxy", newGalaxyID)
+		newGalaxy = tran.db[newGalaxyID]
+		log.debug("Loading new ", newGalaxyID)
+		self.cmd(newGalaxy).loadFromXML(tran, newGalaxy, galaxyFileName, strGalaxyID, x, y, galaxyName)
+		log.debug("Setup Enviroment", newGalaxyID)
+		self.cmd(newGalaxy).setupEnvironment(tran, newGalaxy)
+		log.debug("Removing temp file", galaxyFileName)
+		os.remove(galaxyFileName)
+		log.debug("Galaxy Restarting END")
+
+	createNewGalaxy.public = 1
+	createNewGalaxy.accLevel = AL_ADMIN

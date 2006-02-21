@@ -335,9 +335,9 @@ def processMenu(inp, objId, s):
 
 	return objId
 
-#s = IClient('ige.qgir.cz:9080', None, msgHandler, 'IClient/osc')
+s = IClient('ospace.net:9080', None, msgHandler, None, 'IClient/osc')
 #s = IClient('212.11.104.99:9080', None, msgHandler, None, 'IClient/osc')
-s = IClient('localhost:9080', None, msgHandler, None, 'IClient/osc')
+#~ s = IClient('localhost:9080', None, msgHandler, None, 'IClient/osc')
 
 if len(sys.argv) != 2:
 	print "Usage: osclient LOGIN"
