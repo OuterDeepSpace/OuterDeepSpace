@@ -5,3 +5,4 @@ ticker.py
 *.sh
 *.bat
 exportnews
+crontab
