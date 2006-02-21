@@ -74,7 +74,7 @@ setup(
     ],
     data_files = data_files,
     package_dir = {"osci": "lib/osci", "pygameui": "lib/pygameui", "": "libsrvr"},
-    packages = ["osci", "pygameui", "igeclient", "ige", "ige.ospace", "ige.ospace.Rules"],
+    packages = ["osci", "osci.dialog", "pygameui", "igeclient", "ige", "ige.ospace", "ige.ospace.Rules"],
     py_modules = ["log"],
     scripts = ["osc.py"],
 )
