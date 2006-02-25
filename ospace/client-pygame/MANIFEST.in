@@ -1,5 +1,6 @@
 recursive-include res *
 recursive-include lib *
+recursive-include libsrvr *
 prune *CVS
 prune *pyc
 prune *.cvsignore
