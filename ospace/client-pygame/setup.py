@@ -15,6 +15,7 @@ except ImportError:
 import glob
 import shutil
 import os
+import stat
 
 # collect data files
 data_files = []
@@ -28,7 +29,7 @@ data_files.append(
 # resources
 for root, dirs, files in os.walk('res'):
     try:
-        dirs.remove("CVS")
+        dirs.remove(".svn")
     except ValueError:
         pass
     if files:
@@ -80,4 +81,9 @@ setup(
 )
 
 # cleanup
-shutil.rmtree("libsrvr")
+def onerror(func, path, err):
+    if func is os.remove:
+        os.chmod(path, stat.S_IWRITE)
+        os.remove(path)
+
+shutil.rmtree("libsrvr", onerror = onerror)

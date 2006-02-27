@@ -12,30 +12,38 @@ parser.add_option("-f", "--force", dest = "force", action = "store_true",
 options, args = parser.parse_args()
 
 # generate version info
-print "#\n# Generating build info\n#"
+import pysvn
 
+svn = pysvn.Client()
 
-fh = open("client-pygame/lib/osci/buildInfo.py", "w")
-print >> fh, """\
+print "#\n# Generating version info\n#"
+
+entry = svn.info(".")
+
+if entry.revision.kind == pysvn.opt_revision_kind.number:
+    print 'Revision:', entry.revision.number
+    fh = open("client-pygame/lib/osci/svnInfo.py", "w")
+    print >> fh, """\
 #
 # This is generated file, please, do not edit
 #
-buildTime = %d
+revision = %d
 """ % (
-    time.time()
+    entry.revision.number
 )
-fh.close()
+    fh.close()
+else:
+    print "Cannot retrieve revision info"
+    sys.exit(1)
 
 # check for modified files
 if not options.force:
     print "#\n# Checking for modified and unversioned files\n#"
-
-    fh = os.popen("cvs -nq upd -I *.pyc")
-
     okToGo = True
-    for line in fh:
-        print line.rstrip()
-        okToGo = False
+    for status in svn.status(".", recurse = True):
+        if status.text_status not in (pysvn.wc_status_kind.normal, pysvn.wc_status_kind.ignored):
+            print "[%s] %s" % (status.text_status, status.path)
+            okToGo = False
 
     if not okToGo:
         print
@@ -133,7 +141,7 @@ os.system('..\\tools\\ISetup4\\iscc.exe setup.iss')
 
 # copy version
 shutil.copy2('client-pygame/lib/osci/version.py', 'server/lib/ige/ospace/ClientVersion.py')
-shutil.copy2('client-pygame/lib/osci/buildInfo.py', 'server/lib/ige/ospace/buildInfo.py')
+shutil.copy2('client-pygame/lib/osci/svnInfo.py', 'server/lib/ige/ospace/svnInfo.py')
 
 # create tech tree
 os.chdir("tools")
