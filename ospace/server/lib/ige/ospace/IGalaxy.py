@@ -345,8 +345,6 @@ class IGalaxy(IObject):
 	def getPublicInfo(self, tran, obj):
 		result = IDataHolder()
 		result.oid = obj.oid
-		result.x = obj.x
-		result.y = obj.y
 		result.type = obj.type
 		result.name = obj.name
 		result.emrLevel = obj.emrLevel
@@ -354,7 +352,7 @@ class IGalaxy(IObject):
 
 	getPublicInfo.public = 1
 	getPublicInfo.accLevel = AL_NONE
-
+	
 	def setupEnvironment(self, tran, obj):
 		# check required players
 		universe = tran.db[OID_UNIVERSE]
