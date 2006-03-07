@@ -1248,9 +1248,9 @@ class StarSystemDlg:
 			align = ui.ALIGN_W, tags = ['task', 'pl'])
 		ui.Label(self.win, layout = (26, 21, 5, 1), id = 'vITCompl', align = ui.ALIGN_E,
 			tags = ['task', 'pl'])
-		ui.Label(self.win, layout = (31, 21, 5, 1), text = _('ETC'),
+		ui.Label(self.win, layout = (31, 21, 3, 1), text = _('ETC'),
 			align = ui.ALIGN_W, tags = ['task', 'pl'])
-		ui.Label(self.win, layout = (36, 21, 5, 1), id = 'vITEtc', align = ui.ALIGN_E,
+		ui.Label(self.win, layout = (35, 21, 5, 1), id = 'vITEtc', align = ui.ALIGN_E,
 			tags = ['task', 'pl'])
 		ui.Label(self.win, layout = (20, 22, 6, 1), text = _('Construction pts'),
 			align = ui.ALIGN_W, tags = ['task', 'pl'])
