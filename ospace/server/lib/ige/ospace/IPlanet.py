@@ -24,7 +24,8 @@ from ige.IObject import IObject
 from ige.IDataHolder import IDataHolder
 import Rules, Utils, ShipUtils
 from Const import *
-import log, math, random
+import math, random
+from ige import log
 
 class IPlanet(IObject):
 

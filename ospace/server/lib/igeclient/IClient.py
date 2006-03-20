@@ -18,11 +18,10 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-import log
 import md5
 import ige
 from ige.IMarshal import IMarshal, IPacket
-from ige import ServerStatusException
+from ige import ServerStatusException, log
 import httplib, urllib
 import exceptions
 import time

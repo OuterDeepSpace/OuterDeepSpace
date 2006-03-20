@@ -25,7 +25,8 @@ from xml.dom.minidom import Node, parse
 from ige.IObject import IObject
 from ISystem import ISystem
 from ige.IDataHolder import IDataHolder
-import os.path, log, time, Utils, Rules
+import os.path, time, Utils, Rules
+from ige import log
 
 import Scanner
 

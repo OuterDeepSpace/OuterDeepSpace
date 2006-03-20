@@ -21,6 +21,7 @@
 
 # tweak PYTHONPATH
 import sys, string
+import os
 sys.path.insert(0, 'lib')
 
 from igeclient.IClient import IClient
@@ -335,9 +336,8 @@ def processMenu(inp, objId, s):
 
 	return objId
 
-s = IClient('ospace.net:9080', None, msgHandler, None, 'IClient/osc')
-#s = IClient('212.11.104.99:9080', None, msgHandler, None, 'IClient/osc')
-#~ s = IClient('localhost:9080', None, msgHandler, None, 'IClient/osc')
+#s = IClient('ospace.net:9080', None, msgHandler, None, 'IClient/osc')
+s = IClient('localhost:9080', None, msgHandler, None, 'IClient/osc')
 
 if len(sys.argv) != 2:
 	print "Usage: osclient LOGIN"
@@ -345,7 +345,11 @@ if len(sys.argv) != 2:
 
 login = sys.argv[1]
 
-password = getpass("Password: ")
+if login == "admin":
+	# get admin login from var/token
+	password = open(os.path.join("var", "token"), "r").read()
+else:
+	password = getpass("Password: ")
 
 s.connect(login)
 s.login('Alpha', login, password)

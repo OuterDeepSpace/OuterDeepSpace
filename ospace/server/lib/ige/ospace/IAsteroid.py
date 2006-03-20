@@ -24,8 +24,8 @@ from Const import *
 from ige.IDataHolder import IDataHolder
 import Rules
 import math
-import log, Utils
-from ige import GameException
+import Utils
+from ige import GameException, log
 
 class IAsteroid(IFleet):
 

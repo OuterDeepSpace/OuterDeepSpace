@@ -20,8 +20,9 @@
 
 import Rules, ige
 from ige.IDataHolder import IDataHolder
-import random, string, log
+import random, string
 from Const import *
+from ige import log
 
 def newStructure(tran, techID, playerID, status = STRUCT_STATUS_ON | STRUCT_STATUS_NEW):
 	tech = Rules.techs[techID]

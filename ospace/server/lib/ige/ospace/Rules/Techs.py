@@ -18,7 +18,8 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-import log, sys, copy
+import sys, copy
+from ige import log
 from ige.ospace import Const
 import sha, os.path
 import cPickle as pickle

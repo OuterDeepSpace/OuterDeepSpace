@@ -28,7 +28,6 @@ class IObject:
 
 	typeID = T_OBJECT
 	forums = []
-	defaultForum = None
 
 	def __init__(self, gameMngr):
 		self.gameMngr = gameMngr
@@ -199,7 +198,7 @@ class IObject:
 
 	def deleteMsgs(self, tran, obj, ids):
 		if not self.canManageMsgs(tran, obj, tran.session.cid):
-			raise SecurityException("You cannot manager messages of this entity.")
+			raise SecurityException("You cannot manage messages of this entity.")
 		# get messages
 		mailbox = "%s-%d" % (tran.gameMngr.gameID, obj.oid)
 		return tran.gameMngr.msgMngr.delete(mailbox, ids)

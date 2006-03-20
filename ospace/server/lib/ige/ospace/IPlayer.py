@@ -19,10 +19,11 @@
 #
 
 from ige import *
+from ige import log
 from ige.IObject import IObject
 from ige.IDataHolder import IDataHolder
 from Const import *
-import Rules, Utils, log, math, ShipUtils, time
+import Rules, Utils, math, ShipUtils, time
 
 class IPlayer(IObject):
 

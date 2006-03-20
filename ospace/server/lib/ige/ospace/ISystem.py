@@ -23,7 +23,8 @@ from xml.dom.minidom import Node
 from ige.IObject import IObject
 from ige.IDataHolder import IDataHolder
 from Const import *
-import Rules, log, Utils, math
+import Rules, Utils, math
+from ige import log
 
 class ISystem(IObject):
 

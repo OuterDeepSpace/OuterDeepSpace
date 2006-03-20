@@ -20,9 +20,10 @@
 
 import Rules
 from ige import GameException
+from ige import log
 from ige.IDataHolder import IDataHolder
 from Const import *
-import log, random
+import random
 
 
 def makeShipMinSpec(player, name, hullID, eqIDs, improvements,

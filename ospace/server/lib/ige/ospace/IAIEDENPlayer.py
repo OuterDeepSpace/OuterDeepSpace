@@ -24,7 +24,7 @@ from IPlayer import IPlayer
 from ige.IDataHolder import IDataHolder
 import Rules, Utils
 from Const import *
-import log, math, time
+import math, time
 
 class IAIEDENPlayer(IPlayer):
 

@@ -18,11 +18,14 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-import os, os.path
+import os
 import md5
+import random
 import time
 import log
 from ige import SecurityException
+from ige.Const import ADMIN_LOGIN
+import sha
 
 class Account:
 
@@ -51,6 +54,15 @@ class ClientMngr:
 		self.accounts = database
 		# create nick to account mapping
 		self.nick2login = database.get("**nick2login**", Mapping())
+		# create special key
+		if not self.accounts.has_key(ADMIN_LOGIN):
+			log.message("No administator account found! (looking for '%s')" % ADMIN_LOGIN)
+			log.message("Creating default account")
+			self.createAccount(None, ADMIN_LOGIN, "tobechanged", "Administrator", "nospam@nospam.com")
+		password = sha.new(str(random.randrange(0, 1e10))).hexdigest()
+		open(os.path.join("var", "token"), "w").write(password)
+		log.message("New password for %s is" % ADMIN_LOGIN, password)
+		self.accounts[ADMIN_LOGIN].passwd = password
 
 	def shutdown(self):
 		self.accounts.shutdown()

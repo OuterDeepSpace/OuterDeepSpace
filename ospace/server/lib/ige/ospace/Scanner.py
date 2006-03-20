@@ -20,7 +20,8 @@
 
 import time, math
 from ige.ospace import Rules
-import ige, log
+import ige
+from ige import log
 
 def recordScanLevel(distance, tObj, scannerPwr, owner, playerMaps):
 	level = min(tObj.signature * scannerPwr / max(0.0001, distance), Rules.maxScanPwr)

@@ -18,10 +18,10 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-import log
 import random, os, time, copy
 
 import ige
+from ige import log
 
 from ige.GameMngr import GameMngr as IGEGameMngr
 from ige.Index import Index

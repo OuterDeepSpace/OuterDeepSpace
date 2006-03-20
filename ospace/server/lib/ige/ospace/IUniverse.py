@@ -24,7 +24,8 @@ from Const import *
 import Rules
 from IGalaxy import IGalaxy
 import time, tempfile, os
-import ige, log
+import ige
+from ige import log
 from GalaxyGenerator import GenerateGalaxy
 from ige import GameException
 

@@ -17,6 +17,13 @@ import shutil
 import os
 import stat
 
+# copy server library
+if not os.path.exists("libsrvr"):
+    shutil.copytree("../server/lib", "libsrvr")
+else:
+    sys.path.append("libsrvr")
+
+
 # collect data files
 data_files = []
 data_files.append(
@@ -54,16 +61,13 @@ from osci import version
 # generate up-to-date rules
 import ige.ospace.Rules
 
-# copy server library
-if os.path.exists("libsrvr"):
-    shutil.rmtree("libsrvr")
-shutil.copytree("../server/lib", "libsrvr")
-
 # setup
 setup(
     name = 'OuterSpace',
     version = '%d.%d.%d%s' % version,
     description = 'Client for IGE - Outer Space game',
+    author = "Ludek Smid",
+    author_email = "qark@ospace.net",
     maintainer = 'Ludek Smid',
     maintainer_email = 'qark@ospace.net',
     url = 'http://www.ospace.net/',

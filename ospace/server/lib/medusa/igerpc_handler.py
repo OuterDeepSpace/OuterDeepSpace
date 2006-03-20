@@ -6,7 +6,7 @@ from ige.IMarshal import IMarshal, IPacket
 import string
 import sys
 
-import log
+from ige import log
 
 class igerpc_handler:
 

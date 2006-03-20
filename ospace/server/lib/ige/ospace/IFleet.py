@@ -24,9 +24,9 @@ from ige.IDataHolder import IDataHolder
 import Rules
 import math
 import random
-import log, Utils, ShipUtils, math, copy
+import Utils, ShipUtils, math, copy
 from sys import maxint
-from ige import GameException, ServerException
+from ige import GameException, ServerException, log
 
 class IFleet(IObject):
 

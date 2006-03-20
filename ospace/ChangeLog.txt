@@ -1,5 +1,8 @@
 Change Log:
 
+[2006-03-20]
+- Fixes for building RPMs. [Qark]
+
 VERSION 0.5.56
 
 [2006-02-21]

@@ -20,7 +20,8 @@
 
 import Rules, Utils
 from Const import *
-import log, random
+import random
+from ige import log
 
 def spaceDocksTurn(tran, obj, tech):
 	# skip unowned planets
