@@ -1,7 +1,14 @@
 Change Log:
 
+[2006-03-21]
+- Testing galaxy has now pirate set up. [Qark]
+
 [2006-03-20]
 - Fixes for building RPMs. [Qark]
+- Tools for managing server does not need admin password. [Qark]
+
+[2006-03-07]
+- Made "Repair Ships" technology obsolete. [Qark] (SF#1444716)
 
 VERSION 0.5.56
 

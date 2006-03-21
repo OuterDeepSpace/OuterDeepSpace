@@ -393,19 +393,6 @@
 		/>
 		<preresearch>This flak cannon can be mounted on medium to large ships to help deffend them against fighters.</preresearch>
 	</technology>
-	<technology id="2800" symbol="REPAIRSHIPS2" name="Repair Ships">
-		<discovery
-			researchMod="1.00"
-			level="2"
-			researchRequires="REPAIR1-3"
-		/>
-		<project
-			buildProd="480"
-			data="5,2"
-			finishConstrHandler="finishProjectREPAIRSHIPS2"
-		/>
-		<preresearch>Factories can sometimes patch damaged ships on orbit, but do not expect miracles from this process.</preresearch>
-	</technology>
 	<technology id="2801" symbol="NFURANIUM" name="Nuclear Fusion - Uranium">
 		<discovery
 			researchMod="1.50 + 0.75"

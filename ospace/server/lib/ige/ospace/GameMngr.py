@@ -96,8 +96,7 @@ class GameMngr(IGEGameMngr):
 		#self.cmdPool[galaxy.type].loadFromXML(tran, galaxy, 'galaxy-Argo42P.xml', 'Circle42P', 100, 100, 'Argo')
 		self.cmdPool[galaxy.type].loadFromXML(tran, galaxy, 'galaxy-Circle4P.xml', 'Circle4P', 100, 100, 'Galaxy Test')
 		# setup environment
-		if not ige.igeRuntimeMode:
-			self.cmdPool[galaxy.type].setupEnvironment(tran, galaxy)
+		self.cmdPool[galaxy.type].setupEnvironment(tran, galaxy)
 		# start time
 		self.cmdPool[galaxy.type].enableTime(tran, galaxy, force = 1)
 		# create 'NATURE' player
