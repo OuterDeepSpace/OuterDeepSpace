@@ -68,10 +68,7 @@ os.system('setup.py py2exe')
 os.system('setup.py sdist')
 os.chdir('..')
 
-shutil.copytree('client-pygame/dist_win32', baseDir)
-
-# compress executables
-os.system('upx %s\\*' % baseDir)
+shutil.copytree('dist_win32', baseDir)
 
 # generate checksums
 import md5, stat

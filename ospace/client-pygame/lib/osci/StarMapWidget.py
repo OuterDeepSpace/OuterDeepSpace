@@ -26,7 +26,8 @@ from ige.ospace import Rules, Utils
 import pygame, pygame.draw, pygame.key
 from pygame.locals import *
 from dialog.ShowBuoyDlg import ShowBuoyDlg
-import gdata, client, log, res, math, string
+import gdata, client, res, math, string
+from ige import log
 from osci.dialog.SearchDlg import SearchDlg
 
 buoyColors = [(0xff, 0xff, 0x00), (0x00, 0xff, 0xff), (0xff, 0x00, 0xff)]

@@ -25,7 +25,7 @@ from ige.ospace.Const import *
 from NewMessageDlg import NewMessageDlg
 from ConfirmDlg import ConfirmDlg
 import time
-import log
+from ige import log
 import re
 
 class MessagesDlg:

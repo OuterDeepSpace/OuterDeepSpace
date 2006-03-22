@@ -25,7 +25,8 @@ import pygame.transform
 from pygame.locals import *
 from config import Config
 
-import osci, random, log
+import osci, random
+from ige import log
 import sys, os, os.path
 import re
 

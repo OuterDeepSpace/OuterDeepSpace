@@ -18,7 +18,8 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-import time, urllib, shutil, log, os, os.path, sys, string, glob
+import time, urllib, shutil, os, os.path, sys, string, glob
+from ige import log
 import dialog, gdata
 
 totalSize = 0

@@ -1,5 +1,11 @@
 Change Log:
 
+VERSION 0.5.57
+
+[2006-03-22]
+- Fixed bug with upgrading ships design to 0 speed and leaving the
+  system at the same time. [Qark] (SF#1452133)
+
 [2006-03-21]
 - Testing galaxy has now pirate set up. [Qark]
 

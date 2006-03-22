@@ -786,6 +786,7 @@ class IFleet(IObject):
 		if not upgrPlanets:
 			# no service facility
 			return
+		upgraded = 0
 		# perform upgrade
 		for designID in player.shipDesigns.keys():
 			spec = player.shipDesigns[designID]
@@ -845,6 +846,7 @@ class IFleet(IObject):
 							obj.ships[index][1],
 							int(upgradeToSpec.maxHP * maxHPRatio)
 						))
+						upgraded += 1
 						#@log.debug("HP penalty", diff, upgradeToSpec.buildProd, maxHPRatio)
 						player.fleetUpgradePool -= diff
 						designExists = 1
@@ -858,6 +860,9 @@ class IFleet(IObject):
 							break
 				if player.fleetUpgradePool < diff:
 					break
+		# fix fleet stats
+		if upgraded > 0:
+			self.cmd(obj).update(tran, obj)
 
 	serviceShips.public = 0
 

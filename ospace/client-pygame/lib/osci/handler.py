@@ -21,7 +21,8 @@
 import gdata
 from dialog import ProgressDlg
 from dialog import NewAccountDlg
-import pygame, log
+import pygame
+from ige import log
 
 # module globals
 progressDlg = None

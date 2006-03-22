@@ -22,7 +22,8 @@ import pygame
 from pygame.locals import *
 from Const import *
 from Fonts import *
-import os, os.path, sys, ConfigParser, log
+import os, os.path, sys, ConfigParser
+from ige import log
 
 try:
 	import _winreg

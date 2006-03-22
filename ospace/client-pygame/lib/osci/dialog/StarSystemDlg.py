@@ -33,7 +33,8 @@ from ChangeQtyDlg import ChangeQtyDlg
 import ige
 from ige.ospace.Const import *
 from ige.ospace import Rules
-import math, log
+from ige import log
+import math
 import Utils
 
 INFO_NONE = 0

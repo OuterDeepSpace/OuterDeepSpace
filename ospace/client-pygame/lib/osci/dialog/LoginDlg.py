@@ -25,7 +25,7 @@ from NewAccDlg import NewAccDlg
 from ConfirmDlg import ConfirmDlg
 from OptionsDlg import OptionsDlg
 import binascii
-import log
+from ige import log
 
 class LoginDlg:
 
