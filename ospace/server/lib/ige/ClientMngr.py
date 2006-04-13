@@ -61,7 +61,6 @@ class ClientMngr:
 			self.createAccount(None, ADMIN_LOGIN, "tobechanged", "Administrator", "nospam@nospam.com")
 		password = sha.new(str(random.randrange(0, 1e10))).hexdigest()
 		open(os.path.join("var", "token"), "w").write(password)
-		log.message("New password for %s is" % ADMIN_LOGIN, password)
 		self.accounts[ADMIN_LOGIN].passwd = password
 
 	def shutdown(self):

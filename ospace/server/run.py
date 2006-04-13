@@ -32,7 +32,7 @@ import getopt
 #	gc.DEBUG_INSTANCES | gc.DEBUG_OBJECTS)
 
 # legacy logger
-import log
+from ige import log
 log.setMessageLog('var/logs/messages.log')
 log.setErrorLog('var/logs/errors.log')
 
