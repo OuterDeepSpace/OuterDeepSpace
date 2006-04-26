@@ -1,5 +1,8 @@
 Change Log:
 
+[2006-04-26]
+- Setup script for new client distribution. [Qark]
+
 [2006-04-13]
 - Fixes for osclient command line client. [Qark]
 
