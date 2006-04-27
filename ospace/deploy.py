@@ -1,3 +1,4 @@
+#!/usr/bin/env python2.4
 import sys
 import os, os.path, glob
 import shutil
