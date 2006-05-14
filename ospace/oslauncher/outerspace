@@ -1,0 +1,286 @@
+#!/usr/bin/python -t
+
+"""
+Synchronize and run sources
+"""
+import sys
+import os
+from urlgrabber.grabber import URLGrabber, URLGrabError
+from urlgrabber.progress import RateEstimator
+from ConfigParser import SafeConfigParser
+from StringIO import StringIO
+from urlparse import urlparse
+from pgu import gui
+
+import pygame
+from pygame.locals import *
+
+version = (0, 1, 0, "")
+versionString = "%d.%d.%d%s" % version
+
+# screen size
+screenSize = 640, 480
+screenFlags = SWSURFACE
+
+# constants
+UPTODATE = 1
+NEEDSUPDATE = 2
+CANNOTCONNECT = 3
+
+class NetRunner:
+    
+    def __init__(self, baseUrl):
+        # init grabber
+        self.baseUrl = baseUrl
+        self.grabber = URLGrabber()
+        self.baseDir = self.getBaseDir(baseUrl)
+        self.log("Using base directory", self.baseDir)
+
+    def setProgress(self, progress):
+        self.grabber.opts.progress_obj = progress
+    
+    def getStatus(self):
+        # download and process application info
+        self.log("Downloading application info")
+        self.globalConfig = SafeConfigParser()
+        try:
+            data = self.grabber.urlread(self.baseUrl + ".global")
+        except URLGrabError:
+            return CANNOTCONNECT
+        self.globalConfig.readfp(StringIO(data))
+        self.log(
+            "Checking status of application",
+            self.globalConfig.get("application", "name"),
+            self.globalConfig.get("application", "version"),
+        )
+        # check if local mirror is ok
+        if self.isUpToDate(self.globalConfig.get("application", "checksum")):
+            self.log("Application is up-to-date")
+            return UPTODATE
+        else:
+            self.log("Updating application")
+            return NEEDSUPDATE
+
+    def launch(self):
+        """Launch application"""
+        self.log("Launching application")
+        sys.path.insert(0, self.baseDir)
+        os.chdir(self.baseDir)
+        exec "import %s" % self.globalConfig.get("application", "module")
+
+    def log(self, *args):
+        for arg in args:
+            sys.stdout.write(str(arg))
+            sys.stdout.write(" ")
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+
+    def getBaseDir(self, baseUrl):
+        location, path = urlparse(baseUrl)[1:3]
+        location = location.replace(":", "_")
+        path = path.replace("/", "_")
+        return os.path.abspath(os.path.join(os.path.expanduser("~"), ".ospace", location + path))
+
+    def isUpToDate(self, checksum):
+        config = SafeConfigParser()
+        config.read(os.path.join(self.baseDir, ".global"))
+        if config.has_option("application", "checksum"):
+            return config.get("application", "checksum") == checksum
+        else:
+            return False
+
+    def getFiles(self, text):
+        result = {}
+        for line in text.split("\n"):
+            if not line:
+                continue 
+            # remove additional white spaces (\r at the end)
+            line = line.strip()
+            chksum, size, name = line.split("|")
+            result[name, chksum] = int(size)
+        return result
+            
+    def update(self):
+        # make sure directory exists
+        if not os.path.exists(self.baseDir):
+            os.makedirs(self.baseDir)
+        # local and remote files checksums
+        if os.path.exists(os.path.join(self.baseDir, ".files")):
+            localFiles = self.getFiles(open(os.path.join(self.baseDir, ".files"), "r").read())
+        else:
+            localFiles = {}
+        # remote files
+        files = self.grabber.urlread(self.baseUrl + ".files")
+        remoteFiles = self.getFiles(files)
+        # diff them
+        for key in localFiles.keys():
+            if key in remoteFiles:
+                del remoteFiles[key]
+                del localFiles[key]
+        self.log("Files to delete:", len(localFiles))
+        self.log("Files to download:", len(remoteFiles))
+        # delete obsolete files
+        for name, cksum in localFiles:
+            self.log("Deleting file", name)
+            os.remove(os.path.join(self.baseDir, name))
+        # compute total size
+        size = sum(remoteFiles.values())
+        self.log(size, "B to download")
+        self.grabber.opts.progress_obj.setTotal(size)
+        # download new files
+        for name, cksum in remoteFiles:
+            # make directory for file
+            directory = os.path.dirname(os.path.join(self.baseDir, name))
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            # download it
+            self.grabber.urlgrab(self.baseUrl + name, os.path.join(self.baseDir, name))
+        # write config
+        open(os.path.join(self.baseDir, ".files"), "wb").write(files)
+        self.globalConfig.write(open(os.path.join(self.baseDir, ".global"), "w"))
+
+class CancelOperation(Exception):
+    pass
+
+class UpdateDlg(gui.Table):
+    
+    def __init__(self, **params):
+        name = params["name"]
+        del params["name"]
+        version = params["version"]
+        del params["version"]
+        
+        gui.Table.__init__(self, **params)
+        
+        self.tr()
+        self.td(gui.Label(_("Updating %s %s") % (name, version)), colspan = 2, align = -1)
+        
+        self.tr()
+        self.td(gui.Spacer(1, 10), colspan = 2)
+        
+        self.tr()
+        self.td(gui.Label(_("Progress  ")), align = 1)
+        self.progress = gui.ProgressBar(0, 0, 100, width = 200)
+        self.td(self.progress, align = -1)
+
+        self.tr()
+        self.td(gui.Label(""), colspan = 2)
+        
+        self.tr()
+        e = gui.Button(_("Cancel"))
+        e.connect(gui.CLICK, self.onCancel, None)        
+        self.td(e, colspan = 2, align = 1)
+    
+    def onCancel(self, arg):
+        raise CancelOperation()
+
+class Progress:
+    
+    def __init__(self, dlg):
+        self.dlg = dlg
+        self.re = None
+    
+    def setTotal(self, total):
+        self.re = RateEstimator()
+        self.re.start(total)
+        self.base = 0
+    
+    def start(self, filename=None, url=None, basename=None,
+              size=None, now=None, text=None):
+        pass
+    
+    def update(self, amount_read, now=None):
+        if self.re is None:
+            return
+        if amount_read > 0:
+            self.re.update(self.base + amount_read)
+            if self.re.fraction_read():
+                self.dlg.progress.value = int(self.re.fraction_read() * 100)
+            self.dlg.update()
+
+    def end(self, amount_read, now=None):
+        if self.re is None:
+            return
+        self.re.update(self.base + amount_read)
+        if self.re.fraction_read():
+            self.dlg.progress.value = int(self.re.fraction_read() * 100)
+        self.base += amount_read
+        self.dlg.update()
+
+def initLocalization():
+    """initialize _ function"""
+    # TODO: map it to corresponding locale
+    import __builtin__
+    __builtin__.__dict__["_"] = lambda x: x
+
+if __name__ == "__main__":
+    """Setup display and stard dialogue with a user"""
+    initLocalization()
+    # load configuration
+    confFilename = os.path.join(os.path.expanduser("~"), ".ospace", "netrunner.ini")
+    config = SafeConfigParser()
+    config.read(confFilename)
+    if not config.has_section("server"):
+        config.add_section("server")
+    if not config.has_option("server", "url"):
+        config.set("server", "url", "http://ospace.net:9080/client/")
+    url = config.get("server", "url")
+    # check if server is available and app is up-to-date
+    netRunner = NetRunner(url)
+    status = netRunner.getStatus()
+    okToLaunch = False
+    if status != UPTODATE:
+        # initialize pygame
+        os.environ['SDL_VIDEO_CENTERED'] = 'yes'
+        pygame.init()
+        # main screen
+        bestDepth = pygame.display.mode_ok(screenSize, screenFlags)
+        screen = pygame.display.set_mode(screenSize, screenFlags, bestDepth)
+        pygame.mouse.set_visible(True)
+        pygame.display.set_caption(_("Outer Space Launcher %s") % versionString)
+        pygame.display.set_icon(pygame.image.load("res/icon32.png").convert_alpha())
+        # connection dlg?
+        while status == CANNOTCONNECT:
+            pass
+        # update app
+        app = gui.Desktop(theme = gui.Theme("res/gray"))
+        app.connect(gui.QUIT,app.quit,None)
+        dlg = UpdateDlg(
+            name = netRunner.globalConfig.get("application", "longname"),
+            version = netRunner.globalConfig.get("application", "version"),
+            align = 1
+        )
+        app.init(dlg)
+        def update():
+            for e in pygame.event.get():
+                app.event(e)
+            app.paint(screen)
+            pygame.display.flip()
+        dlg.update = update
+        # update
+        netRunner.setProgress(Progress(dlg))
+        try:
+            netRunner.update()
+            okToLaunch = True
+        except CancelOperation:
+            pass
+        else:
+            # close screen
+            pygame.display.quit()
+    # launch synchronized application
+    if okToLaunch or status == UPTODATE:
+        netRunner.launch()
+
+# this is for py2exe
+# import all modules needed by Outer Space client
+# (ideally all Python modules from base library)
+if False:
+    import gettext
+    import glob
+    import shutil
+    import webbrowser
+    import xml
+    import xml.sax
+    import xmlrpclib
+
+# vim:ts=4:sw=4:showmatch:expandtab
