@@ -4,15 +4,26 @@ import os, os.path, glob
 import shutil
 import time
 from optparse import OptionParser
+import re
 
 baseDir = 'server/website/osclient/latest'
 
 parser = OptionParser()
 parser.add_option("-f", "--force", dest = "force", action = "store_true",
     default = False, help = "Bypass CVS checks")
+parser.add_option("-v", "--version", dest = "version", action = "store",
+    default = "0.0.0a", help = "Set version (format N.N.NS)")
 options, args = parser.parse_args()
 
-# generate version info
+## break version info into tuple
+match = re.match("(\d+)\.(\d+)\.(\d+)(\w*)", options.version)
+if match:
+    version = match.group(1), match.group(2), match.group(3), match.group(4)
+else:
+    print "Cannot parse version string N.N.NS format required"
+
+
+## generate version info
 import pysvn
 
 svn = pysvn.Client()
@@ -23,14 +34,17 @@ entry = svn.info(".")
 
 if entry.revision.kind == pysvn.opt_revision_kind.number:
     print 'Revision:', entry.revision.number
-    fh = open("client-pygame/lib/osci/svnInfo.py", "w")
+    print 'Version :', version
+    fh = open("client-pygame/lib/osci/versiondata.py", "w")
     print >> fh, """\
 #
 # This is generated file, please, do not edit
 #
 revision = %d
+version = %s, %s, %s, "%s"
 """ % (
-    entry.revision.number
+    entry.revision.number,
+    version[0], version[1], version[2], version[3],
 )
     fh.close()
 else:
@@ -67,8 +81,8 @@ except:
 os.chdir('client-pygame')
 os.system('setup.py py2exe')
 os.system('setup.py sdist')
+os.system('client-setup.py --name=ospace1 --longname="Outer Space" --version=%s --module=main.py ../server/website/client' % options.version)
 os.chdir('..')
-
 shutil.copytree('dist_win32', baseDir)
 
 # generate checksums
@@ -139,7 +153,7 @@ os.system('..\\tools\\ISetup4\\iscc.exe setup.iss')
 
 # copy version
 shutil.copy2('client-pygame/lib/osci/version.py', 'server/lib/ige/ospace/ClientVersion.py')
-shutil.copy2('client-pygame/lib/osci/svnInfo.py', 'server/lib/ige/ospace/svnInfo.py')
+shutil.copy2('client-pygame/lib/osci/versiondata.py', 'server/lib/ige/ospace/versiondata.py')
 
 # create tech tree
 os.chdir("tools")

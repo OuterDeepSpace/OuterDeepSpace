@@ -392,9 +392,10 @@ class IGalaxy(IObject):
 					log.debug("Adding pirates", planetID)
 					self.cmd(planet).changeOwner(tran, planet, players[T_AIPIRPLAYER].oid, 1)
 					planet.slots.append(Utils.newStructure(tran, Rules.Tech.PIRATEBASE, planet.owner))
+					planet.storPop = 5000
 					if planet.plSlots > 1:
 						planet.slots.append(Utils.newStructure(tran, Rules.Tech.PIRATEDEN, planet.owner))
-					planet.storPop = 3000
+						planet.storPop += 1000
 				# EDEN
 				if planet.plStratRes in (SR_TL5A, SR_TL5B, SR_TL5C) and planet.owner == OID_NONE:
 					# populate planet

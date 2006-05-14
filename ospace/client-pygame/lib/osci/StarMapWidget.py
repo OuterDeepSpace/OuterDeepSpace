@@ -181,7 +181,7 @@ class StarMapWidget(Widget):
 							refuelInc = max(refuelInc, planet.refuelInc)
 						if hasattr(planet, "repairShip"):
 							upgradeShip += planet.upgradeShip
-							repairShip += planet.repairShip
+							repairShip = max(repairShip, planet.repairShip)
 						if hasattr(planet, "fleetSpeedBoost"):
 							speedBoost = max(speedBoost, planet.fleetSpeedBoost)
 						# uncharted system

@@ -18,12 +18,12 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-version = (0, 5, 57, '')
-
 try:
-	import svnInfo
-	revision = svnInfo.revision
-	versionString = ("%d.%d.%d%s" % version) + " [Revision %s]" % revision
+    import versiondata
+    version = versiondata.version
+    revision = versiondata.revision
+    versionString = ("%d.%d.%d%s" % version) + " [Revision %s]" % revision
 except ImportError:
-	revision = 0
-	versionString = ("%d.%d.%d%s" % version) + " [Work In Progress]"
+    revision = 0
+    version = (0, 0, 0, 'a')
+    versionString = ("%d.%d.%d%s" % version) + " [Work In Progress]"

@@ -1,5 +1,17 @@
 Change Log:
 
+VERSION 0.5.58
+
+[2006-05-14]
+- WIP version of OSLauncher. [Qark]
+- Increased food production of pirate base. [Qark] (SF#1460508)
+- Fixed info for repair ship feature. [Qark] (SF#1484726)
+- Pirate can deploy colony modules at no fame cost in system
+  he/she owns. [Qark] (SF#1484737)
+- F9 key forces client to send keep alive message to server. [Qark]
+- Pirate AI is now able to build Pirate Bases on all planets
+  in the system it occupies. [Qark]
+
 [2006-04-26]
 - Setup script for new client distribution. [Qark]
 

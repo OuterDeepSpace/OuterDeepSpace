@@ -64,8 +64,6 @@ class IPiratePlayer(IPlayer):
 		obj.techs[Rules.Tech.PIRATESD] = Rules.techMaxImprovement
 		obj.techs[Rules.Tech.PIRATEFTLENG] = Rules.techMaxImprovement
 		obj.techs[Rules.Tech.PIRCOLONYMOD] = Rules.techMaxImprovement
-		# TODO: enable?
-		#@obj.techs[Rules.Tech.PIRGOVERNMENT] = Rules.techMaxImprovement
 		# grant all TL1 ship techs except for colony module(s)
 		for techID in Rules.techs:
 			tech = Rules.techs[techID]

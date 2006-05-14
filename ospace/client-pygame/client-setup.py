@@ -25,6 +25,7 @@ import shutil
 import sha
 import stat
 import sys
+import zlib
 from optparse import OptionParser
 from ConfigParser import ConfigParser
 
@@ -59,7 +60,8 @@ def makeDist(distDir, module):
     # cleanup
     if os.path.exists(distDir):
         shutil.rmtree(distDir)
-
+    os.makedirs(distDir)
+    
     # find relevant modules
     path = ["lib", "../server/lib"]
 
@@ -71,13 +73,15 @@ def makeDist(distDir, module):
         module = finder.modules[name]
         if not module.__file__:
             continue
-	if name == "__main__":
-             name = "main"
+        if name == "__main__":
+            name = "main"
         if module.__path__:
             # package
+            print "  adding package", name
             filename = name.replace(".", "/") + "/__init__.py"
         else:
             # module
+            print "  adding module", name
             filename = name.replace(".", "/") + ".py"
         dest = os.path.join(distDir, filename)
         # copy
@@ -118,7 +122,7 @@ def chsums(fh, base, directory, globalChsum):
             raise 'Unknow file type %s' % file
 
 
-def computeChksums(basedir, name, version):
+def computeChksums(basedir, name, longname, version):
     fh = open(os.path.join(basedir, '.files'), 'w')
     chsum = sha.new()
     chsums(fh, None, basedir, chsum)
@@ -127,6 +131,7 @@ def computeChksums(basedir, name, version):
     config = ConfigParser()
     config.add_section("application")
     config.set("application", "name", name)
+    config.set("application", "fullname", longname)
     config.set("application", "version", version)
     config.set("application", "module", "main")
     config.set("application", "checksum", chsum.hexdigest())
@@ -134,10 +139,40 @@ def computeChksums(basedir, name, version):
         open(os.path.join(basedir, '.global'), 'w')
     )
 
+# compress files
+def compressFiles(directory):
+    origSize = 0
+    compSize = 0
+    filelist = os.listdir(directory)
+    filelist.sort()
+    for file in filelist:
+        if file in ('.files', '.global'):
+            continue
+        absfilename = os.path.join(directory, file)
+        if os.path.isfile(absfilename):
+            f = open(absfilename, 'rb')
+            data = f.read()
+            f.close()
+            origSize += len(data)
+            f = open(absfilename + ".gz", "wb")
+            compData = zlib.compress(data, 9)
+            compSize += len(compData)
+            f.write(compData)
+            f.close()
+        elif os.path.isdir(absfilename):
+            o, c = compressFiles(os.path.join(directory, file))
+            origSize += o
+            compSize += c
+        else:
+            raise 'Unknow file type %s' % file
+    return origSize, compSize
+
 if __name__ == "__main__":
     parser = OptionParser(usage = "usage: %prog [options] DIRECTORY")
     parser.add_option("--name", action = "store", type = "string",
         dest = "name", help = "Name of application")
+    parser.add_option("--longname", action = "store", type = "string",
+        dest = "longname", help = "Long name of application")
     parser.add_option("--version", action = "store", type = "string",
         dest = "version", help = "Version of application")
     parser.add_option("--module", action = "store", type = "string",
@@ -148,12 +183,20 @@ if __name__ == "__main__":
         parser.error("directory not specified")
     if not options.name:
         parser.error("--name must be specified") 
+    if not options.longname:
+        parser.error("--longname must be specified") 
     if not options.version:
         parser.error("--version must be specified") 
     if not options.module:
-        parser.error("--module must be specified")\
+        parser.error("--module must be specified")
     # make distribution
+    print "Collecting source and data files"
     makeDist(args[0], options.module)
     # compute checksums
-    computeChksums(args[0], options.name, options.version)
-
+    print "Creating distribution"
+    computeChksums(args[0], options.name, options.longname, options.version)
+    # compress distribution
+    print "Compressing distribution"
+    orig, comp = compressFiles(args[0])
+    print "  original size   : %10d bytes" % orig
+    print "  comporessed size: %10d bytes (saved %d bytes) " % (comp, orig - comp)

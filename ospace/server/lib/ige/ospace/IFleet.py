@@ -1063,7 +1063,7 @@ class IFleet(IObject):
 	getPreCombatData.public = 0
 
 	def applyShot(self, tran, obj, attack, weaponID, targetClass, target):
-		log.debug(obj.oid, 'IFleet', 'Apply shot', attack, weaponID, targetClass, target)
+		#@log.debug(obj.oid, 'IFleet', 'Apply shot', attack, weaponID, targetClass, target)
 		player = tran.db[obj.owner]
 		# find correct ship to hit
 		target = -1
@@ -1105,36 +1105,37 @@ class IFleet(IObject):
 		# limit number of shots
 		cClass = weapon.weaponClass
 		if cClass < obj.lastHitClass:
-			log.debug(obj.oid, "Different class", obj.lastHitClass, cClass, obj.maxHits)
+			#@log.debug(obj.oid, "Different class", obj.lastHitClass, cClass, obj.maxHits)
 			for i in range(obj.lastHitClass - 1, cClass - 1, -1):
 				if obj.hitMods[cClass] >= 0.99: # == 1.0
-					log.debug(obj.oid, "Adding to", i, int(Rules.combatHitXferMod * (obj.maxHits[i + 1] - obj.hitCounters[i + 1])), obj.hitCounters[i + 1])
+					#@log.debug(obj.oid, "Adding to", i, int(Rules.combatHitXferMod * (obj.maxHits[i + 1] - obj.hitCounters[i + 1])), obj.hitCounters[i + 1])
 					obj.maxHits[i] += int(Rules.combatHitXferMod * (obj.maxHits[i + 1] - obj.hitCounters[i + 1]))
 				else:
-					log.debug(obj.oid, "Not transfering hits")
+					#@log.debug(obj.oid, "Not transfering hits")
+					pass
 				obj.maxHits[i + 1] = 0
-			log.debug(obj.oid, "max hits", obj.maxHits)
+			#@log.debug(obj.oid, "max hits", obj.maxHits)
 			obj.lastHitClass = cClass
 		elif cClass > obj.lastHitClass:
 			log.debug(obj.oid, "INCORRECT ORDER OF SHOTS", obj.lastHitClass, cClass)
 		if weapon.weaponROF > 1:
-			log.debug(obj.oid, "Increasing counter", cClass, 1.0 / weapon.weaponROF)
+			#@log.debug(obj.oid, "Increasing counter", cClass, 1.0 / weapon.weaponROF)
 			obj.hitCounters[cClass] += 1.0 / weapon.weaponROF
 		else:
-			log.debug(obj.oid, "Increasing counter", cClass, 1)
+			#@log.debug(obj.oid, "Increasing counter", cClass, 1)
 			obj.hitCounters[cClass] += 1
 		if obj.hitCounters[cClass] > obj.maxHits[cClass]:
 			obj.hitCounters[cClass] = 0
 			obj.hitMods[cClass] *= Rules.combatShipHitMod
-			log.debug(obj.oid, "Increasing hit penalty", obj.hitMods[cClass], obj.maxHits[cClass], "class", cClass)
+			#@log.debug(obj.oid, "Increasing hit penalty", obj.hitMods[cClass], obj.maxHits[cClass], "class", cClass)
 		#
 		attackChance = obj.hitMods[cClass] * attack / (attack + defense)
-		log.debug(obj.oid, "Chance to attack", attackChance, obj.hitMods[cClass],
-			 obj.hitCounters[cClass], obj.maxHits[cClass], "without penalty:", float(attack) / (attack + defense))
+		#@log.debug(obj.oid, "Chance to attack", attackChance, obj.hitMods[cClass],
+		#@	 obj.hitCounters[cClass], obj.maxHits[cClass], "without penalty:", float(attack) / (attack + defense))
 		if random.random() <= attackChance:
 			# HIT! -> apply damage
 			dmg = ShipUtils.computeDamage(weapon.weaponClass, ship.combatClass, weapon.weaponDmgMin, weapon.weaponDmgMax)
-			log.debug(obj.oid, 'HIT! att=%d vs def=%d, dmg=%d '% (attack, defense, dmg))
+			#@log.debug(obj.oid, 'HIT! att=%d vs def=%d, dmg=%d '% (attack, defense, dmg))
 			# shield
 			if not weapon.weaponIgnoreShield and shield > 0:
 				blocked = min(shield, dmg)

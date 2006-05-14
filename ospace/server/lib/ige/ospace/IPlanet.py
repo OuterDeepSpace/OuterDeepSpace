@@ -922,7 +922,7 @@ class IPlanet(IObject):
 					continue
 				weapon = Rules.techs[weaponID]
 				for weaponIdx in range(0, tech.structWeapons[cClass]):
-					log.debug(obj.oid, "FIRING PLANET WEAPON", weapon.name)
+					#@log.debug(obj.oid, "FIRING PLANET WEAPON", weapon.name)
 					wpnCount[weaponID] = wpnCount.get(weaponID, 0) + 1
 					#
 					weaponEff = Rules.techImprEff[player.techs.get(weaponID, Rules.techBaseImprovement)]
@@ -954,28 +954,28 @@ class IPlanet(IObject):
 		dmg = 0
 		# limit number of shots
 		if weapon.weaponClass < obj.lastHitClass:
-			log.debug(obj.oid, "Different class", obj.lastHitClass, weapon.weaponClass, obj.maxHits)
+			#@log.debug(obj.oid, "Different class", obj.lastHitClass, weapon.weaponClass, obj.maxHits)
 			obj.maxHits = int(Rules.combatHitXferMod * obj.maxHits * (obj.lastHitClass - weapon.weaponClass))
 			obj.hitCounter = int(Rules.combatHitXferMod * obj.hitCounter * (obj.lastHitClass - weapon.weaponClass))
 			obj.lastHitClass = weapon.weaponClass
 		if weapon.weaponROF > 1:
-			log.debug(obj.oid, "Increasing counter PL", 1.0 / weapon.weaponROF)
+			#@log.debug(obj.oid, "Increasing counter PL", 1.0 / weapon.weaponROF)
 			obj.hitCounter += 1.0 / weapon.weaponROF
 		else:
-			log.debug(obj.oid, "Increasing counter PL", 1)
+			#@log.debug(obj.oid, "Increasing counter PL", 1)
 			obj.hitCounter += 1
 		if obj.hitCounter > obj.maxHits:
 			obj.hitCounter = 0
 			obj.hitMod *= Rules.combatStructureHitMod
-			log.debug(obj.oid, "Increasing hit penalty", obj.hitMod, obj.maxHits)
+			#@log.debug(obj.oid, "Increasing hit penalty", obj.hitMod, obj.maxHits)
 		attackChance = obj.hitMod * attack / (attack + defense)
-		log.debug(obj.oid, "Chance to attack", attackChance, obj.hitMod, obj.hitCounter, obj.maxHits,
-			"without penalty:", float(attack) / (attack + defense))
+		#@log.debug(obj.oid, "Chance to attack", attackChance, obj.hitMod, obj.hitCounter, obj.maxHits,
+		#@	"without penalty:", float(attack) / (attack + defense))
 		#@log.debug('IPlanet', obj.oid, 'HIT?', attack + defense + 1, defense)
 		if random.random() <= attackChance:
 			# hit
 			dmg = ShipUtils.computeDamage(weapon.weaponClass, 3, weapon.weaponDmgMin, weapon.weaponDmgMax)
-			log.debug(obj.oid, 'HIT! att=%d vs def=%d, dmg=%d '% (attack, defense, dmg))
+			#@log.debug(obj.oid, 'HIT! att=%d vs def=%d, dmg=%d '% (attack, defense, dmg))
 			if dmg == 0:
 				return 0, 0, 3
 			# select slot

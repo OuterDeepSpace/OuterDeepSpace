@@ -234,10 +234,10 @@ def updateDatabaseUnsafe(clearDB = 0, force = 0):
 
 ## Basic functions
 
-def keepAlive():
+def keepAlive(force = False):
 	if cmdProxy and db:
 		try:
-			if cmdProxy.doKeepAlive():
+			if force or cmdProxy.doKeepAlive():
 				getMessages()
 		except ige.NoAccountException:
 			pass
