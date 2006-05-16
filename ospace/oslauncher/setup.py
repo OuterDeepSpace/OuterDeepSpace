@@ -31,13 +31,20 @@ for root, dirs, files in os.walk('res'):
         data_files.append((root, [os.path.join(root, file) for file in files]))
 
 # version
-version = (0, 1, 0)
+version = (0, 2, 0)
+
+open("oslauncher/versiondata.py", "w").write("""
+#
+# This is generated file, please, do not edit
+#
+version = %d, %d, %d
+""" % version)
 
 # setup
 setup(
-    name = 'OuterSpaceLauncher',
+    name = 'outerspace',
     version = '%d.%d.%d' % version,
-    description = 'Launcher of client for Outer Space',
+    description = 'Launcher for Outer Space client',
     author = "Ludek Smid",
     author_email = "qark@ospace.net",
     maintainer = 'Ludek Smid',
@@ -50,6 +57,6 @@ setup(
         }
     ],
     data_files = data_files,
-    packages = ["urlgrabber", "pgu", "pgu.gui"],
+    packages = ["oslauncher", "oslauncher.urlgrabber", "oslauncher.pgu", "oslauncher.pgu.gui"],
     scripts = ["outerspace"],
 )

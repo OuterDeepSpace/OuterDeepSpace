@@ -1,22 +1,48 @@
 #!/usr/bin/python -t
 
+#
+#  Copyright 2006 Ludek Smid [http://www.ospace.net/]
+#
+#  This file is part of Outer Space.
+#
+#  Outer Space is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  Outer Space is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with Outer Space; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+
 """
-Synchronize and run sources
+Synchronize and run sources from given URL.
 """
+
 import sys
 import os
-from urlgrabber.grabber import URLGrabber, URLGrabError
-from urlgrabber.progress import RateEstimator
+from oslauncher.urlgrabber.grabber import URLGrabber, URLGrabError
+from oslauncher.urlgrabber.progress import RateEstimator, format_time, format_number
 from ConfigParser import SafeConfigParser
 from StringIO import StringIO
 from urlparse import urlparse
-from pgu import gui
+from oslauncher.pgu import gui
+from oslauncher import version
 
 import pygame
 from pygame.locals import *
 
-version = (0, 1, 0, "")
-versionString = "%d.%d.%d%s" % version
+try:
+    import zlib
+except ImportError:
+    useCompression = False
+else:
+    useCompression = True
 
 # screen size
 screenSize = 640, 480
@@ -28,10 +54,12 @@ NEEDSUPDATE = 2
 CANNOTCONNECT = 3
 
 class NetRunner:
+    """Class responsible for dowloading and launching application from the specified URL."""
     
-    def __init__(self, baseUrl):
-        # init grabber
+    def __init__(self, baseUrl, useCompression = False):
         self.baseUrl = baseUrl
+        self.useCompression = useCompression
+        # init grabber
         self.grabber = URLGrabber()
         self.baseDir = self.getBaseDir(baseUrl)
         self.log("Using base directory", self.baseDir)
@@ -64,6 +92,7 @@ class NetRunner:
     def launch(self):
         """Launch application"""
         self.log("Launching application")
+        self.log("-" * 79)
         sys.path.insert(0, self.baseDir)
         os.chdir(self.baseDir)
         exec "import %s" % self.globalConfig.get("application", "module")
@@ -96,8 +125,8 @@ class NetRunner:
                 continue 
             # remove additional white spaces (\r at the end)
             line = line.strip()
-            chksum, size, name = line.split("|")
-            result[name, chksum] = int(size)
+            chksum, size, compSize, name = line.split("|")
+            result[name, chksum] = int(size), int(compSize)
         return result
             
     def update(self):
@@ -124,7 +153,10 @@ class NetRunner:
             self.log("Deleting file", name)
             os.remove(os.path.join(self.baseDir, name))
         # compute total size
-        size = sum(remoteFiles.values())
+        if self.useCompression:
+            size = sum([item[1] for item in remoteFiles.itervalues()])
+        else:
+            size = sum([item[0] for item in remoteFiles.itervalues()])
         self.log(size, "B to download")
         self.grabber.opts.progress_obj.setTotal(size)
         # download new files
@@ -134,15 +166,23 @@ class NetRunner:
             if not os.path.exists(directory):
                 os.makedirs(directory)
             # download it
-            self.grabber.urlgrab(self.baseUrl + name, os.path.join(self.baseDir, name))
+            if self.useCompression:
+                data = self.grabber.urlread("%s%s.gz" % (self.baseUrl, name))
+                fh = open(os.path.join(self.baseDir, name), "wb")
+                fh.write(zlib.decompress(data))
+                fh.close()
+            else:
+                self.grabber.urlgrab(self.baseUrl + name, os.path.join(self.baseDir, name))
         # write config
         open(os.path.join(self.baseDir, ".files"), "wb").write(files)
         self.globalConfig.write(open(os.path.join(self.baseDir, ".global"), "w"))
 
 class CancelOperation(Exception):
+    """Raised when user cancels download."""
     pass
 
 class UpdateDlg(gui.Table):
+    """Dialog that informs user about download progress."""
     
     def __init__(self, **params):
         name = params["name"]
@@ -153,18 +193,27 @@ class UpdateDlg(gui.Table):
         gui.Table.__init__(self, **params)
         
         self.tr()
-        self.td(gui.Label(_("Updating %s %s") % (name, version)), colspan = 2, align = -1)
+        self.td(gui.Label(_("Dowloading:  ")), align = 1)
+        self.td(gui.Label(_("%s %s") % (name, version)), align = -1)
         
         self.tr()
         self.td(gui.Spacer(1, 10), colspan = 2)
         
         self.tr()
-        self.td(gui.Label(_("Progress  ")), align = 1)
+        self.td(gui.Label(_("Progress:  ")), align = 1)
         self.progress = gui.ProgressBar(0, 0, 100, width = 200)
         self.td(self.progress, align = -1)
 
         self.tr()
-        self.td(gui.Label(""), colspan = 2)
+        self.td(gui.Spacer(1, 10), colspan = 2)
+
+        self.tr()
+        self.td(gui.Label(_("Remaining:  ")), align = 1)
+        self.speed = gui.Label(_("00:00 mins (%.2f KiB/sec)" % 0))
+        self.td(self.speed, align = -1)
+
+        self.tr()
+        self.td(gui.Spacer(1, 10), colspan = 2)
         
         self.tr()
         e = gui.Button(_("Cancel"))
@@ -175,6 +224,7 @@ class UpdateDlg(gui.Table):
         raise CancelOperation()
 
 class Progress:
+    """Compute and display progress of download."""
     
     def __init__(self, dlg):
         self.dlg = dlg
@@ -196,6 +246,10 @@ class Progress:
             self.re.update(self.base + amount_read)
             if self.re.fraction_read():
                 self.dlg.progress.value = int(self.re.fraction_read() * 100)
+                self.dlg.speed.value = _("%s mins (%siB/sec)") % (
+                    format_time(self.re.remaining_time()),
+                    format_number(self.re.average_rate()),
+                )
             self.dlg.update()
 
     def end(self, amount_read, now=None):
@@ -204,6 +258,10 @@ class Progress:
         self.re.update(self.base + amount_read)
         if self.re.fraction_read():
             self.dlg.progress.value = int(self.re.fraction_read() * 100)
+            self.dlg.speed.value = _("%s mins (%siB/sec)") % (
+                format_time(self.re.remaining_time()),
+                format_number(self.re.average_rate()),
+            )
         self.base += amount_read
         self.dlg.update()
 
@@ -226,7 +284,7 @@ if __name__ == "__main__":
         config.set("server", "url", "http://ospace.net:9080/client/")
     url = config.get("server", "url")
     # check if server is available and app is up-to-date
-    netRunner = NetRunner(url)
+    netRunner = NetRunner(url, useCompression)
     status = netRunner.getStatus()
     okToLaunch = False
     if status != UPTODATE:
@@ -237,7 +295,7 @@ if __name__ == "__main__":
         bestDepth = pygame.display.mode_ok(screenSize, screenFlags)
         screen = pygame.display.set_mode(screenSize, screenFlags, bestDepth)
         pygame.mouse.set_visible(True)
-        pygame.display.set_caption(_("Outer Space Launcher %s") % versionString)
+        pygame.display.set_caption(_("Outer Space Launcher %s") % version.versionString)
         pygame.display.set_icon(pygame.image.load("res/icon32.png").convert_alpha())
         # connection dlg?
         while status == CANNOTCONNECT:
@@ -246,7 +304,7 @@ if __name__ == "__main__":
         app = gui.Desktop(theme = gui.Theme("res/gray"))
         app.connect(gui.QUIT,app.quit,None)
         dlg = UpdateDlg(
-            name = netRunner.globalConfig.get("application", "longname"),
+            name = netRunner.globalConfig.get("application", "fullname"),
             version = netRunner.globalConfig.get("application", "version"),
             align = 1
         )
@@ -270,17 +328,5 @@ if __name__ == "__main__":
     # launch synchronized application
     if okToLaunch or status == UPTODATE:
         netRunner.launch()
-
-# this is for py2exe
-# import all modules needed by Outer Space client
-# (ideally all Python modules from base library)
-if False:
-    import gettext
-    import glob
-    import shutil
-    import webbrowser
-    import xml
-    import xml.sax
-    import xmlrpclib
 
 # vim:ts=4:sw=4:showmatch:expandtab
