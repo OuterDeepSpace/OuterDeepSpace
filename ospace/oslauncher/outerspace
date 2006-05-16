@@ -26,6 +26,7 @@ Synchronize and run sources from given URL.
 
 import sys
 import os
+import oslauncher
 from oslauncher.urlgrabber.grabber import URLGrabber, URLGrabError
 from oslauncher.urlgrabber.progress import RateEstimator, format_time, format_number
 from ConfigParser import SafeConfigParser
@@ -44,8 +45,18 @@ except ImportError:
 else:
     useCompression = True
 
+# set base directory for resources
+if hasattr(sys, "frozen"):
+    base = os.path.join(os.path.dirname(sys.executable), "oslauncher")
+else:
+    base = os.path.dirname(oslauncher.__file__)
+    
+resources = os.path.abspath(os.path.join(base, "res"))
+
+del base
+
 # screen size
-screenSize = 640, 480
+screenSize = 639, 479
 screenFlags = SWSURFACE
 
 # constants
@@ -213,7 +224,7 @@ class UpdateDlg(gui.Table):
         self.td(self.speed, align = -1)
 
         self.tr()
-        self.td(gui.Spacer(1, 10), colspan = 2)
+        self.td(gui.Spacer(1, 20), colspan = 2)
         
         self.tr()
         e = gui.Button(_("Cancel"))
@@ -296,12 +307,12 @@ if __name__ == "__main__":
         screen = pygame.display.set_mode(screenSize, screenFlags, bestDepth)
         pygame.mouse.set_visible(True)
         pygame.display.set_caption(_("Outer Space Launcher %s") % version.versionString)
-        pygame.display.set_icon(pygame.image.load("res/icon32.png").convert_alpha())
+        pygame.display.set_icon(pygame.image.load(os.path.join(resources, "icon32.png")).convert_alpha())
         # connection dlg?
         while status == CANNOTCONNECT:
             pass
         # update app
-        app = gui.Desktop(theme = gui.Theme("res/gray"))
+        app = gui.Desktop(theme = gui.Theme(os.path.join(resources, "gray")))
         app.connect(gui.QUIT,app.quit,None)
         dlg = UpdateDlg(
             name = netRunner.globalConfig.get("application", "fullname"),

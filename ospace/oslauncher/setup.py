@@ -17,12 +17,12 @@ data_files = []
 data_files.append(
     (
         ".",
-        ["CHANGES", "COPYING", "README"]
+        ["ChangeLog", "COPYING", "README"]
     )
 )
 
 # resources
-for root, dirs, files in os.walk('res'):
+for root, dirs, files in os.walk('oslauncher/res'):
     try:
         dirs.remove(".svn")
     except ValueError:
@@ -53,7 +53,7 @@ setup(
     windows = [
         {
             "script": "outerspace",
-            "icon_resources": [(1, "res/smallicon.ico"), (1, "res/bigicon.ico")]
+            "icon_resources": [(1, "oslauncher/res/smallicon.ico"), (1, "oslauncher/res/bigicon.ico")]
         }
     ],
     data_files = data_files,

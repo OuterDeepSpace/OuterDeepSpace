@@ -67,10 +67,10 @@ button background button.normal.png
 button:down background button.down.png
 button padding_left 8
 button padding_right 8
-button padding_top 1
-button padding_bottom 1
+button padding_top 2
+button padding_bottom 2
 button.label font Vera.ttf 16
-button.label color #000000
+button.label color #ffffff
 
 slider background slider.png
 slider bar slider.bar.normal.png
