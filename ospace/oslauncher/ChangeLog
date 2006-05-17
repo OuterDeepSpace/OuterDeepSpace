@@ -1,3 +1,5 @@
+ * Linux build fixed. (Qark)
+
 Version 0.2.0 - 2006-05-16
  * Added ability to handle compressed files. (Qark)
  * New directory layout. (Qark)

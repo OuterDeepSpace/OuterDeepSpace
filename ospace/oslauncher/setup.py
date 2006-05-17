@@ -13,22 +13,22 @@ import os
 import stat
 
 # collect data files
-data_files = []
-data_files.append(
-    (
-        ".",
-        ["ChangeLog", "COPYING", "README"]
-    )
-)
+#data_files = []
+#data_files.append(
+#    (
+#        ".",
+#        ["ChangeLog", "COPYING", "README"]
+#    )
+#)
 
 # resources
-for root, dirs, files in os.walk('oslauncher/res'):
-    try:
-        dirs.remove(".svn")
-    except ValueError:
-        pass
-    if files:
-        data_files.append((root, [os.path.join(root, file) for file in files]))
+#for root, dirs, files in os.walk('oslauncher/res'):
+#    try:
+#        dirs.remove(".svn")
+#    except ValueError:
+#        pass
+#    if files:
+#        data_files.append((root, [os.path.join(root, file) for file in files]))
 
 # version
 version = (0, 2, 0)
@@ -44,7 +44,9 @@ version = %d, %d, %d
 setup(
     name = 'outerspace',
     version = '%d.%d.%d' % version,
+    license = "GPL",
     description = 'Launcher for Outer Space client',
+    long_description = "The Outer Space Launcher keeps Outer Space client synchronized with the server",
     author = "Ludek Smid",
     author_email = "qark@ospace.net",
     maintainer = 'Ludek Smid',
@@ -56,7 +58,11 @@ setup(
             "icon_resources": [(1, "oslauncher/res/smallicon.ico"), (1, "oslauncher/res/bigicon.ico")]
         }
     ],
-    data_files = data_files,
+    #data_files = data_files,
     packages = ["oslauncher", "oslauncher.urlgrabber", "oslauncher.pgu", "oslauncher.pgu.gui"],
+    package_data = {
+        "oslauncher": ["res/*.ico", "res/*.png", "res/gray/*"],
+    },
     scripts = ["outerspace"],
 )
+
