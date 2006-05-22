@@ -31,7 +31,7 @@ import stat
 #        data_files.append((root, [os.path.join(root, file) for file in files]))
 
 # version
-version = (0, 2, 0)
+version = (0, 2, 1)
 
 open("oslauncher/versiondata.py", "w").write("""
 #
