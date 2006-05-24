@@ -292,6 +292,7 @@ def showMenu(objID):
 	print "6. Show Galaxies"
 	print "7. Promote current object to imperator"
 	print "8. Give current object Strategic Resource"
+	print "9. Finish production queue"
 	print "C. Interactive console"
 	print "T. Process turn"
 	print "R. Process X turns"
@@ -308,6 +309,12 @@ def processTurns():
 
 	for i in range(1, num + 1):
 		s.processTurn()
+
+def finishProdQueue(objId):
+	p = s.get(objId)
+	for i in p.prodQueue:
+		i.currProd = 38400
+	s.set(p.oid, "prodQueue", p.prodQueue)
 
 def processMenu(inp, objId, s):
 	if inp == "1":
@@ -326,6 +333,8 @@ def processMenu(inp, objId, s):
 		promoteToImperator(objId)
 	elif inp == "8":
 		giveStratRes(objId)
+	elif inp == "9":
+		finishProdQueue(objId)
 	elif string.upper(inp) == "R":
 		processTurns()
 	elif string.upper(inp) == "T":

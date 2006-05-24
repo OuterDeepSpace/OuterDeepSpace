@@ -2,20 +2,20 @@
 #
 #  Copyright 2001 - 2006 Ludek Smid [http://www.ospace.net/]
 #
-#  This file is part of IGE - Outer Space.
+#  This file is part of Outer Space.
 #
-#  IGE - Outer Space is free software; you can redistribute it and/or modify
+#  Outer Space is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
 #
-#  IGE - Outer Space is distributed in the hope that it will be useful,
+#  Outer Space is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-#  along with IGE - Outer Space; if not, write to the Free Software
+#  along with Outer Space; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 import glob
@@ -99,6 +99,7 @@ def makeDist(distDir, module):
 
 # generate checksums
 def chsums(fh, base, directory, globalChsum):
+    """Generate checksums and compress files."""
     filelist = os.listdir(directory)
     filelist.sort()
     for file in filelist:
@@ -115,7 +116,12 @@ def chsums(fh, base, directory, globalChsum):
             f.close()
             globalChsum.update(data)
             myChsum = sha.new(data)
-            print >>fh, "%s|%s|%s" % (myChsum.hexdigest(), os.stat(absfilename)[stat.ST_SIZE], filename)
+            # write compressed file to disc
+            f = open(absfilename + ".gz", "wb")
+            compData = zlib.compress(data, 9)
+            f.write(compData)
+            f.close()
+            print >>fh, "%s|%s|%s|%s" % (myChsum.hexdigest(), os.stat(absfilename)[stat.ST_SIZE], len(compData), filename)
         elif os.path.isdir(absfilename):
             chsums(fh, filename, os.path.join(directory, file), globalChsum)
         else:
@@ -123,6 +129,7 @@ def chsums(fh, base, directory, globalChsum):
 
 
 def computeChksums(basedir, name, longname, version):
+    """Compute global and per file checksums. Generate corresponding .global and .files files."""
     fh = open(os.path.join(basedir, '.files'), 'w')
     chsum = sha.new()
     chsums(fh, None, basedir, chsum)
@@ -138,34 +145,6 @@ def computeChksums(basedir, name, longname, version):
     config.write(
         open(os.path.join(basedir, '.global'), 'w')
     )
-
-# compress files
-def compressFiles(directory):
-    origSize = 0
-    compSize = 0
-    filelist = os.listdir(directory)
-    filelist.sort()
-    for file in filelist:
-        if file in ('.files', '.global'):
-            continue
-        absfilename = os.path.join(directory, file)
-        if os.path.isfile(absfilename):
-            f = open(absfilename, 'rb')
-            data = f.read()
-            f.close()
-            origSize += len(data)
-            f = open(absfilename + ".gz", "wb")
-            compData = zlib.compress(data, 9)
-            compSize += len(compData)
-            f.write(compData)
-            f.close()
-        elif os.path.isdir(absfilename):
-            o, c = compressFiles(os.path.join(directory, file))
-            origSize += o
-            compSize += c
-        else:
-            raise 'Unknow file type %s' % file
-    return origSize, compSize
 
 if __name__ == "__main__":
     parser = OptionParser(usage = "usage: %prog [options] DIRECTORY")
@@ -195,8 +174,3 @@ if __name__ == "__main__":
     # compute checksums
     print "Creating distribution"
     computeChksums(args[0], options.name, options.longname, options.version)
-    # compress distribution
-    print "Compressing distribution"
-    orig, comp = compressFiles(args[0])
-    print "  original size   : %10d bytes" % orig
-    print "  comporessed size: %10d bytes (saved %d bytes) " % (comp, orig - comp)

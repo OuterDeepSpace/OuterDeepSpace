@@ -287,13 +287,13 @@ if __name__ == "__main__":
     initLocalization()
     # load configuration
     confFilename = os.path.join(os.path.expanduser("~"), ".ospace", "netrunner.ini")
-    config = SafeConfigParser()
-    config.read(confFilename)
-    if not config.has_section("server"):
-        config.add_section("server")
-    if not config.has_option("server", "url"):
-        config.set("server", "url", "http://ospace.net:9080/client/")
-    url = config.get("server", "url")
+    print oslauncher.config
+    oslauncher.config.read(confFilename)
+    if "server" not in oslauncher.config:
+        oslauncher.config.add_section("server")
+    if "url" not in oslauncher.config.server:
+        oslauncher.config.server.url = "http://ospace.net:9080/client/"
+    url = oslauncher.config.server.url
     # check if server is available and app is up-to-date
     netRunner = NetRunner(url, useCompression)
     status = netRunner.getStatus()

@@ -12,23 +12,31 @@ import shutil
 import os
 import stat
 
-# collect data files
-#data_files = []
-#data_files.append(
-#    (
-#        ".",
-#        ["ChangeLog", "COPYING", "README"]
-#    )
-#)
+if havePy2Exe:
+    # collect data files
+    data_files = []
+    data_files.append(
+        (
+            ".",
+            ["ChangeLog", "COPYING", "README"]
+        )
+    )
 
-# resources
-#for root, dirs, files in os.walk('oslauncher/res'):
-#    try:
-#        dirs.remove(".svn")
-#    except ValueError:
-#        pass
-#    if files:
-#        data_files.append((root, [os.path.join(root, file) for file in files]))
+    # resources
+    for root, dirs, files in os.walk('oslauncher/res'):
+        try:
+            dirs.remove(".svn")
+        except ValueError:
+            pass
+        if files:
+            data_files.append((root, [os.path.join(root, file) for file in files]))
+    # no package data
+    package_data = {}
+else:
+    package_data = {
+        "oslauncher": ["res/*.ico", "res/*.png", "res/gray/*"],
+    }
+    data_files = []
 
 # version
 version = (0, 2, 1)
@@ -58,11 +66,8 @@ setup(
             "icon_resources": [(1, "oslauncher/res/smallicon.ico"), (1, "oslauncher/res/bigicon.ico")]
         }
     ],
-    #data_files = data_files,
+    data_files = data_files,
     packages = ["oslauncher", "oslauncher.urlgrabber", "oslauncher.pgu", "oslauncher.pgu.gui"],
-    package_data = {
-        "oslauncher": ["res/*.ico", "res/*.png", "res/gray/*"],
-    },
+    package_data = package_data,
     scripts = ["outerspace"],
 )
-

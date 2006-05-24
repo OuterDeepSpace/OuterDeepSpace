@@ -96,6 +96,10 @@ class IAIPiratePlayer(IPlayer):
                     continue
 
     def update(self, tran, obj):
+        # TODO: remove in 0.5.59
+        if not hasattr(self, "techs"):
+            self.techs = {}
+        
         obj.techLevel = 3
         # grant technologies
         obj.techs[Rules.Tech.EMCANNONTUR] = Rules.techMaxImprovement

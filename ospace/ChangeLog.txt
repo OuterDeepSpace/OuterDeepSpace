@@ -1,5 +1,12 @@
 Change Log:
 
+[2006-05-24]
+- Mutagen Dispenser Pod now requires Mutagen strat. resource. [Qark]
+- Disabled "Population decreased" message. [Qark]
+
+[2006-05-16]
+- Outer Space Launcher is now standalone project. [Qark]
+
 VERSION 0.5.58
 
 [2006-05-14]

@@ -476,7 +476,7 @@ class IPlanet(IObject):
 				# do not generate this message when construction has been destroyed
 				# and do not lower morale too
 				if obj.storPop < obj.maxPop:
-					Utils.sendMessage(tran, obj, MSG_NOSUPPORT_POP, obj.oid, None)
+					#@Utils.sendMessage(tran, obj, MSG_NOSUPPORT_POP, obj.oid, None)
 					obj.morale -= Rules.moraleLostNoFood
 			elif obj.storPop < maxPop:
 				# born
