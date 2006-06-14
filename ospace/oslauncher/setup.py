@@ -36,7 +36,10 @@ else:
     package_data = {
         "oslauncher": ["res/*.ico", "res/*.png", "res/gray/*"],
     }
-    data_files = []
+    data_files = [
+        ("/usr/share/pixmaps", ("fedora/outerspace-icon.png",)),
+        ("/usr/share/applications", ("fedora/fedora-outerspace.desktop",)),
+    ]
 
 # version
 version = (0, 2, 1)
