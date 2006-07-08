@@ -910,6 +910,7 @@ class IPlanet(IObject):
 		firing = False
 		for struct in obj.slots:
 			structTechID = struct[STRUCT_IDX_TECHID]
+			opStatus = struct[STRUCT_IDX_OPSTATUS] / 100.0
 			tech = Rules.techs[structTechID]
 			desCount[structTechID] = desCount.get(structTechID, 0) + 1
 			wpnCount = {}
@@ -921,7 +922,8 @@ class IPlanet(IObject):
 				if weaponID is None:
 					continue
 				weapon = Rules.techs[weaponID]
-				for weaponIdx in range(0, tech.structWeapons[cClass]):
+				maxWeaponCount = int(tech.structWeapons[cClass] * opStatus)
+				for weaponIdx in range(0, maxWeaponCount):
 					#@log.debug(obj.oid, "FIRING PLANET WEAPON", weapon.name)
 					wpnCount[weaponID] = wpnCount.get(weaponID, 0) + 1
 					#
