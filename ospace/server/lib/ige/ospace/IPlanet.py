@@ -1069,7 +1069,7 @@ class IPlanet(IObject):
 			# gain/lose fame
 			self.cmd(newOwner).capturePlanet(tran, newOwner, obj)
 			# steal ship techs
-			self.cmd(newOwner).stealTechs(tran, newOwner, obj.owner)
+			self.cmd(newOwner).stealTechs(tran, newOwner, obj.owner, obj.oid)
 			obj.storPop = 0
 			self.cmd(obj).changeOwner(tran, obj, OID_NONE, force = 1)
 		else:

@@ -84,6 +84,7 @@ MSG_DELETED_RESEARCH = 1029 # research deleted (disabled)
 MSG_DAMAGE_BY_SG = 1030 # deceleration damage from Star Gate
 MSG_GAINED_FAME = 1031 # pirate gained fame
 MSG_LOST_FAME = 1032 # pirate lost some fame
+MSG_GAINED_TECH = 1033 # pirate gained technology
 
 MSG_GNC_EMR_FORECAST = 2000 # Electromagnetic radiation (EMR) forecast
 MSG_GNC_EMR_CURRENT_LVL = 2001 # Curren level of EMR

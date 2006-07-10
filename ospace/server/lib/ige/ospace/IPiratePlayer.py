@@ -114,26 +114,30 @@ class IPiratePlayer(IPlayer):
 			obj.pirateFame += Rules.pirateCaptureOutOfRangeFame
 			Utils.sendMessage(tran, obj, MSG_LOST_FAME, planet.oid, Rules.pirateCaptureOutOfRangeFame)
 
-	def stealTechs(self, tran, obj, playerID):
-		if playerID == OID_NONE:
+	def stealTechs(self, tran, piratePlayer, oldOwnerID, stealFromPlanetID):
+		if oldOwnerID == OID_NONE:
 			return
-		log.debug(obj.oid, "IPiratePlayer stealing techs")
-		player = tran.db[playerID]
+		log.debug(piratePlayer.oid, "IPiratePlayer stealing techs")
+		oldOwner = tran.db[oldOwnerID]
 		canSteal = Rules.pirateCanStealImprovements
-		for techID in player.techs:
+		for techID in oldOwner.techs:
 			tech = Rules.techs[techID]
-			if player.techs[techID] <= obj.techs.get(techID, 0):
+			if oldOwner.techs[techID] <= piratePlayer.techs.get(techID, 0):
 				# skip techs that are already stealed
 				continue
 			if (tech.isShipEquip or tech.isShipHull) and not tech.unpackStruct:
-				obj.techs[techID] = min(obj.techs.get(techID, 0) + 1, player.techs[techID])
+				self.givePirateTech(tran, piratePlayer, oldOwner, techID, stealFromPlanetID)
 				canSteal -= 1
 				if canSteal == 0:
 					break
-				# TODO message to (both?) players
 			if (tech.isProject):
-				obj.techs[techID] = min(obj.techs.get(techID, 0) + 1, player.techs[techID])
+				self.givePirateTech(tran, piratePlayer, oldOwner, techID, stealFromPlanetID)
 				break
 		# update techs
-		self.cmd(obj).update(tran, obj)
+		self.cmd(piratePlayer).update(tran, piratePlayer)
 		return
+
+	def givePirateTech(self, tran, piratePlayer, oldOwner, techID, stealFromPlanetID):
+		piratePlayer.techs[techID] = min(piratePlayer.techs.get(techID, 0) + 1, oldOwner.techs[techID])
+		Utils.sendMessage(tran, piratePlayer, MSG_GAINED_TECH, stealFromPlanetID, (techID, piratePlayer.techs[techID]))
+		

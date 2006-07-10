@@ -146,7 +146,8 @@ addMsg(MSG_DELETED_DESIGN, N_('Obsolete ship design deleted: %(1)s'), (unicode,)
 addMsg(MSG_CANNOT_UPGRADE_SR, N_('Cannot upgrade ship from %(1)s to %(2)s\n\nCannot upgrade ship from %(1)s to %(2)s because of we have not enough of %(3)s.'), (unicode,unicode,stratID2Name), MAJ)
 addMsg(MSG_DAMAGE_BY_SG, N_('Malfunctional Star Gate, lost %(1)d %% HP\n\nOur fleet has arrived at system with no or malfunctional Star Gate or Comm/Scann Center. Every ship lost %(1)d %% hitpoints due to intensive deceleration.'), (int,), MAJ)
 addMsg(MSG_GAINED_FAME, N_('Gained %(1)d fame.'), severity = INFO)
-addMsg(MSG_LOST_FAME, N_('Lost %(1)d fame.'), severity = MIN)
+addMsg(MSG_LOST_FAME, N_('Lost %(1)d fame.'), severity = CRI)
+addMsg(MSG_GAINED_TECH, N_('Gained %(1)s technology at sublevel %(2)d.'), (techID2Name, int), severity = INFO)
 
 # GNC
 addMsg(MSG_GNC_EMR_FORECAST, N_("EMR Forecast\n\nLevel of the electromagnetic radiation is believed to be about %(1)d %% of the average level for the next %(2)s turns"), (float2percent, res.formatTime), severity = MIN)
