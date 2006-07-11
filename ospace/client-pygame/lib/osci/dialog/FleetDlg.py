@@ -136,6 +136,10 @@ class FleetDlg:
 		self.win.vCommands.items = items
 		self.win.vCommands.selection = []
 		self.win.vCommands.itemsChanged()
+		self.win.vCommandUp.enabled = 0
+		self.win.vCommandDown.enabled = 0
+		self.win.vCommandDel.enabled = 0
+		self.win.vCommandSetActive.enabled = 0
 
 	def showShip(self, techID, exp):
 		tech = client.getPlayer().shipDesigns[techID]
@@ -178,6 +182,13 @@ class FleetDlg:
 
 	def onShipSelected(self, widget, action, data):
 		self.showShip(data.designID, data.tExp)
+
+	def onSelectCommand(self, widget, action, data):
+		index = self.win.vCommands.items.index(self.win.vCommands.selection[0])
+		self.win.vCommandUp.enabled = index > 0
+		self.win.vCommandDown.enabled = index < len(self.win.vCommands.items) - 1
+		self.win.vCommandDel.enabled = 1
+		self.win.vCommandSetActive.enabled = 1
 
 	def onNewCommand(self, widget, action, data):
 		sel = self.win.vCommands.selection
@@ -231,6 +242,32 @@ class FleetDlg:
 		except ige.GameException, e:
 			self.win.setStatus(_(e.args[0]))
 			return 1
+
+	def onCommandMove(self, widget, action, data):
+		try:
+			self.win.setStatus(_('Executing MOVE ACTION command...'))
+			fleet = client.get(self.fleetID, noUpdate = 1)
+			index = self.win.vCommands.items.index(self.win.vCommands.selection[0])
+			# execute command
+			fleet.actions = client.cmdProxy.moveAction(fleet.oid, index, widget.data)
+			self.update()
+			index += widget.data
+			self.win.vCommands.selectItem(self.win.vCommands.items[index])
+			self.win.setStatus(_('Command has been executed.'))
+			self.onSelectCommand(widget, action, None)
+			gdata.mainGameDlg.update()
+		except ige.GameException, e:
+			self.win.setStatus(_(e.args[0]))
+			return 1
+
+	def onAutoDelete(self, widget, action, data):
+		self.win.setStatus(_('Executing CLEAR PROCESSED ACTIONS command...'))
+		fleet = client.get(self.fleetID, noUpdate = 1)
+		fleet.actions, fleet.actionIndex = client.cmdProxy.clearProcessedActions(fleet.oid)
+		self.win.setStatus(_('Command has been executed.'))
+		self.win.vCommands.selection = []
+		self.update()
+		gdata.mainGameDlg.update()
 
 	def onCloseDlg(self, widget, action, data):
 		self.hide()
@@ -307,21 +344,27 @@ class FleetDlg:
 		ui.Listbox(self.win, layout = (20, 13, 20, 10), id = 'vCommands',
 			columns = (('', 'current', 1, 0), (_('#'), 'tIndex', 1, 0), (_('Command'), 'text', 5, ui.ALIGN_W),
 				(_('Target'), 'targetName', 7, ui.ALIGN_W),	(_('Info'), 'data', 7, ui.ALIGN_W)),
-			columnLabels = 1)
-		ui.Button(self.win, text = _('New cmd'), layout = (20, 23, 5, 1),
+			columnLabels = 1, action = 'onSelectCommand', sortable = False)
+		ui.Button(self.win, text = _('New cmd'), layout = (20, 23, 4, 1),
 			action = 'onNewCommand')
-		ui.Button(self.win, text = _('Set active'), layout = (25, 23, 5, 1),
-			action = 'onSetActiveCommand')
-		ui.Button(self.win, text = _('Delete cmd'), layout = (30, 23, 5, 1),
-			action = 'onDeleteCommand')
-		ui.Button(self.win, text = _('Delete All'), layout = (35, 23, 5, 1),
+		ui.Button(self.win, text = _('Set active'), layout = (24, 23, 4, 1),
+			id = 'vCommandSetActive', action = 'onSetActiveCommand')
+		ui.Button(self.win, text = _('Delete cmd'), layout = (28, 23, 4, 1),
+			id = 'vCommandDel', action = 'onDeleteCommand')
+		ui.Button(self.win, text = _('Delete All'), layout = (32, 23, 4, 1),
 			action = 'onDeleteAllCommands')
+		ui.ArrowButton(self.win, layout = (36, 23, 1, 1), direction = ui.ALIGN_N,
+			id = 'vCommandUp', action = 'onCommandMove', data = -1)
+		ui.ArrowButton(self.win, layout = (37, 23, 1, 1), direction = ui.ALIGN_S,
+			id = 'vCommandDown', action = 'onCommandMove', data = 1)
 		ui.Title(self.win, text = _('Other commands'), align = ui.ALIGN_W, font = 'normal-bold',
 			layout = (20, 24, 20, 1))
 		ui.Button(self.win, text = _('Split fleet'), id = 'vSplitButton',
 			layout = (20, 25, 5, 1), action = 'onSplitFleet')
 		ui.Button(self.win, text = _('Rename fleet'), id = 'vRenameButton',
 			layout = (25, 25, 5, 1), action = 'onRenameFleet', enabled = 0)
+		ui.Button(self.win, text = _('Auto delete'), id = 'vAutoDeleteButton',
+			layout = (30, 25, 5, 1), action = 'onAutoDelete')
 		# ship data
 		ui.Title(self.win, text = _('Ship Data'), layout = (0, 12, 15, 1),
 			align = ui.ALIGN_W, font = 'normal-bold')

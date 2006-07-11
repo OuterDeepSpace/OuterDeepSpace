@@ -485,6 +485,39 @@ class IFleet(IObject):
 	setActionIndex.public = 1
 	setActionIndex.accLevel = AL_FULL
 
+	def moveAction(self, tran, fleet, index, rel):
+		if index >= len(fleet.actions):
+			raise GameException('No such item in the command list.')
+		if index + rel < 0 or index + rel >= len(fleet.actions):
+			raise GameException('Cannot move.')
+		if index == fleet.actionIndex:
+			raise GameException('Cannot move active command.')
+		if index < fleet.actionIndex:
+			raise GameException('Cannot move processed command.')
+		if index + rel <= fleet.actionIndex:
+			raise GameException('Cannot move before active command.')
+		action = fleet.actions[index]
+		del fleet.actions[index]
+		fleet.actions.insert(index + rel, action)
+		return fleet.actions
+
+	moveAction.public = 1
+	moveAction.accLevel = AL_FULL
+
+	def clearProcessedActions(self, tran, fleet):
+		if fleet.actionIndex <= 0:
+			return (fleet.actions, fleet.actionIndex)
+		
+		for actionIdx in range(0, fleet.actionIndex):
+			del fleet.actions[0]
+		
+		fleet.actionIndex = 0
+		
+		return (fleet.actions, fleet.actionIndex)
+	
+	clearProcessedActions.public = 1
+	clearProcessedActions.accLevel = AL_FULL
+
 	def processACTIONPhase(self, tran, obj, data):
 		#@log.debug("Fleet", obj.oid, "ACTION")
 		# update fleet data
