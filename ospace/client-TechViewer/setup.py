@@ -6,9 +6,9 @@ class Target:
     def __init__(self, **kw):
         self.__dict__.update(kw)
         # for the versioninfo resources
-        self.version = "0.2.1"
+        self.version = "0.3.0.49"
         self.company_name = "Anderuso"
-        self.copyright = "(C) 2004 Anderuso"
+        self.copyright = "(C) 2004-2006 Anderuso"
         self.name = "OuterSpace Technology Viewer"
         self.description = "OuterSpace Technology Viewer"
 
@@ -47,8 +47,8 @@ setup(
 	windows = [techViewer],
 	version = techViewer.version,
 	author = techViewer.company_name,
-	author_email = "anderuso@tiscali.cz",
+	author_email = "ospace@anderuso.net",
 	name = "TechViewer-src",
-	url = "http://techviewer.web.tiscali.cz",
+	url = "http://sf.net/projects/ospace",
 	description = techViewer.description,
     )

@@ -221,16 +221,17 @@ class TechViewer(wx.Frame):
 
         self.finishHandlers = FinishConstrHandlers(self.list, self.improvement)
 
-        self.prodBio = DependencyPanel(self.rightPanel, "Bio production depends on:", wx.GREEN, 0, 0, 0, 0)
-        self.prodEn = DependencyPanel(self.rightPanel, "Energy production depends on:", wx.BLUE, 0, 0, 0, 0)
-        self.prodCon = DependencyPanel(self.rightPanel, "Construction points production depends on:", wx.BLACK, 0, 0, 0, 0)
+        self.prodBio = DependencyPanel(self.rightPanel, "Bio production depends on:", wx.GREEN, wx.BLACK)
+        self.prodEn = DependencyPanel(self.rightPanel, "Energy production depends on:", wx.BLUE, wx.WHITE)
+        self.prodCon = DependencyPanel(self.rightPanel, "Construction points production depends on:", wx.BLACK, wx.WHITE)
 
         box.Add(self.list, 1, wx.EXPAND)
+        box.Add(wx.StaticLine(self.rightPanel, -1), 0, wx.EXPAND | wx.ALL, 4)
         box.Add(self.prodBio, 0, wx.EXPAND | wx.WEST, 4)
         box.Add(wx.StaticLine(self.rightPanel, -1), 0, wx.EXPAND | wx.ALL, 4)
         box.Add(self.prodEn, 0, wx.EXPAND | wx.WEST, 4)
         box.Add(wx.StaticLine(self.rightPanel, -1), 0, wx.EXPAND | wx.ALL, 4)
-        box.Add(self.prodCon, 0, wx.EXPAND | wx.SOUTH | wx.WEST, 4)
+        box.Add(self.prodCon, 0, wx.EXPAND | wx.WEST, 4)
         box.Fit(self.rightPanel)
         self.rightPanel.SetSizer(box)
         
@@ -565,16 +566,40 @@ class TechViewer(wx.Frame):
             fce = tech.finishConstrHandler.__name__
             if fce in dir(self.finishHandlers):
                 i = getattr(self.finishHandlers, fce)(i, tech)
+                
+        if getattr(tech, "prodProdMod", None) != None:
+        	b, m, e, d = tech.prodProdMod
+        	self.prodCon.SetEnv(b)
+        	self.prodCon.SetMineral(m)
+        	self.prodCon.SetEnergy(e)
+        	self.prodCon.SetNothing(d)
+        	
+        if getattr(tech, "prodBioMod", None) != None:
+        	b, m, e, d = tech.prodBioMod
+        	self.prodBio.SetEnv(b)
+        	self.prodBio.SetMineral(m)
+        	self.prodBio.SetEnergy(e)
+        	self.prodBio.SetNothing(d)
+
+        if getattr(tech, "prodEnMod", None) != None:
+        	b, m, e, d = tech.prodEnMod
+        	self.prodEn.SetEnv(b)
+        	self.prodEn.SetMineral(m)
+        	self.prodEn.SetEnergy(e)
+        	self.prodEn.SetNothing(d)
 
     def addNode(self, parentNode, tech):
-        raceColours = { "C": wx.RED, 
-                "B": wx.NamedColour("MEDIUM FOREST GREEN"),
-                "H": wx.BLUE,
-                "HC": wx.NamedColour("BROWN"),
-                "CH": wx.NamedColour("BROWN"),
-                "BH": wx.NamedColour("GOLD"),
-                "BC": wx.NamedColour("LIGHT MAGENTA")
-              }
+        raceColours = {
+            "C": wx.RED, 
+            "B": wx.NamedColour("MEDIUM FOREST GREEN"),
+            "H": wx.BLUE,
+            "HC": wx.NamedColour("BROWN"),
+            "CH": wx.NamedColour("BROWN"),
+            "BH": wx.NamedColour("GOLD"),
+            "HB": wx.NamedColour("GOLD"),
+            "BC": wx.NamedColour("LIGHT MAGENTA"),
+            "CB": wx.NamedColour("LIGHT MAGENTA")
+        }
 
         dataItem = wx.TreeItemData(tech)
         title = tech.name

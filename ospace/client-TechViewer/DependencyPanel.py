@@ -2,69 +2,42 @@ import wx
 from Gauge import Gauge
 
 class DependencyPanel(wx.Panel):
-	def __init__(self, parent, text, color, env, mineral, energy, nothing):
+	def __init__(self, parent, text, gaugeColor, textColor, env = 0, mineral = 0, energy = 0, nothing = 0):
 		wx.Panel.__init__(self, parent, -1)
 
+		gaugeBorders = (5, 5, 1, 7)
+		
+		self.env = Gauge(self, gaugeColor, textColor, gaugeBorders, env)
+		self.mineral = Gauge(self, gaugeColor, textColor, gaugeBorders, mineral)
+		self.energy = Gauge(self, gaugeColor, textColor, gaugeBorders, energy)
+		self.nothing = Gauge(self, gaugeColor, textColor, gaugeBorders, nothing)
+
 		vertBox = wx.BoxSizer(wx.VERTICAL)
+		panelCaption = wx.StaticText(self, -1, text)
+		font = panelCaption.GetFont()
+		font.SetWeight(wx.FONTWEIGHT_BOLD)
+		panelCaption.SetFont(font)
+		vertBox.Add(panelCaption, 0, wx.BOTTOM, 5)
+
+		gbs = wx.GridBagSizer(4, 4)
+		gbs.SetFlexibleDirection(wx.HORIZONTAL)
+		gbs.SetCols(2)
+		gbs.SetRows(4)
+		gbs.AddGrowableCol(1)
 		
-		gaugeWidth = 340
-		gaugeHeight = 20
-		gaugeBorders = (5, 0, 5, 5)
+		gbs.Add(wx.StaticText(self, -1, "Environment"), (0, 0), flag = wx.WEST, border = 4)
+		gbs.Add(self.env, (0, 1), flag = wx.EXPAND)
+		gbs.Add(wx.StaticText(self, -1, "Mineral"), (1, 0), flag = wx.WEST, border = 4)
+		gbs.Add(self.mineral, (1, 1), flag = wx.EXPAND)
+		gbs.Add(wx.StaticText(self, -1, "Energy"), (2, 0), flag = wx.WEST, border = 4)
+		gbs.Add(self.energy, (2, 1), flag = wx.EXPAND)
+		gbs.Add(wx.StaticText(self, -1, "Nothing"), (3, 0), flag = wx.WEST, border = 4)
+		gbs.Add(self.nothing, (3, 1), flag = wx.EXPAND)
 		
-		minPanel = wx.Panel(self, -1)
-		box = wx.BoxSizer(wx.HORIZONTAL)
-		box.Add(wx.StaticText(minPanel, -1, text), 0, wx.NORTH | wx.SOUTH, 4)
-		box.Fit(minPanel)
-		minPanel.SetSizer(box)
-		vertBox.Add(minPanel, 0, wx.EXPAND)
+		vertBox.Add(gbs, 1, wx.EXPAND | wx.ALL)
 
-		minPanel = wx.Panel(self, -1)
-		box = wx.BoxSizer(wx.HORIZONTAL)
-		st = wx.StaticText(minPanel, -1, "Environment")
-		size = st.GetSize()
-		box.Add(st, 0, wx.EAST | wx.WEST, 4)
-		self.env = Gauge(minPanel, color, gaugeWidth, gaugeHeight, gaugeBorders, env)
-		box.Add(self.env, 1, wx.EXPAND)
-		box.Fit(minPanel)
-		minPanel.SetSizer(box)
-		vertBox.Add(minPanel, 0, wx.EXPAND)
-		
-		minPanel = wx.Panel(self, -1)
-		box = wx.BoxSizer(wx.HORIZONTAL)
-		st = wx.StaticText(minPanel, -1, "Mineral")
-		st.SetSize(size)
-		box.Add(st, 0, wx.EAST | wx.WEST, 4)
-		self.mineral = Gauge(minPanel, color, gaugeWidth, gaugeHeight, gaugeBorders, mineral)
-		box.Add(self.mineral, 1, wx.EXPAND)
-		box.Fit(minPanel)
-		minPanel.SetSizer(box)
-		vertBox.Add(minPanel, 0, wx.EXPAND)
+		self.SetSizerAndFit(vertBox)
 
-		minPanel = wx.Panel(self, -1)
-		box = wx.BoxSizer(wx.HORIZONTAL)
-		st = wx.StaticText(minPanel, -1, "Energy")
-		st.SetSize(size)
-		box.Add(st, 0, wx.EAST | wx.WEST, 4)
-		self.energy = Gauge(minPanel, color, gaugeWidth, gaugeHeight, gaugeBorders, energy)
-		box.Add(self.energy, 1, wx.EXPAND)
-		box.Fit(minPanel)
-		minPanel.SetSizer(box)
-		vertBox.Add(minPanel, 0, wx.EXPAND)
-
-		minPanel = wx.Panel(self, -1)
-		box = wx.BoxSizer(wx.HORIZONTAL)
-		st = wx.StaticText(minPanel, -1, "Nothing")
-		st.SetSize(size)
-		box.Add(st, 0, wx.EAST | wx.WEST, 4)
-		self.nothing = Gauge(minPanel, color, gaugeWidth, gaugeHeight, gaugeBorders, nothing)
-		box.Add(self.nothing, 1, wx.EXPAND)
-		box.Fit(minPanel)
-		minPanel.SetSizer(box)
-		vertBox.Add(minPanel, 0, wx.EXPAND)
-
-		vertBox.Fit(self)
-		self.SetSizer(vertBox)
-	
 	def SetEnv(self, percent):
 		self.env.percent = percent
 		self.Refresh()
