@@ -836,7 +836,7 @@ class IFleet(IObject):
 				# scan all ships for design
 				designExists = 0
 				for index in xrange(0, len(obj.ships)):
-					if obj.ships[index][0] == designID:
+					if obj.ships[index][SHIP_IDX_DESIGNID] == designID:
 						# find planet with free upgrade points
 						needsUPts = Rules.shipUpgradePts[upgradeToSpec.combatClass]
 						planet = None
@@ -874,11 +874,12 @@ class IFleet(IObject):
 						# upgrade ship
 						log.debug("Upgrading ship in fleet", obj.oid, needsUPts, planet.upgradeShip, planet.oid)
 						maxHPRatio = max(0.01, 1.0 - max(upgradeToSpec.buildProd - spec.buildProd, 0) / float(upgradeToSpec.buildProd))
-						obj.ships[index][0] = spec.upgradeTo
-						obj.ships[index][1] = max(1, min(
+						obj.ships[index][SHIP_IDX_DESIGNID] = spec.upgradeTo
+						obj.ships[index][SHIP_IDX_HP] = max(1, min(
 							obj.ships[index][1],
 							int(upgradeToSpec.maxHP * maxHPRatio)
 						))
+						obj.ships[index][SHIP_IDX_SHIELDHP] = upgradeToSpec.shieldHP
 						upgraded += 1
 						#@log.debug("HP penalty", diff, upgradeToSpec.buildProd, maxHPRatio)
 						player.fleetUpgradePool -= diff
