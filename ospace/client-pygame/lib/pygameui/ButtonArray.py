@@ -75,27 +75,27 @@ class ButtonArray(MetaWidget):
 	def onScroll(self, widget, action, data):
 		self.itemsChanged()
 
+	def clearSelection(self):
+		if self.selectedButton:
+			self.selectedButton.pressed = 0
+			self.selectedButton = None
+
 	def selectItem(self, item):
 		if not item:
-			if self.selectedButton:
-				self.selectedButton.pressed = 0
-				self.selectedButton = None
+			self.clearSelection()
 		elif item != self.selected:
-			if self.selectedButton:
-				self.selectedButton.pressed = 0
-				self.selectedButton = None
+			self.clearSelection()
 		self.selected = item
 		self.itemsChanged()
 
 	def onButtonPressed(self, widget, action, data):
 		if self.selectedButton:
-			self.selectedButton.pressed = 0
+			self.clearSelection()
 		if widget.pressed:
 			self.selected = widget.data
 			self.selectedButton = widget
 		else:
 			self.selected = None
-			self.selectedButton = None
 		self.processAction(self.action, self.selected)
 
 	def onRButtonPressed(self, widget, action, data):
@@ -149,6 +149,7 @@ class ButtonArray(MetaWidget):
 			button.background = None
 			if button.visible: button.visible = 0
 			index += 1
+		self.clearSelection()
 		self.parent.redraw(self)
 
 	def drawMetaWidget(self, surface):

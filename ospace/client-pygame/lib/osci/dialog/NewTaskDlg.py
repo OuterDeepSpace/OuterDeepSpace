@@ -211,6 +211,7 @@ class NewTaskDlg:
 
 		self.win.vTSlots.items = items
 		self.win.vTSlots.itemsChanged()
+		self.structToDemolish = OID_NONE
 
 	def onSelectPlanet(self, widget, action, data):
 		self.targetID = data.planetID
