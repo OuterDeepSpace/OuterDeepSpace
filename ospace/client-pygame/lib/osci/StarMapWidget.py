@@ -150,7 +150,6 @@ class StarMapWidget(Widget):
 				log.warning('StarMapWidget', 'Cannot render objID = %d' % objID)
 				continue
 			if obj.type == T_SYSTEM:
-				player = client.getPlayer()
 				img = res.getSmallStarImg(obj.starClass[1]) # TODO correct me
 				icons = []
 				name = getattr(obj, 'name', None)
@@ -169,11 +168,8 @@ class StarMapWidget(Widget):
 					for planetID in obj.planets:
 						planet = client.get(planetID, noUpdate = 1)
 						owner = getattr(planet, 'owner', OID_NONE)
-						#rel = min(rel, client.getRelationTo(owner))
 						if int(owner) != 0:
 								ownerID = owner
-				#		if int(player_highlight) == int(owner):
-				#			owner2 = 1
 						if hasattr(planet, "plStratRes") and planet.plStratRes != SR_NONE:
 							icons.append(res.icons["sr_%d" % planet.plStratRes])
 						if hasattr(planet, "refuelMax"):
@@ -188,17 +184,9 @@ class StarMapWidget(Widget):
 						if hasattr(planet, 'plBio') and hasattr(planet, 'plEn'):
 							explored = True
 				if not explored and name != None:
-					name = "[%s]" %	(name)
+					name = "[%s]" % (name)
 						
-				# pirates
-				dist = 10000
-				for pirX, pirY in pirates:
-					dist = min(dist, math.hypot(obj.x - pirX, obj.y - pirY))
-				pirProb = Rules.pirateGainFamePropability(dist)
-				if pirProb >= 1.0:
-					icons.append(res.icons["pir_99"])
-				elif pirProb > 0.0:
-					icons.append(res.icons["pir_00"])
+				pirProb = self.precomputePirates(obj, pirates, icons)
 				# refuelling
 				if refuelMax >= 87:
 					icons.append(res.icons["fuel_99"])
@@ -213,22 +201,16 @@ class StarMapWidget(Widget):
 					icons.append(res.icons["rep_10"])
 				elif upgradeShip > 0 and repairShip > 0:
 					icons.append(res.icons["rep_1"])
-				if hasattr(obj, "combatCounter") and obj.combatCounter > 0:
-					icons.append(res.icons["combat"])
-				if hasattr(player, "buoys") and obj.oid in player.buoys:
-					icons.append(res.icons["buoy_%d" % player.buoys[obj.oid][1]])
-				if hasattr(player, "alliedBuoys") and obj.oid in player.alliedBuoys and len(player.alliedBuoys[obj.oid]) > 0:
-					buoyName = "buoy_%d" % player.alliedBuoys[obj.oid][0][1]
-					if len(player.alliedBuoys[obj.oid]) > 1:
-						buoyName = "%s_plus" % buoyName
-					icons.append(res.icons[buoyName])
+
+				self.precomputeCombat(obj, icons)
+				self.precomputeBuoys(obj, player, icons)
 				# star gates
 				if speedBoost > 1.0:
 					icons.append(res.icons["sg_%02d" % round(speedBoost)])
 				#if owner2 != 0:
-				#	color = gdata.playerHighlightColor
+				#   color = gdata.playerHighlightColor
 				#else:
-				#	color = res.getFFColorCode(rel)
+				#   color = res.getFFColorCode(rel)
 				color = res.getPlayerColor(ownerID)
 				self._map[self.MAP_SYSTEMS].append((obj.oid, obj.x, obj.y, name, img, color, icons))
 				# pop up info
@@ -249,17 +231,28 @@ class StarMapWidget(Widget):
 				if pirProb > 0.0:
 					info.append(_("Pirate get fame chance: %d %%") % (pirProb * 100))
 				self._popupInfo[obj.oid] = info
+			elif obj.type == T_WORMHOLE:
+				img = res.getSmallStarImg(obj.starClass[1])
+				icons = []
+				name = getattr(obj, 'name', None)
+				pirProb = self.precomputePirates(obj, pirates, icons)
+				self.precomputeCombat(obj, icons)
+				self.precomputeBuoys(obj, player, icons)
+				color = res.getPlayerColor(OID_NONE)
+				self._map[self.MAP_SYSTEMS].append((obj.oid, obj.x, obj.y, name, img, color, icons))
+				# pop up info
+				info = []
+				info.append(_('Worm hole: %s [ID: %d]') % (name or res.getUnknownName(), obj.oid))
+				info.append(_('Coordinates: [%.2f, %.2f]') % (obj.x, obj.y))
+				if pirProb > 0.0:
+					info.append(_("Pirate get fame chance: %d %%") % (pirProb * 100))
+				self._popupInfo[obj.oid] = info
 			elif obj.type == T_PLANET:
 				owner = getattr(obj, 'owner', OID_NONE)
 				name = getattr(obj, 'name', None) or res.getUnknownName()
 				if hasattr(obj, "plType") and obj.plType in ("A", "G"):
 					color = gdata.sevColors[gdata.DISABLED]
 				else:
-					#if int(player_highlight) == int(owner):
-					#	color = gdata.playerHighlightColor
-					#else:
-					#	color = res.getFFColorCode(client.getRelationTo(owner))
-					# color = res.getNColorCode(owner,client.getRelationTo(owner))
 					color = res.getPlayerColor(owner)
 				self._map[self.MAP_PLANETS].append((obj.oid, obj.x, obj.y, obj.orbit, color))
 				scannerPwr = getattr(obj, 'scannerPwr', 0)
@@ -269,7 +262,7 @@ class StarMapWidget(Widget):
 				# pop up info
 				info = []
 				info.append(_('Planet: %s [ID: %d]') % (name, obj.oid))
-				if hasattr(obj, 'scanPwr'):	info.append(_('Scan pwr: %d') % obj.scanPwr)
+				if hasattr(obj, 'scanPwr'): info.append(_('Scan pwr: %d') % obj.scanPwr)
 				elif hasattr(obj, 'scannerPwr'): info.append(_('Scanner pwr: %d') % obj.scannerPwr)
 				plType = gdata.planetTypes[getattr(obj, 'plType', None)]
 				info.append(_('Type: %s') % _(plType))
@@ -288,11 +281,6 @@ class StarMapWidget(Widget):
 			elif obj.type == T_FLEET:
 				owner = getattr(obj, 'owner', OID_NONE)
 				name = getattr(obj, 'name', None) or res.getUnknownName()
-				#if int(player_highlight) == int(owner):
-				#	color = gdata.playerHighlightColor
-				#else:
-				#	color = res.getFFColorCode(client.getRelationTo(owner))
-				# color = res.getNColorCode(owner,client.getRelationTo(owner))
 				color = res.getPlayerColor(owner)
 				scannerPwr = getattr(obj, 'scannerPwr', 0)
 				if hasattr(obj, "scannerOn") and not obj.scannerOn:
@@ -310,8 +298,8 @@ class StarMapWidget(Widget):
 				# pop up info
 				info = []
 				info.append(_('Fleet: %s [ID: %d]') % (name, obj.oid))
-				if hasattr(obj, 'scanPwr'):	info.append(_('Scan pwr: %d') % obj.scanPwr)
-				if hasattr(obj, 'scannerPwr'):	info.append(_('Scanner pwr: %d') % obj.scannerPwr)
+				if hasattr(obj, 'scanPwr'):    info.append(_('Scan pwr: %d') % obj.scanPwr)
+				if hasattr(obj, 'scannerPwr'): info.append(_('Scanner pwr: %d') % obj.scannerPwr)
 				info.append(_('Coordinates: [%.2f, %.2f]') % (obj.x, obj.y))
 				info.append(_('Signature: %d') % obj.signature)
 				if eta:
@@ -416,7 +404,7 @@ class StarMapWidget(Widget):
 				# pop up info
 				info = []
 				info.append(_('Asteroid: %s [ID: %d]') % (name, obj.oid))
-				if hasattr(obj, 'scanPwr'):	info.append(_('Scan pwr: %d') % obj.scanPwr)
+				if hasattr(obj, 'scanPwr'): info.append(_('Scan pwr: %d') % obj.scanPwr)
 				info.append(_('Coordinates: [%.2f, %.2f]') % (obj.x, obj.y))
 				info.append(_('Signature: %d') % obj.signature)
 				if hasattr(obj, 'asDiameter'): info.append(_('Diameter: %d') % obj.asDiameter)
@@ -457,6 +445,31 @@ class StarMapWidget(Widget):
 			self.currY = anyY
 		# self dirty flag
 		self.repaintMap = 1
+
+	def precomputePirates(self, system, pirates, icons):
+		dist = 10000
+		for pirX, pirY in pirates:
+			dist = min(dist, math.hypot(system.x - pirX, system.y - pirY))
+		pirProb = Rules.pirateGainFamePropability(dist)
+		if pirProb >= 1.0:
+			icons.append(res.icons["pir_99"])
+		elif pirProb > 0.0:
+			icons.append(res.icons["pir_00"])
+		
+		return pirProb
+
+	def precomputeCombat(self, system, icons):
+		if hasattr(system, "combatCounter") and system.combatCounter > 0:
+			icons.append(res.icons["combat"])
+
+	def precomputeBuoys(self, system, player, icons):
+		if hasattr(player, "buoys") and system.oid in player.buoys:
+			icons.append(res.icons["buoy_%d" % player.buoys[system.oid][1]])
+		if hasattr(player, "alliedBuoys") and system.oid in player.alliedBuoys and len(player.alliedBuoys[system.oid]) > 0:
+			buoyName = "buoy_%d" % player.alliedBuoys[system.oid][0][1]
+			if len(player.alliedBuoys[system.oid]) > 1:
+				buoyName = "%s_plus" % buoyName
+			icons.append(res.icons[buoyName])
 
 	def drawScanners(self):
 		# coordinates
@@ -918,6 +931,9 @@ class StarMapWidget(Widget):
 					if obj.type == T_SYSTEM:
 						name = getattr(obj, "name", None)
 						name = _("System: %s [ID: %d]") % (name or res.getUnknownName(), obj.oid)
+					elif obj.type == T_WORMHOLE:
+						name = getattr(obj, "name", None)
+						name = _("Worm hole: %s [ID: %d]") % (name or res.getUnknownName(), obj.oid)
 					elif obj.type == T_PLANET:
 						name = getattr(obj, "name", None)
 						name = _("Planet: %s [ID: %d]") % (name or res.getUnknownName(), obj.oid)
@@ -937,6 +953,9 @@ class StarMapWidget(Widget):
 					if obj.type == T_SYSTEM:
 						name = getattr(obj, "name", None)
 						name = _("Buoy on system: %s [ID: %d]") % (name or res.getUnknownName(), obj.oid)
+					elif obj.type == T_WORMHOLE:
+						name = getattr(obj, "name", None)
+						name = _("Buoy on worm hole: %s [ID: %d]") % (name or res.getUnknownName(), obj.oid)
 					else:
 						name = _("Buoy on unknown object [ID: %d]") % obj.oid
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <universe>
 	<galaxy id="Circle4P" x="20.00" y="20.00">
 		<properties radius="20.00"/>
@@ -106,5 +106,17 @@
 		<system x="24.33" y="7.55">
 			<properties starClass="mF3" name="CXX"/>
 		</system>
+		<hole x="26.15" y="6.12">
+		    <properties name="H1" destination="H2"/>
+		</hole>
+		<hole x="30.65" y="7.02">
+		    <properties name="H2" destination="H3"/>
+		</hole>
+		<hole x="28.71" y="4.50">
+		    <properties name="H3" destination="H4"/>
+		</hole>
+		<hole x="23.84" y="6.01">
+		    <properties name="H4" destination="H1"/>
+		</hole>
 	</galaxy>
 </universe>

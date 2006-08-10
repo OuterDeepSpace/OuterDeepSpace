@@ -52,6 +52,7 @@ starTypes = {
 	'd': N_('Dwarf'),
 	'b': N_('Black hole'),
 	'n': N_('Neutron star'),
+	'w': N_('Worm hole'),
 }
 
 shipClasses = {

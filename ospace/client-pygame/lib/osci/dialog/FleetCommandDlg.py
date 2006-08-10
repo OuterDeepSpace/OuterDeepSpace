@@ -174,7 +174,7 @@ class FleetCommandDlg:
 		if target.type == T_PLANET:
 			self.targetID = target.oid
 			self.win.vStarMap.highlightPos = (target.x, target.y)
-		elif target.type == T_SYSTEM:
+		elif target.type in (T_SYSTEM, T_WORMHOLE):
 			self.targetID = target.oid
 			self.win.vStarMap.highlightPos = (target.x, target.y)
 		else:

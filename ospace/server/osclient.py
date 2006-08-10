@@ -156,6 +156,8 @@ def showPlayers():
 		print "%5d: %s" % pl
 
 	print
+	print "Press Enter to continue"
+	raw_input()
 
 def showGalaxies():
 	un = s.getInfo(1)

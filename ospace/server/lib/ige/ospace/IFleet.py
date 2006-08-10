@@ -318,7 +318,7 @@ class IFleet(IObject):
 		# TODO: remove obj.ships.sort(lambda a, b: cmp(a[1], b[1]))
 		obj.ships = ShipUtils.sortShips(obj.ships)
 		# closest system
-		if not tran.db.has_key(obj.closeSystem) or tran.db[obj.closeSystem].type != T_SYSTEM:
+		if not tran.db.has_key(obj.closeSystem) or tran.db[obj.closeSystem].type not in (T_SYSTEM, T_WORMHOLE):
 			if obj.orbiting == OID_NONE:
 				log.debug("No close system for fleet", obj.oid)
 				# select any system
@@ -334,7 +334,7 @@ class IFleet(IObject):
 		# verify close system
 		if tran.db.has_key(obj.closeSystem):
 			system = tran.db[obj.closeSystem]
-			if system.type == T_SYSTEM:
+			if system.type in (T_SYSTEM, T_WORMHOLE):
 				if obj.oid not in system.closeFleets:
 					log.debug("Adding fleet", obj.oid, "into closeFleets of", system.oid)
 					system.closeFleets.append(obj.oid)
@@ -436,8 +436,8 @@ class IFleet(IObject):
 				raise GameException("Invalid commander.")
 		else:
 			target = tran.db[targetID]
-			if target.type != T_SYSTEM and target.type != T_PLANET:
-				raise GameException('Can target systems or planets only.')
+			if target.type not in (T_SYSTEM, T_WORMHOLE, T_PLANET):
+				raise GameException('Can target wormholes, systems or planets only.')
 			if action == FLACTION_DEPLOY and target.type != T_PLANET:
 				raise GameException('Can build on/colonize planets only.')
 			if len(obj.actions) + 1 > Rules.maxCmdQueueLen:
@@ -972,7 +972,7 @@ class IFleet(IObject):
 				system = tran.db[target.compOf]
 				system.closeFleets.append(obj.oid)
 				obj.closeSystem = system.oid
-			elif target.type == T_SYSTEM:
+			elif target.type in (T_SYSTEM, T_WORMHOLE):
 				target.closeFleets.append(obj.oid)
 				obj.closeSystem = target.oid
 			else:
@@ -999,6 +999,14 @@ class IFleet(IObject):
 				system = tran.db[obj.orbiting]
 				system.fleets.append(obj.oid)
 				#@log.debug('IFleet', system.oid, 'system fleets', system.fleets)
+				arrived = 1
+			elif target.type == T_WORMHOLE:
+				destinationWormHole = tran.db[target.destinationOid]
+				destinationWormHole.fleets.append(obj.oid)
+				obj.orbiting = destinationWormHole.oid
+				obj.x = destinationWormHole.x
+				obj.y = destinationWormHole.y
+				system = destinationWormHole
 				arrived = 1
 			else:
 				raise GameException('Unsupported type of target %d for move command.' % target.type)

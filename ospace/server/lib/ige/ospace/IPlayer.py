@@ -106,7 +106,7 @@ class IPlayer(IObject):
 			obj.staticMap[objID] = min(obj.staticMap[objID], Rules.maxScanPwr)
 			if obj.staticMap[objID] < Rules.level1InfoScanPwr:
 				del obj.staticMap[objID]
-			if not tran.db.has_key(objID) or tran.db[objID].type != T_SYSTEM:
+			if not tran.db.has_key(objID) or tran.db[objID].type not in (T_SYSTEM, T_WORMHOLE):
 				log.debug("Deleting non system %d from static map of player %d" % (objID, obj.oid))
 				del obj.staticMap[objID]
 		for objID in obj.dynamicMap.keys():
@@ -133,7 +133,7 @@ class IPlayer(IObject):
 				if not tran.db.has_key(objID):
 					log.debug("System for buoy does not exists - removing", obj.oid, objID)
 					obj.buoys.remove(objID)
-				if tran.db[objID].type != T_SYSTEM:
+				if tran.db[objID].type not in (T_SYSTEM, T_WORMHOLE):
 					log.debug("System for buoy is not a system - removing", obj.oid, objID)
 					obj.buoys.remove(objID)
 			except:
@@ -357,7 +357,7 @@ class IPlayer(IObject):
 		if len(obj.buoys) >= 30:
 			raise GameException("You cannot add more than 30 buoys.")
 
-		if tran.db[systemID].type != T_SYSTEM:
+		if tran.db[systemID].type not in (T_SYSTEM, T_WORMHOLE):
 			raise GameException("You can add buoy only to system.")
 
 		# new buoy
@@ -764,7 +764,7 @@ class IPlayer(IObject):
 		contacts = {}
 		for object, level in map.iteritems():
 			objID = object.oid
-			if object.type == T_SYSTEM:
+			if object.type in (T_SYSTEM, T_WORMHOLE):
 				obj.staticMap[objID] = max(obj.staticMap.get(objID, 0), level)
 				contacts.update(object.scannerPwrs)
 			elif object.type in (T_FLEET, T_ASTEROID):

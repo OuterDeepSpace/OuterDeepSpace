@@ -70,7 +70,7 @@ class SearchDlg:
 		found = False
 		for objID in client.db.keys():
 			obj = client.get(objID, noUpdate = 1)
-			if hasattr(obj, 'type') and obj.type == T_SYSTEM:
+			if hasattr(obj, 'type') and obj.type in (T_SYSTEM, T_WORMHOLE):
 				name = string.lower(getattr(obj, "name", ""))
 				if len(name) > 0 and not name in self.founded and fnmatch.fnmatch(name, self.pattern):
 					if hasattr(obj, "x") and hasattr(obj, "y") and self.mapWidget:

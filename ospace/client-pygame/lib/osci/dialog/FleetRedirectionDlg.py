@@ -69,7 +69,7 @@ class FleetRedirectionDlg:
 		target = client.get(data, noUpdate = 1)
 		if target.type == T_PLANET:
 			self.win.setStatus(_("Select system, please."))
-		elif target.type == T_SYSTEM:
+		elif target.type in (T_SYSTEM, T_WORMHOLE):
 			self.targetID = target.oid
 			self.win.vStarMap.highlightPos = (target.x, target.y)
 		else:

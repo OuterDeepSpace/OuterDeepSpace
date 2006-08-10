@@ -62,7 +62,7 @@ class StarSystemDlg:
 		if obj.type == T_PLANET:
 			self.systemID = obj.compOf
 			self.planetID = objID
-		elif obj.type == T_SYSTEM:
+		elif obj.type in (T_SYSTEM, T_WORMHOLE):
 			self.systemID = objID
 			self.planetID = None
 		else:

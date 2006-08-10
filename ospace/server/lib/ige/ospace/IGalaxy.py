@@ -1,4 +1,4 @@
-#
+﻿#
 #  Copyright 2001 - 2006 Ludek Smid [http://www.ospace.net/]
 #
 #  This file is part of IGE - Outer Space.
@@ -60,8 +60,8 @@ class IGalaxy(IObject):
 			for systemID in obj.systems:
 				if not tran.db.has_key(systemID):
 					log.debug("CONSISTENCY - system %d from galaxy %d does not exists" % (systemID, obj.oid))
-				elif tran.db[systemID].type != T_SYSTEM:
-					log.debug("CONSISTENCY - system %d from galaxy %d is not a T_SYSTEM" % (systemID, obj.oid))
+				elif tran.db[systemID].type not in (T_SYSTEM, T_WORMHOLE):
+					log.debug("CONSISTENCY - system %d from galaxy %d is not a T_SYSTEM or T_WORMHOLE" % (systemID, obj.oid))
 		# validate starting positions
 		for planetID in obj.startingPos[:]:
 			if not tran.db.has_key(planetID):
@@ -72,8 +72,8 @@ class IGalaxy(IObject):
 				log.debug("REMOVING ??? from start pos", planetID)
 				obj.startingPos.remove(planetID)
 			#if planet.plType != "E":
-			#	log.debug("REMOVING non earth planet from start pos", planetID)
-			#	obj.startingPos.remove(planetID)
+			#   log.debug("REMOVING non earth planet from start pos", planetID)
+			#   obj.startingPos.remove(planetID)
 		# check compOf
 		if not tran.db.has_key(obj.compOf) or tran.db[obj.compOf].type != T_UNIVERSE:
 			log.debug("CONSISTENCY invalid compOf for galaxy", obj.oid, obj.compOf)
@@ -228,6 +228,7 @@ class IGalaxy(IObject):
 			if node.nodeType == Node.ELEMENT_NODE and node.tagName == 'galaxy':
 				if node.getAttribute('id') == galID:
 					self.loadDOMNode(tran, obj, node, x, y, name)
+					self.connectWormHoles(tran, obj)
 					return SUCC
 		raise GameException('No such id %s in resource' % galID)
 
@@ -247,18 +248,47 @@ class IGalaxy(IObject):
 				if name == 'properties':
 					self.loadDOMAttrs(obj, elem)
 				elif name == 'system':
-					# create system
 					system = tran.db[self.createSystem(tran, obj)]
 					self.cmd(system).loadDOMNode(tran, system, xoff, yoff, elem)
+				elif name == 'hole':
+					wormHole = tran.db[self.createWormHole(tran, obj)]
+					self.cmd(wormHole).loadDOMNode(tran, wormHole, xoff, yoff, elem)
 				else:
 					raise GameException('Unknown element %s' % name)
 		return SUCC
+
+	def connectWormHoles(self, tran, obj):
+		wormHoles = {}
+		for holeID in obj.systems:
+			wormHole = tran.db[holeID]
+			if wormHole.type == T_WORMHOLE:
+				wormHoles[wormHole.name] = holeID
+		
+		for holeID in obj.systems:
+			wormHole = tran.db[holeID]
+			if wormHole.type != T_WORMHOLE:
+				continue
+			if len(wormHole.destination) == 0:
+				raise GameException('Wrong WormHole(%d) definition' % holeID)
+			if wormHole.destination == wormHole.name:
+				raise GameException('Same destination as position for WormHole(%d)' % holeID)
+			destinationOid = wormHoles[wormHole.destination]
+			if destinationOid == OID_NONE:
+				raise GameException('WormHole(%d) has wrong destination ''%s''' % (holeID, wormHole.destination))
+			wormHole.destinationOid = destinationOid
 
 	def createSystem(self, tran, obj):
 		system = self.new(T_SYSTEM)
 		system.compOf = obj.oid
 		oid = tran.db.create(system)
 		obj.systems.append(oid)
+		return oid
+
+	def createWormHole(self, tran, galaxy):
+		hole = self.new(T_WORMHOLE)
+		hole.compOf = galaxy.oid
+		oid = tran.db.create(hole)
+		galaxy.systems.append(oid)
 		return oid
 
 	def enableTime(self, tran, obj, force = 0, deleteSP = 0, enable = 1):
@@ -269,8 +299,8 @@ class IGalaxy(IObject):
 			canRun = 0
 			# there must be at least 1/2 positions already assigned
 			#if len(obj.startingPos) <= obj.numOfStartPos / 2 and obj.creationTime < time.time() - 2 * 24 * 3600:
-			#	log.debug("Half galaxy populated", len(obj.startingPos), obj.numOfStartPos)
-			#	canRun = 1
+			#   log.debug("Half galaxy populated", len(obj.startingPos), obj.numOfStartPos)
+			#   canRun = 1
 			# at least two days must pass from creation
 			if not obj.startingPos:
 				log.debug("All positions taken, starting galaxy")

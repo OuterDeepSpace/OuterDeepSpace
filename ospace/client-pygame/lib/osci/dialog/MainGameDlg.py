@@ -93,9 +93,7 @@ class MainGameDlg:
 		if obj == None:
 			self.app.setStatus(_('Cannot select object on map'))
 			return
-		if obj.type == T_PLANET:
-			self.starSystemDlg.display(data)
-		elif obj.type == T_SYSTEM:
+		if obj.type in (T_PLANET, T_SYSTEM, T_WORMHOLE):
 			self.starSystemDlg.display(data)
 		elif obj.type == T_FLEET:
 			self.fleetDlg.display(data)

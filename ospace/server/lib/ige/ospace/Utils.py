@@ -118,7 +118,7 @@ def getSpeedBoost(tran, player, objs):
 	for obj in objs:
 		if obj.type == T_PLANET:
 			system = tran.db[obj.compOf]
-		elif obj.type == T_SYSTEM:
+		elif obj.type in (T_SYSTEM, T_WORMHOLE):
 			system = obj
 		else:
 			raise ige.ServerException("Not a planet or system")
