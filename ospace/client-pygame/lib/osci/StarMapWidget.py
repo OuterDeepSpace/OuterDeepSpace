@@ -29,6 +29,7 @@ from dialog.ShowBuoyDlg import ShowBuoyDlg
 import gdata, client, res, math, string
 from ige import log
 from osci.dialog.SearchDlg import SearchDlg
+from osci.MiniMap import MiniMap
 
 buoyColors = [(0xff, 0xff, 0x00), (0x00, 0xff, 0xff), (0xff, 0x00, 0xff)]
 MAX_BOUY_DISPLAY_LEN = 30
@@ -87,6 +88,8 @@ class StarMapWidget(Widget):
 		self.highlightPos = None
 		self.alwaysShowRangeFor = None
 		self.showBuoyDlg = ShowBuoyDlg(self.app)
+		self._miniMapRect = Rect(0, 20, 150, 100)
+		self.miniMap = MiniMap(self._miniMapRect.width, self._miniMapRect.height)
 		# flags
 		self.processKWArguments(kwargs)
 		parent.registerWidget(self)
@@ -298,7 +301,7 @@ class StarMapWidget(Widget):
 				# pop up info
 				info = []
 				info.append(_('Fleet: %s [ID: %d]') % (name, obj.oid))
-				if hasattr(obj, 'scanPwr'):    info.append(_('Scan pwr: %d') % obj.scanPwr)
+				if hasattr(obj, 'scanPwr'):	info.append(_('Scan pwr: %d') % obj.scanPwr)
 				if hasattr(obj, 'scannerPwr'): info.append(_('Scanner pwr: %d') % obj.scannerPwr)
 				info.append(_('Coordinates: [%.2f, %.2f]') % (obj.x, obj.y))
 				info.append(_('Signature: %d') % obj.signature)
@@ -419,7 +422,7 @@ class StarMapWidget(Widget):
 						getattr(player, 'oid', '?')
 					))
 				self._popupInfo[obj.oid] = info
-			elif obj.type == T_GALAXY:
+			elif obj.type in (T_GALAXY, T_AIRENPLAYER, T_AIMUTPLAYER, T_AIPIRPLAYER, T_AIEDENPLAYER):
 				pass
 			elif obj.type == T_UNKNOWN:
 				# pop up info
@@ -443,6 +446,8 @@ class StarMapWidget(Widget):
 			self.setPosition = 0
 			self.currX = anyX
 			self.currY = anyY
+		
+		self.miniMap.precompute()
 		# self dirty flag
 		self.repaintMap = 1
 
@@ -677,6 +682,8 @@ class StarMapWidget(Widget):
 			clip.height -= 2
 			self._mapSurf.set_clip(clip)
 			#
+			self._miniMapRect.left = self.rect.width - self._miniMapRect.width
+			self._miniMapRect.top = self.rect.top
 			self.repaintMap = 1
 		if self.repaintMap:
 			self._actAreas = {}
@@ -775,6 +782,8 @@ class StarMapWidget(Widget):
 					rng = int(halfRange * self.scale)
 					if rng > 1:
 						pygame.draw.circle(surface, (0x20, 0x20, 0x80), (sx, sy), rng, 1)
+
+		self.miniMap.draw(surface, self._miniMapRect.left, self._miniMapRect.top)
 		# draw popups
 		moreIDs = len(self.activeObjIDs) > 1
 		if not moreIDs:
@@ -879,6 +888,8 @@ class StarMapWidget(Widget):
 		if mods & KMOD_SHIFT:
 			return self.processMB3Down(evt)
 		pos = evt.pos
+		if self._miniMapRect.collidepoint(pos):
+			return ui.NoEvent
 		self.pressedObjIDs = []
 		for objID in self._actAreas.keys():
 			rect = self._actAreas[objID]
@@ -903,6 +914,10 @@ class StarMapWidget(Widget):
 		if mods & KMOD_SHIFT:
 			return self.processMB3Up(evt)
 		pos = evt.pos
+		if self._miniMapRect.collidepoint(pos):
+			self.currX, self.currY = self.miniMap.processMB1Up((pos[0] - self._miniMapRect.left, self._miniMapRect.height - pos[1] + self._miniMapRect.top))
+			self.repaintMap = 1
+			return ui.NoEvent
 		objIDs = []
 		for objID in self._actAreas.keys():
 			rect = self._actAreas[objID]
@@ -976,6 +991,8 @@ class StarMapWidget(Widget):
 		self.showBuoyDlg.display(data)
 
 	def processMB3Down(self, evt):
+		if self._miniMapRect.collidepoint(evt.pos):
+			return ui.NoEvent
 		self._newCurrXY = 1
 		return ui.NoEvent
 
@@ -1002,6 +1019,8 @@ class StarMapWidget(Widget):
 
 	def processMMotion(self, evt):
 		pos = evt.pos
+		if self._miniMapRect.collidepoint(pos):
+			return ui.NoEvent
 		self.activeObjID = OID_NONE
 		self.activeObjIDs = []
 		for objID in self._actAreas.keys():
