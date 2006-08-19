@@ -50,7 +50,7 @@ class Menu(Window):
 		index = 0
 		for item in self.items:
 			if len(self._labels) <= index:
-				label = ActiveLabel(self, align = ALIGN_W)
+				label = ActiveLabel(self, align = ALIGN_W, enabled = item.enabled)
 				label.subscribeAction("*", self.actionHandler)
 				self._labels.append(label)
 			label = self._labels[index]

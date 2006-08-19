@@ -287,7 +287,6 @@ while running:
         forceKeepAlive = False
 
         for evt in evts:
-            evt = app.processEvent(evt)
             if evt.type == QUIT:
                 running = 0
                 break
@@ -296,6 +295,7 @@ while running:
                 break
             if evt.type == KEYUP and evt.key == K_F9:
                 forceKeepAlive = True
+            evt = app.processEvent(evt)
 
         if app.needsUpdate() or isHWSurface:
             update()

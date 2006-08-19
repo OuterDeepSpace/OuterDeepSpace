@@ -330,10 +330,13 @@ def drawCheck(surface, widget):
 	return widget.rect
 
 def drawLabel(surface, widget, highlight = 0):
-	if highlight:
-		style = "%s-highlight" % (widget.style or "label")
+	if not widget.enabled:
+		style = "%s-disabled" % (widget.style or "label")
 	else:
-		style = "%s-clean" % (widget.style or "label")
+		if highlight:
+			style = "%s-highlight" % (widget.style or "label")
+		else:
+			style = "%s-clean" % (widget.style or "label")
 	drawBox(surface, widget, style)
 	drawTextAndIcons(surface, widget, style)
 	return widget.rect

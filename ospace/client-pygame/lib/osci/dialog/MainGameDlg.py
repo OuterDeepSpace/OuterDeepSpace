@@ -166,20 +166,8 @@ class MainGameDlg:
 		self.app.exit()
 
 	def update(self):
-		if client.db != None:
-			player = client.getPlayer()
-			if player.imperator > 2:
-				lastGalaxyRestartShown = gdata.config.game.lastGalaxyRestartShown
-				if lastGalaxyRestartShown != None:
-					localTime = time.time()
-					storedTime = float(lastGalaxyRestartShown)
-					if localTime - storedTime > 60 * 60 * 24:
-						gdata.config.game.lastGalaxyRestartShown = str(localTime)
-						self.galaxyRestartDlg.display(restartAction = self.onRestartConfirmed)
-				else:
-					gdata.config.game.lastGalaxyRestartShown = str(time.time())
-					self.galaxyRestartDlg.display(restartAction = self.onRestartConfirmed)
-
+		self.galaxyRestart(None, None, False)
+  		player = client.getPlayer()
 		turn = client.getTurn()
 		self.win.vTurn.text = res.formatTime(turn)
 		self.win.vStarMap.precompute()
@@ -206,6 +194,27 @@ class MainGameDlg:
 			self.win.vMessages.foreground = gdata.sevColors[gdata.MAJ]
 		else:
 			self.win.vMessages.foreground = None
+
+	def galaxyRestart(self, widget, action, data):
+		shownFromMenu = bool(data)
+		if client.db != None:
+			player = client.getPlayer()
+			if player.imperator > 2:
+				self.systemMenu.items[3].enabled = True
+				lastGalaxyRestartShown = gdata.config.game.lastGalaxyRestartShown
+				if lastGalaxyRestartShown != None:
+					localTime = time.time()
+					storedTime = float(lastGalaxyRestartShown)
+					if localTime - storedTime > 60 * 60 * 24 or shownFromMenu == True:
+						gdata.config.game.lastGalaxyRestartShown = str(localTime)
+						self.galaxyRestartDlg.display(restartAction = self.onRestartConfirmed)
+				else:
+					gdata.config.game.lastGalaxyRestartShown = str(time.time())
+					self.galaxyRestartDlg.display(restartAction = self.onRestartConfirmed)
+			else:
+				self.systemMenu.items[3].enabled = False
+				if shownFromMenu == True:
+					self.win.setStatus(_("Only imperator elected three times and more can restart galaxy."))
 
 	def updateMsgButton(self):
 		if self.messagesDlg.newMsgs > 0:
@@ -277,11 +286,12 @@ class MainGameDlg:
 		self.app.setStatus(_('Ready.'))
 		# system menu
 		self.systemMenu = ui.Menu(self.app, title = _("Menu"),
-			width = 4,
+			width = 5,
 			items = [
 				ui.Item(_("Find system"), action = "onSearch"),
 				ui.Item(_("Statistics"), action = "onStats"),
 				ui.Item(_("Resign"), action = "onResign"),
+				ui.Item(_("Galaxy restart"), action = "galaxyRestart", enabled = False, data = True),
 				ui.Item(_("Options"), action = "onOptions"),
 				ui.Item(_("Quit"), action = "onQuit"),
 			]

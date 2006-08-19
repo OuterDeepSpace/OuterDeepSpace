@@ -47,7 +47,7 @@ class GalaxyRestartDlg:
 		self.win.hide()
 
 	def onRestart(self, widget, action, data):
-		self.confirmDlg.display(_('Are you sure realy raaly sure to restart this galaxy?'), _('No'),
+		self.confirmDlg.display(_('Are you really really sure you want to restart this galaxy?'), _('No'),
 			('Yes'), cancelAction = self.onRealyRestart)
 
 	def onRealyRestart(self):
