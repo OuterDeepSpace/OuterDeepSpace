@@ -56,6 +56,13 @@ class EmpireOverviewDlg:
 
 	def show(self):
 		player = client.getPlayer()
+		if not hasattr(player.stats, "prodProd"):
+			self.win.vText.text = [_("No data available")]
+			self.win.vText.offsetRow = 0
+			self.win.vText.vertScrollbar.slider.position = 0
+			self.win.vText.vertScrollbar.slider.max = 1
+			return
+			
 		text = []
 		# imperator or leader
 		if player.imperator == 1:
@@ -191,7 +198,6 @@ class EmpireOverviewDlg:
 		self.win.vText.offsetRow = 0
 		self.win.vText.vertScrollbar.slider.position = 0
 		self.win.vText.vertScrollbar.slider.max = len(text)
-		pass
 
 	def onClose(self, widget, action, data):
 		self.hide()
@@ -207,7 +213,7 @@ class EmpireOverviewDlg:
 
 	def onMenu(self, widget, action, data):
 		r = widget.rect
-		self.analysisMenu.show((self.win.rect.left + r.left, r.top))
+		self.analysisMenu.show((self.win.rect.left + r.left, self.win.rect.bottom - 4 * r.height))
 
 	def createUI(self):
 		screenWidth, screenHeight = gdata.scrnSize
