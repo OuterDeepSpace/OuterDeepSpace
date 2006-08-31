@@ -24,10 +24,13 @@ import pygame, pygame.draw
 from pygame.locals import *
 import res, client
 
+borderColor = (0x00, 0x00, 0x90)
+rectColor = (29, 118, 229)
+
 class MiniMap:
     def __init__(self, width, height):
         self._map = []
-        self._repaintMap = 1
+        self._repaintMap = True
         self._mapSurf = None
         self._scaleX = 0.0
         self._scaleY = 0.0
@@ -37,6 +40,7 @@ class MiniMap:
         self._shiftY = 0
         self._width = width
         self._height = height
+        self._rectRect = (0, 0, 0, 0)
 
     def precompute(self):
         minX = minY = 1000000
@@ -70,7 +74,7 @@ class MiniMap:
         self._shiftY = int(self._height * zoomFactor)
         self._scaleX = float(self._width - 2 * self._shiftX) / float(maxX - minX)
         self._scaleY = float(self._height - 2 * self._shiftX) / float(maxY - minY)
-        self._repaintMap = 1
+        self._repaintMap = True
 
     def draw(self, surface, startX, startY):
         if not self._mapSurf:
@@ -84,13 +88,23 @@ class MiniMap:
                 sx = int((x - self._minX) * self._scaleX) + self._shiftX
                 sy = maxY - int((y - self._minY) * self._scaleY) - self._shiftY
                 pygame.draw.circle(self._mapSurf, color, (sx, sy), 2)
-            pygame.draw.rect(self._mapSurf, (0x00, 0x00, 0x90), (0, 0, self._width, self._height), 1)
+            pygame.draw.rect(self._mapSurf, rectColor, self._rectRect, 1)
+            pygame.draw.rect(self._mapSurf, borderColor, (0, 0, self._width, self._height), 1)
             # clean up flag
-            self._repaintMap = 0
+            self._repaintMap = False
         # blit cached map
         rect = Rect(startX, startY, self._width, self._height)
         surface.blit(self._mapSurf, rect)
         return rect
     
+    def moveRect(self, centerX, centerY, width, height):
+        maxX, maxY = self._mapSurf.get_rect().size
+        sx = int((centerX - self._minX) * self._scaleX) + self._shiftX
+        sy = maxY - int((centerY - self._minY) * self._scaleY) - self._shiftY
+        w = int(width * self._scaleX)
+        h = int(height * self._scaleY)
+        self._rectRect = (sx - w / 2, sy - h / 2, w, h)
+        self._repaintMap = True
+
     def processMB1Up(self, pos):
         return (((pos[0] - self._shiftX) / self._scaleX) + self._minX, ((pos[1] - self._shiftY) / self._scaleY) + self._minY)

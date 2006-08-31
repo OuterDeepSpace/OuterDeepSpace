@@ -88,7 +88,7 @@ class StarMapWidget(Widget):
 		self.highlightPos = None
 		self.alwaysShowRangeFor = None
 		self.showBuoyDlg = ShowBuoyDlg(self.app)
-		self._miniMapRect = Rect(0, 20, 150, 100)
+		self._miniMapRect = Rect(0, 20, 200, 150)
 		self.miniMap = MiniMap(self._miniMapRect.width, self._miniMapRect.height)
 		# flags
 		self.processKWArguments(kwargs)
@@ -916,6 +916,7 @@ class StarMapWidget(Widget):
 		pos = evt.pos
 		if self._miniMapRect.collidepoint(pos):
 			self.currX, self.currY = self.miniMap.processMB1Up((pos[0] - self._miniMapRect.left, self._miniMapRect.height - pos[1] + self._miniMapRect.top))
+			self.processMiniMapRect()
 			self.repaintMap = 1
 			return ui.NoEvent
 		objIDs = []
@@ -1002,19 +1003,26 @@ class StarMapWidget(Widget):
 			centerX, centerY = self._mapSurf.get_rect().center
 			self.currX -= float(centerX - x) / self.scale
 			self.currY += float(centerY - y) / self.scale
+			self.processMiniMapRect()
 			self.repaintMap = 1
 			self._newCurrXY = 0
 		return ui.NoEvent
 
+	def processMiniMapRect(self):
+		rect = self._mapSurf.get_rect()
+		self.miniMap.moveRect(self.currX, self.currY, rect.width / self.scale, rect.height / self.scale)
+
 	def processMWUp(self, evt):
 		self.scale += 5
 		self.repaintMap = 1
+		self.processMiniMapRect()
 		return ui.NoEvent
 
 	def processMWDown(self, evt):
 		if self.scale > 10:
 			self.scale -= 5
 			self.repaintMap = 1
+			self.processMiniMapRect()
 		return ui.NoEvent
 
 	def processMMotion(self, evt):
