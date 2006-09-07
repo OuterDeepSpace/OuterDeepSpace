@@ -103,6 +103,7 @@
 			level="5"
 			researchRequires="FLAKBATTERY-5"
 			researchReqSRes="SR_TL5C"
+			researchDisables="STARBASE"
 			researchRaces="H"
 		/>
 		<structure
@@ -126,6 +127,7 @@
 			level="5"
 			researchRequires="PWRPLANT3D-5"
 			researchReqSRes="SR_TL5A"
+			researchDisables="SILICIUMSYNTH"
 			researchRaces="H"
 		/>
 		<structure
@@ -147,6 +149,7 @@
 			level="5"
 			researchRequires="PWRPLANT3A-5"
 			researchReqSRes="SR_TL5B"
+			researchDisables="NUKEFTL"
 			researchRaces="C"
 		/>
 		<structure
@@ -161,6 +164,65 @@
 		/>
 		<preresearch>To solve the uniquitous issue of energy depletion, we are resorting to a volatile radioisotope.</preresearch>
 		<description>With the newest facilities to meet the demands of the populous at large and the government comes the need to supply the needed power for these buildings to operate at acceptable levels.  Since the development of enhanced oil refinement and incindiary combustion, it has become clear that such advanced methods could simply not keep up.  Thus we have looked to a source of naturally occuring Plutonium deposits and found them to provide a significant output in a reactor.  Included in this design is also a considerable energy reservior to be used in the event of a plant shutdown.</description>
+	</technology>
+	<technology id="5007" symbol="BIOCOMPLEX" name="Generator Complex">
+		<discovery
+			researchMod="1.00 + 1.00"
+			level="5"
+			researchRequires="PWRPLANT3C-5"
+			researchReqSRes="SR_TL5C"
+			researchDisables="ECOCATALYST"
+			researchRaces="B"
+		/>
+		<structure
+			subtype="str01"
+			buildProd="3840"
+			buildSRes="SR_TL5C"
+			operWorkers="2000"
+			moraleTrgt="+8"
+			prodBio="300"
+			prodBioMod="0.6,0.0,0.6,0.3"
+			storBio="4800"
+			prodEn="500"
+			prodEnMod="0.6,0.0,0.6,0.3"
+			storEn="6000"
+			maxHP="800"
+			prodEnv="+16"
+			combatAtt="10"
+			structWeapons="4,2,1,0,1"
+			isMilitary="1"
+		/>
+		<preresearch>Utilising the inherent structural properties of Wolframium, we are able to assemble a fortified complex capable of supplying our most basic needs in virtually any situation.</preresearch>
+		<description>While our people are highly attuned to nature, sometimes there are problems that simply cannot be solved by even the most careful genetic authoring.  As such, we make use of a very rigid and extremely rare metal for this project.  Combining the attributes of solar collector energy production, and greenhouse farming techniques, we are able to consolidate these two processes into one seamless operation.  Excess production in both resources is used to feed a small bank of ground defenses including four anti-small, two anti-medium, and one anti-large weapon.  This symbol of efficiency provides the side benefit of keeping your citizens prideful in their advanced nation.</description>
+	</technology>
+	<technology id="5008" symbol="STARBASE" name="Starbase">
+		<discovery
+			researchMod="1.00 + 1.00"
+			level="5"
+			researchRequires="STARGATE5A-5"
+			researchReqSRes="SR_TL5C"
+			researchDisables="HUMANFLAK5"
+			researchRaces="H"
+		/>
+		<structure
+			subtype="str90"
+			buildProd="3840"
+			buildSRes="SR_TL5C"
+			operEn="1500"
+			operWorkers="2000"
+			fleetSpeedBoost="3.2"
+			refuelMax="80"
+			refuelInc="5"
+			repairShip="0.04"
+			upgradeShip="40"
+			scannerPwr="80"
+			maxHP="1200"
+			combatAtt="10"
+			structWeapons="6,4,2,0,1"
+			isMilitary="1"
+		/>
+		<preresearch>With the employment of Wolframium, our engineers can assemble a magnificent all-purpose fleet orbital facility.</preresearch>
+		<description>This facility of titanic proportions is the ultimate expression of centralised fleet maintenance facilities ever conceived.  The massive Wolframium reinforced frame is tethered to the ground with sturdy cables, aiding space elevetors to ferry crewmen between the station and the planet's surface.  Housed within the massive frame is a stargate to expedite interplanetary travel, located on the top of the structure.  In addition, the facilities for refuelling, repair, and even ship upgrading are installed in huge service bays along side of the gate entrance.  No station can be complete without the capacity for automated defense in the event of attack, as such, there are six anti-small, four anti-medium, and two anti-large weapons of our best designs installed on an array near the cable tethers on the bottom, giving them a wide firing arc without the risk of damaging docked ships by friendly fire.</description>
 	</technology>
 	<technology id="5400" symbol="BIONICCANNON5" name="Virus Injector">
 		<discovery
@@ -635,6 +697,7 @@
 			level="5"
 			researchRequires="PLASMABOMB-5"
 			researchReqSRes="SR_TL5B"
+			researchDisables="BATTLETRACK"
 			researchRaces="H"
 		/>
 		<shipequip
@@ -659,6 +722,7 @@
 			level="5"
 			researchRequires="BIONICROCKET5-5"
 			researchReqSRes="SR_TL5B"
+			researchDisables="BIOBRIDGE"
 			researchRaces="B"
 		/>
 		<shipequip
@@ -667,8 +731,8 @@
 			buildSRes="SR_TL5B"
 			slots="1"
 			weight="5"
-			weaponDmgMin="19"
-			weaponDmgMax="28"
+			weaponDmgMin="25"
+			weaponDmgMax="37"
 			weaponAtt="8"
 			weaponClass="1"
 			weaponROF="8.0"
@@ -683,6 +747,7 @@
 			level="5"
 			researchRequires="PLASMABOMB-5"
 			researchReqSRes="SR_TL5A"
+			researchDisables="CHROMIUMSYNTH"
 			researchRaces="C"
 		/>
 		<shipequip
@@ -708,19 +773,67 @@
 			level="5"
 			researchRequires="ETANKS2-5"
 			researchReqSRes="SR_TL5A"
+			researchDisables="CARBONEUMSYNTH"
 			researchRaces="B"
 		/>
 		<shipequip
 			subtype="seq_mod"
 			buildProd="480"
 			buildSRes="SR_TL5A"
-			storEn="3840"
+			storEn="7680"
 			operEn="0"
 			slots="1"
 			weight="4"
 		/>
 		<preresearch>We have just found ourselves a new source of fuel.</preresearch>
 		<description>Further augmenting our ability to provide extended flight range comes the use of antimatter particles which, in a very delicate process, can be bombarded with its antiparticle to produce pure energy which can be fed into a starship's propulsion systems, thereby reducing the tax upon our conventional fuel reserves.  This should prove invaluable for missions heading far outside of friendly territory.</description>
+	</technology>
+	<technology id="5434" symbol="BATTLETRACK" name="Battle Tracker">
+		<discovery
+			researchMod="1.00 + 0.50 + 0.50"
+			level="5"
+			researchRequires="STEALTHMOD-5"
+			researchReqSRes="SR_TL5B"
+			researchDisables="PLUTONIUMMORTAR5"
+			researchRaces="H"
+		/>
+		<shipequip
+			subtype="seq_mod"
+			buildProd="960"
+			buildSRes="SR_TL5B"
+			slots="1"
+			weight="-8"
+			signature="-30"
+			missileDef="26"
+			combatAtt="16"
+			combatDef="16"
+			minHull="1"
+			maxInstallations="1"
+		/>
+		<preresearch>Some creative thinking can exploit Plutonium into providing some strange and wondrous effects useful on starships.</preresearch>
+		<description>Brought to you by a mysterious entity amongst the scientific community, this innocuous looking ship module provides numerous effects that encompass the entire ship it is installed upon.  Being powered by a pile of Plutonium dust, this black box amplifies the combat computers onboard the ship significantly, giving a very high increase to attack and defensive computations, including electronic countermeasures against guided weaponry.  Additionally, by accessing the ship's power grid at key points, in parallel to the central control systems, this module can virutally eliminate all scanner signature emitted by the craft under normal circumstances.  Lastly, the strangest effect of all (which the creators absolutely refuse to discuss the workings of), is that not only does the module have no mass of its own, but it actually reduces the ship's mass a slight degree.  A very strange invention indeed, and due to its highly complex nature, only one may be installed on any ship.</description>
+	</technology>
+	<technology id="5435" symbol="BUNKERMOD" name="Bunker Module">
+		<discovery
+			researchMod="1.00 + 0.50"
+			level="5"
+			researchRequires="COLONYMOD2-5"
+			researchReqSRes="SR_TL5C"
+			researchDisables="HUGEHULL5"
+			researchRaces="C"
+		/>
+		<shipequip
+			subtype="seq_struct"
+			buildProd="1440"
+			buildSRes="SR_TL5C"
+			operEn="10"
+			slots="12"
+			weight="30"
+			unpackStruct="BUNKER"
+			minHull="2"
+		/>
+		<preresearch>An innovative solution to limited fuel, by way of Wolframium.</preresearch>
+		<description>This large and bulky module contains a self-sufficient Bunker that can be deployed onto any planet owned by yourself or uninhabited.  A Bunker requires no outside energy, produces enough food for its workforce, serves the functions of space ship refuelling, as well as a proximity scanner as this structure is most likely to be found in sectors rife with combat.  Added to this are basic stargate functions to assist with calling in reinforcements as necessary.  There are no research nor construction facilities within a Bunker, though, so planetary development must stem from other resources.</description>
 	</technology>
 	<technology id="5465" symbol="LIVLARGEHULL5" name="Live Large Hull">
 		<discovery
@@ -834,6 +947,7 @@
 			level="5"
 			researchRequires="COMPCOMDECK5-5"
 			researchReqSRes="SR_TL5C"
+			researchDisables="BUNKERMOD"
 			researchRaces="C"
 		/>
 		<shiphull
@@ -929,6 +1043,55 @@
 		/>
 		<preresearch>Soon we shall be able to double the strength of our fighting ships with just a simple module upgrade.</preresearch>
 	</technology>
+	<technology id="5475" symbol="BIOBRIDGE" name="Biometric Controller">
+		<discovery
+			researchMod="1.00 + 0.50"
+			level="5"
+			researchRequires="LIVCOMDECK5-5"
+			researchReqSRes="SR_TL5B"
+			researchDisables="PLUTONIUMROCKET5"
+			researchRaces="B"
+		/>
+		<shipequip
+			subtype="seq_ctrl"
+			buildProd="120"
+			buildSRes="SR_TL5B"
+			combatAtt="8"
+			combatDef="8"
+			missileDef="8"
+			maxHP="160"
+			slots="6"
+			weight="12"
+			scannerPwr="80"
+			storEn="1536"
+			minHull="1"
+		/>
+		<preresearch>Evolution shall always conquer technology; living proof is here, in the form of a radiophilic insectoid control module suitable for medium and large vessels.</preresearch>
+		<description>Plutonium.  Notoriously unstable, and a well known biological hazard.  No longer.  Our top zoological engineers have managed to coax a strain of DNA extrapolated from relatively unimpressive ants into an immobile symbiant that actually is capable of feeding off Plutonium's alpha radiation, employing the particles into reinforcing its sturdy exoskeleton, which serves as the housing for the commanding officers of the ship.  Not only that, but the cerebral functions of the creature are remarkable, adding a valuable increase in combat accuracy and evasiveness.  Any excess radiation absorbed by the creature is stored in a sac as consumable energy that can be used by our FTL engines.</description>
+	</technology>
+	<technology id="5476" symbol="NUKEFTL" name="Fission FTL Drive">
+		<discovery
+			researchMod="1.00 + 0.50"
+			level="5"
+			researchRequires="FTLENG5C-5"
+			researchReqSRes="SR_TL5B"
+			researchDisables="PWRPLANTPLUTONIUM5"
+			researchRaces="C"
+		/>
+		<shipequip
+			subtype="seq_eng"
+			buildProd="1152"
+			buildSRes="SR_TL5B"
+			storEn="3840"
+			operEn="32"
+			slots="16"
+			weight="16"
+			engPwr="768"
+			signature="0"
+		/>
+		<preresearch>Large-scale propulsion with its own built-in thermonuclear powerplant.  A welcome addition to any menacing warcruiser.</preresearch>
+		<description>Three issues have been observed with advancing ship design.  Increased mass, decreased effective range, and increased cost of assembly.  Dug up from some newly opened mines far off near the Galactic Core, a solution has been provided.  Using the inherently radioactive nature of Plutonium, a reactor has been created to harness this power, and directly integrated to massive FTL thruster assembly, enough to replace four standard FTL engines with a single one of these units.  The direct-power feed has resulted in greater thrust in addition to a larger power reserve.  With this, even our most massive battleships shall have greater range for persuit and conquest available to them.</description>
+	</technology>
 	<technology id="5800" symbol="PLCOND5" name="Planetary Condensation">
 		<discovery
 			researchMod="1.00"
@@ -1008,6 +1171,7 @@
 			level="5"
 			researchRequires="TERRAFORM3-1"
 			researchRaces="B"
+			researchDisables="BIOCOMPLEX"
 			researchReqSRes="SR_TL5C"
 		/>
 		<project
@@ -1018,5 +1182,59 @@
 		/>
 		<preresearch>This project maximize Environment of the planet, but beware of the side effects!</preresearch>
 		<description>This project maximize Environment of the planet, but beware of the side effects!</description>
+	</technology>
+	<technology id="5806" symbol="CHROMIUMSYNTH" name="Chromium Synthesis">
+		<discovery
+			researchMod="1.50 + 0.75"
+			level="5"
+			researchReqSRes="SR_TL5A,SR_TL3A"
+			researchDisables="ANTIMATTERBOMB5"
+			researchRaces="C"
+			maxImprovement="1"
+		/>
+		<project
+			buildProd="48000"
+			buildSRes="SR_TL5A"
+			data="3"
+			finishConstrHandler="finishProjectNF2"
+		/>
+		<preresearch>Antimatter is a very adaptable substance.</preresearch>
+		<description>By employing quark-recombination techniques, we can transmute Antimatter into several units of more useful Chromium.</description>
+	</technology>
+	<technology id="5807" symbol="SILICIUMSYNTH" name="Silicium Synthesis">
+		<discovery
+			researchMod="1.50 + 0.75"
+			level="5"
+			researchReqSRes="SR_TL5A,SR_TL3B"
+			researchDisables="PWRPLANTANTIMATTER5"
+			researchRaces="H"
+			maxImprovement="1"
+		/>
+		<project
+			buildProd="48000"
+			buildSRes="SR_TL5A"
+			data="4"
+			finishConstrHandler="finishProjectNF2"
+		/>
+		<preresearch>Antimatter is a very adaptable substance.</preresearch>
+		<description>By employing quark-recombination techniques, we can transmute Antimatter into several units of more useful Silicium.</description>
+	</technology>
+	<technology id="5808" symbol="CARBONEUMSYNTH" name="Carboneum Synthesis">
+		<discovery
+			researchMod="1.50 + 0.75"
+			level="5"
+			researchReqSRes="SR_TL5A,SR_TL3C"
+			researchDisables="ETANKS5"
+			researchRaces="B"
+			maxImprovement="1"
+		/>
+		<project
+			buildProd="48000"
+			buildSRes="SR_TL5A"
+			data="5"
+			finishConstrHandler="finishProjectNF2"
+		/>
+		<preresearch>Antimatter is a very adaptable substance.</preresearch>
+		<description>By employing quark-recombination techniques, we can transmute Antimatter into several units of more useful Carboneum.</description>
 	</technology>
 </techtree>

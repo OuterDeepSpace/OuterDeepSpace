@@ -36,7 +36,7 @@ stratRes = {
 	0: "None",
 	1: "Uranium",
 	2: "Titanium",
-	3: "Chromum",
+	3: "Chromium",
 	4: "Silicium",
 	5: "Carboneum",
 	6: "Antimatter",

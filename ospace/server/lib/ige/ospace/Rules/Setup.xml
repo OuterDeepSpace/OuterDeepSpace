@@ -238,4 +238,37 @@
 		/>
 		<preresearch>Main pirate base that coordinates actions of pirates. Works like government center for ordinal commanders. So, don't loose it!</preresearch>
 	</technology>
+	<technology id="9011" symbol="BUNKER" name="Bunker">
+		<discovery
+			researchMod="1.00"
+			level="99"
+			researchReqSRes="SR_TL5C"
+	        researchRaces="C"
+			maxImprovement="1"
+		/>
+		<structure
+			subtype="str45"
+			buildProd="3840"
+			buildSRes="SR_TL5C"
+			operWorkers="1000"
+			unpackPop="1000"
+			prodBio="167"
+			prodBioMod="0.0,0.0,0.0,1.0"
+			prodEn="14"
+			prodEnMod="0.0,0.0,0.0,1.0"
+			maxHP="2334"
+			refuelMax="134"
+			refuelInc="7"
+			scannerPwr="67"
+	        fleetSpeedBoost="2.67"
+			prodEnv="-7"
+			combatAtt="11"
+			structWeapons="10,6,4,0,1"
+			finishConstrHandler="finishStructOUTPOST"
+			isMilitary="1"
+			fullInfo="1"
+		/>
+		<preresearch>A structure to aid the war effort.</preresearch>
+		<description>This building provides all the necessities for stoking the fires in the engine of war.  The Wolframium frame and outer wall reinforcements provide adequate protection against planetary assault deep behind enemy lines.  Housed within this armoured shell are fleet refuelling services, as well as a stargate useful in aiding the arrival of additional combat units as needed to ensure total victory.  A tactical scanner is also installed to keep track of enemy movements nearby.  We even managed to install an impressive array of automated defense weaponry, including ten of our best anti-small, six anti-medium, and four anti-large weapon emplacements.  Given the strategic value this installation provides, it is also capable of colonising freshly conquered planets, including its own workforce ready for activation.  All energy needs are met with an internal reactor.  Nutrient requirements are also provided by internal soil decomposition machinery capable of utilising any type of ground available.  No expenses were spared on repair and upgrade equipment, as with this utility available, none should be needed.  Success is ours!</description>
+	</technology>
 </techtree>
