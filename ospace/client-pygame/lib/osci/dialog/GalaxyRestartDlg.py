@@ -80,7 +80,7 @@ class GalaxyRestartDlg:
 		rows -= 1
 
 		ui.Label(self.win, layout = (0, 0, cols, 1), text = _("If you are sure to restart this galaxy, click on Restart button."), align = ui.ALIGN_W)
-		ui.Label(self.win, layout = (0, 1, cols, 1), text = _("You can enter message visible in restart announcement bellow."), align = ui.ALIGN_W)
+		ui.Label(self.win, layout = (0, 1, cols, 1), text = _("You can enter message visible in restart announcement below."), align = ui.ALIGN_W)
 
 		s = ui.Scrollbar(self.win, layout = (cols - 1, 2, 1, rows - 3))
 		t = ui.Text(self.win, layout = (0, 2, cols - 1, rows - 3), id = 'vMsg')
