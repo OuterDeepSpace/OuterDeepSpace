@@ -708,9 +708,9 @@
 			weight="20"
 			weaponDmgMin="687"
 			weaponDmgMax="831"
-			weaponAtt="6"
+			weaponAtt="7"
 			weaponClass="0"
-			weaponROF="0.1"
+			weaponROF="0.2"
 			weaponIgnoreShield="0"
 		/>
 		<preresearch>A theory is brought forth for your consideration.  Is it worth your time to investigate?</preresearch>
