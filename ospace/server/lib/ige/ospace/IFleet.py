@@ -311,6 +311,7 @@ class IFleet(IObject):
 			obj.ships.remove(shipSpec)
 		# misc
 		obj.signature = min(obj.signature, Rules.maxSignature)
+		obj.signature = max(obj.signature,1) #require fleet signature to be at least 1 now that we removed that from a per-ship basis
 		obj.speed = obj.maxSpeed
 		# storage
 		obj.storEn = min(obj.storEn, obj.maxEn)
@@ -438,6 +439,8 @@ class IFleet(IObject):
 			target = tran.db[targetID]
 			if target.type not in (T_SYSTEM, T_WORMHOLE, T_PLANET):
 				raise GameException('Can target wormholes, systems or planets only.')
+			if action == FLACTION_ENTERWORMHOLE and target.type != T_WORMHOLE:
+                                raise GameException('Can only traverse wormholes.')
 			if action == FLACTION_DEPLOY and target.type != T_PLANET:
 				raise GameException('Can build on/colonize planets only.')
 			if len(obj.actions) + 1 > Rules.maxCmdQueueLen:
@@ -587,9 +590,14 @@ class IFleet(IObject):
 					obj.actionIndex += 1
 				else:
 					obj.actionWaitCounter += 1
-					break
+				break #wait should wait, not let move; deindented this to act for completed waits also --RC
 			elif action == FLACTION_MOVE:
 				if self.cmd(obj).moveToTarget(tran, obj, target):
+					# we are there
+					obj.actionIndex += 1
+				break
+			elif action == FLACTION_ENTERWORMHOLE:
+				if self.cmd(obj).moveToWormhole(tran, obj, target):
 					# we are there
 					obj.actionIndex += 1
 				break
@@ -707,7 +715,25 @@ class IFleet(IObject):
 			tech = player.shipDesigns[designID]
 			if designID == actionData:
 				removeShip = 0
+				for deployHandlerID in tech.deployHandlers: #do handlers first so that structures can deploy on new planets
+                                        if not (type(deployHandlerID) in (int,long)): #just a double check...
+                                            continue
+                                        deployHandler = Rules.techs[deployHandlerID]
+                                        if deployHandler.deployHandlerValidator(tran, obj, planet, deployHandler):
+                                               try:
+                                                      deployHandler.deployHandlerFunction(tran, obj, planet, deployHandler)
+                                                      Utils.sendMessage(tran, obj, MSG_COMPLETED_STRUCTURE, (deployMessage,planet.oid), structTech.id)
+                                                      removeShip = 1
+                                               except GameException, e:
+                                                      log.warning('IFleet','Deploy handler error - internal error')
+                                                      Utils.sendMessage(tran, obj, MSG_CANNOTBUILD_SHLOST, planet.oid, None)
+                                        else:
+                                               log.debug('IFleet', 'Deploy handler - validation failed')
+                                               Utils.sendMessage(tran, obj, MSG_CANNOTBUILD_SHLOST, planet.oid, None)
+                                            
 				for structTechID in tech.deployStructs:
+                                        if not (type(structTechID) in (int,long)): #just a double check...
+                                            continue
 					structTech = Rules.techs[structTechID]
 					# validate
 					if structTech.validateConstrHandler(tran, obj, planet, structTech):
@@ -912,6 +938,7 @@ class IFleet(IObject):
 					#@log.debug("IFleet - repairing ship", designID, hp, repairFix, repairPerc)
 					obj.ships[idx][SHIP_IDX_HP] = int(min(
 						spec.maxHP,
+                                                spec.autoRepairMaxHP*spec.maxHP, #added 9/11/06 - RC
 						hp + repairFix + max(1, spec.maxHP * repairPerc),
 					))
 			if shields < spec.shieldHP:
@@ -922,7 +949,29 @@ class IFleet(IObject):
 				))
 			idx += 1
 
-	def moveToTarget(self, tran, obj, targetID):
+	def moveToWormhole(self, tran, obj, targetID):
+		if not self.cmd(obj).moveToTarget(tran, obj, targetID):
+			return 0 #ship hasn't arrived
+		# enter wormhole
+                origin = tran.db[targetID]
+                if origin.type == T_WORMHOLE: #is wormhole, now enter it!
+			destinationWormHole = tran.db[target.destinationOid]
+			destinationWormHole.fleets.append(obj.oid)
+                        log.debug('IFleet', 'Entering Wormhole - destination ', destinationWormHole.oid)
+			obj.orbiting = destinationWormHole.oid
+			obj.x = destinationWormHole.x
+			obj.y = destinationWormHole.y
+			destinationWormHole.scannerPwrs[obj.owner] = max(obj.scannerPwr, destinationWormHole.scannerPwrs.get(obj.owner, 0))
+                        Utils.sendMessage(tran, obj, MSG_ENTERED_WORMHOLE, (origin.name,destinationWormHole.name), structTech.id)
+			arrived = 1
+		else: #is not wormhole...how'd you ever execute this command? Or is there some weird "terraform wormhole" technology we never forsaw?
+                        log.warning('IFleet', 'Cannot enter non-existant wormhole at location ', origin.oid)
+                        Utils.sendMessage(tran, obj, MSG_ENTERED_WORMHOLE, (origin.name,destinationWormHole.name), structTech.id)
+                        arrived = 1 #since the move part was successful, just ignore this problem for the player
+                return arrived
+	
+				
+	def moveToTarget(self, tran, obj, targetID): #added action passthrough for wormhole move...needed
 		# DON'T move fleet with speed == 0
 		if obj.speed <= 0:
 			# they cannot arive (never)
@@ -993,20 +1042,12 @@ class IFleet(IObject):
 				system = tran.db[obj.orbiting]
 				system.fleets.append(obj.oid)
 				arrived = 1
-			elif target.type == T_SYSTEM:
+			elif target.type == T_SYSTEM or target.type == T_WORMHOLE:
 				#@log.debug('IFleet', obj.oid, 'is aproaching orbit of', targetID)
 				obj.orbiting = target.oid
 				system = tran.db[obj.orbiting]
 				system.fleets.append(obj.oid)
 				#@log.debug('IFleet', system.oid, 'system fleets', system.fleets)
-				arrived = 1
-			elif target.type == T_WORMHOLE:
-				destinationWormHole = tran.db[target.destinationOid]
-				destinationWormHole.fleets.append(obj.oid)
-				obj.orbiting = destinationWormHole.oid
-				obj.x = destinationWormHole.x
-				obj.y = destinationWormHole.y
-				system = destinationWormHole
 				arrived = 1
 			else:
 				raise GameException('Unsupported type of target %d for move command.' % target.type)
@@ -1089,7 +1130,7 @@ class IFleet(IObject):
 				#
 				weaponEff = Rules.techImprEff[player.techs.get(weaponID, Rules.techBaseImprovement)]
 				# base attack
-				attack = tech.combatAtt + int(weapon.weaponAtt * weaponEff)
+				attack = (tech.combatAtt + int(weapon.weaponAtt * weaponEff)) * tech.combatAttMultiplier #added multiplier part
 				# correct using ship's level
 				level = Rules.shipExpToLevel.get(int(exp / tech.baseExp), Rules.shipDefLevel)
 				attack = int(attack * Rules.shipLevelEff[level])
@@ -1171,6 +1212,7 @@ class IFleet(IObject):
 			obj.hitMods[cClass] *= Rules.combatShipHitMod
 			#@log.debug(obj.oid, "Increasing hit penalty", obj.hitMods[cClass], obj.maxHits[cClass], "class", cClass)
 		#
+		attack = attack+weapon.weaponAtt
 		attackChance = obj.hitMods[cClass] * attack / (attack + defense)
 		#@log.debug(obj.oid, "Chance to attack", attackChance, obj.hitMods[cClass],
 		#@	 obj.hitCounters[cClass], obj.maxHits[cClass], "without penalty:", float(attack) / (attack + defense))
@@ -1183,6 +1225,10 @@ class IFleet(IObject):
 				blocked = min(shield, dmg)
 				obj.ships[target][2] -= blocked
 				dmg -= blocked
+			elif weapon.weaponIgnoreSheild and ship.hardShield > 0 and shield > 0:
+                                blocked = min(shield, int(dmg*(ship.hardShield))) #hard shields also reduce penetrating weapons
+                                obj.ships[target][2] -= blocked
+                                dmg -= blocked
 			# armour
 			if dmg >= hp:
 				destroyed = 1

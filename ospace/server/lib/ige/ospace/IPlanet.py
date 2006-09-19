@@ -485,6 +485,8 @@ class IPlanet(IObject):
 		if owner:
 			moraleBonus = Rules.moraleProdBonus[int(obj.morale / Rules.moraleProdStep)]
 			prod  = obj.effProdProd = max(0, int(obj.prodProd * (owner.prodEff + moraleBonus)))
+			if (obj.morale > 15 and prod == 0 and obj.prodProd > 0 and owner.prodEff > 0): #added for super-low moral bonus issues
+                            prod  = obj.effProdProd = 1
 		else:
 			prod = obj.prodProd
 		index = 0

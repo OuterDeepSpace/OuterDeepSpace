@@ -257,6 +257,7 @@ class IUniverse(IObject):
 					# skip this galaxy
 					continue
 				# compute votes
+				activePlayerCount = 0
 				sum = 0
 				votes = {}
 				votesID = {}
@@ -270,6 +271,7 @@ class IUniverse(IObject):
 						continue
 					# add to sum
 					log.debug(playerID, "votes for", player.voteFor, "with votes", player.stats.slots)
+					activePlayerCount += 1
 					sum += player.stats.slots
 					if player.voteFor == OID_NONE:
 						voteFor = None
@@ -340,6 +342,11 @@ class IUniverse(IObject):
 						"topic": "EVENT",
 					}
 					self.cmd(galaxy).sendMsg(tran, galaxy, message)
+                                if activePlayerCount <= 1:
+                                        if galaxy.imperator == OID_NONE:
+                                                restartGalaxy2(self,tran,OID_NONE,galaxyID,"The galaxy was ended with no active players.")
+                                        else:
+                                                restartGalaxy2(self,tran,galaxy.imperator,galaxyID,"Message from OSCI Administrator: The galaxy was automatically ended with only one active player.")
 		# collect mailboxes
 		used = [self.cmd(obj).getMailboxName(tran, obj)]
 		for galaxyID in obj.galaxies:
@@ -418,7 +425,7 @@ class IUniverse(IObject):
 
 	canSendMsg.public = 0
 
-	def restartGalaxy(self, tran, obj, galaxyID, imperatorMessage):
+	def restartGalaxy(self, tran, obj, galaxyID, imperatorMessage): #client-initiated restart
 		log.debug("Restarting Galaxy", galaxyID)
 		galaxy = tran.db[galaxyID]
 		if galaxy.imperator == 0 or galaxy.imperator != tran.cid:
@@ -463,6 +470,56 @@ class IUniverse(IObject):
 	restartGalaxy.public = 1
 	restartGalaxy.accLevel = AL_NONE
 
+
+	def restartGalaxy2(self, tran, imperatorOID, galaxyID, imperatorMessage): #server-initiated restart
+		log.debug("Restarting Galaxy", galaxyID)
+		galaxy = tran.db[galaxyID]
+		log.debug("Sending message", imperatorMessage)
+		if imperatorOID == OID_NONE:
+                        message = {
+                                "sender": "Admin",
+                                "senderID": tran.cid,
+                                "forum": "NEWS",
+                                "data": (galaxyID, MSG_GNC_GALAXY_RESTARTED, galaxyID, tran.db[OID_UNIVERSE].turn, ("N/A", galaxy.name, imperatorMessage)),
+                                "topic": "EVENT",
+                        }
+                else:
+                        imperator = tran.db[imperatorOID] 
+                        message = {
+                                "sender": imperator.name,
+                                "senderID": tran.cid,
+                                "forum": "NEWS",
+                                "data": (galaxyID, MSG_GNC_GALAXY_RESTARTED, galaxyID, tran.db[OID_UNIVERSE].turn, (imperator.name, galaxy.name, imperatorMessage)),
+                                "topic": "EVENT",
+                        }
+
+                        
+		self.cmd(galaxy).sendMsg(tran, galaxy, message)
+
+		fh, galaxyFileName = tempfile.mkstemp(text = True)
+		log.debug("Generating new galaxy to temporary file", galaxyFileName)
+		strGalaxyID = 'Circle42P'
+		GenerateGalaxy(strGalaxyID, os.fdopen(fh, "w+b"))
+		oldX = galaxy.x
+		oldY = galaxy.y
+		oldName = galaxy.name
+		log.debug("Deleting galaxy", galaxyID)
+		self.cmd(galaxy).delete(tran, galaxy)
+		log.debug("Creating new galaxy")
+		newGalaxyID = self.createGalaxy(tran, obj)
+		log.debug("Created new galaxy", newGalaxyID)
+		newGalaxy = tran.db[newGalaxyID]
+		log.debug("Loading new ", newGalaxyID)
+		self.cmd(newGalaxy).loadFromXML(tran, newGalaxy, galaxyFileName, strGalaxyID, oldX, oldY, oldName)
+		log.debug("Setup Enviroment", newGalaxyID)
+		self.cmd(newGalaxy).setupEnvironment(tran, newGalaxy)
+		log.debug("Removing temp file", galaxyFileName)
+		os.remove(galaxyFileName)
+		log.debug("Galaxy Restarting END")
+
+
+	restartGalaxy.public = 1
+	restartGalaxy.accLevel = AL_ADMIN
 
 	def createNewGalaxy(self, tran, obj, x, y, galaxyName):
 		log.message("Adding new galaxy '%s' to (%d, %d)" % (galaxyName, x, y))

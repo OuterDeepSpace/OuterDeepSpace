@@ -52,6 +52,7 @@ def makeShipMinSpec(player, name, hullID, eqIDs, improvements,
 	spec.buildSRes = ship.buildSRes
 	spec.weaponIDs = ship.weaponIDs
 	spec.deployStructs = ship.deployStructs
+	spec.deployHandlers = ship.deployHandlers
 	spec.built = 0
 	spec.buildTurns = 1
 	spec.upgradeTo = 0
@@ -60,8 +61,11 @@ def makeShipMinSpec(player, name, hullID, eqIDs, improvements,
 	spec.combatPwr = ship.combatPwr
 	spec.autoRepairFix = ship.autoRepairFix
 	spec.autoRepairPerc = ship.autoRepairPerc
+	spec.autoRepairMaxHP = ship.autoRepairMaxHP
 	spec.shieldRechargeFix = ship.shieldRechargeFix
 	spec.shieldRechargePerc = ship.shieldRechargePerc
+	spec.hardShield = ship.hardShield
+	spec.combatAttMultiplier = ship.combatAttMultiplier
 	return spec
 
 def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True):
@@ -85,27 +89,43 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
 	ship.operEn = hull.operEn
 	ship.storEn = hull.storEn * techEff
 	ship.weight = hull.weight
+	ship.slots = 0
 	ship.signature = hull.signature
 	ship.minSignature = hull.minSignature
-	ship.combatAtt = hull.combatAtt * techEff
-	ship.combatDef = hull.combatDef * techEff
-	ship.missileDef = hull.missileDef * techEff
+	ship.signatureCloak = 1.0                                                #NEW; 100% - this is the default rule
+	ship.signatureDecloak = 1.0                                              #NEW; 100% - this is the default rule
+	ship.combatAttBase = hull.combatAtt * techEff
+	ship.combatAtt = 0
+	ship.combatAttMultiplier = 1.0                                             #NEW; 100% - this is the default rule
+	ship.combatDefBase = hull.combatDef * techEff
+	ship.combatDef = 0
+	ship.combatDefMultiplier = 1.0                                             #NEW; 100% - this is the default rule
+	ship.missileDefBase = hull.missileDef * techEff
+	ship.missileDef = 0
+	ship.missileDefMultiplier = 1.0                                             #NEW; 100% - this is the default rule
 	ship.scannerPwr = max(hull.scannerPwr * techEff, Rules.scannerMinPwr)
+	ship.autoRepairMaxHP = hull.autoRepairMaxHP                                 #New...this had been forgotten
 	ship.autoRepairFix = hull.autoRepairFix
 	ship.autoRepairPerc = hull.autoRepairPerc
 	ship.shieldRechargeFix = hull.shieldRechargeFix
 	ship.shieldRechargePerc = hull.shieldRechargePerc
+	ship.hardShield = 0.0
 	ship.engPwr = 0
-	ship.slots = 0
 	ship.upgradeTo = 0
 	ship.shieldHP = 0
 	ship.maxHP = int(hull.maxHP * techEff)
 	ship.weaponIDs = []
 	ship.deployStructs = []
+	ship.deployHandlers = []
 	ship.isMilitary = 0
 	ship.baseExp = 0
+	combatExtra = 0
 	shieldPerc = 0.0
+	unpactStruct = 0
+	deployHandler = 0
 	# add equipment
+	negslots = {}
+	negweight = {}
 	counter = {}
 	installations = {}
 	for techID in eqIDs:
@@ -118,6 +138,10 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
 			if tech.minHull > ship.combatClass and raiseExs:
 				log.warning("Cannot add tech", techID, tech.name)
 				raise GameException("Minimum hull requirement not satisfied.")
+			# check max hull req                                                                        #NEW
+			if tech.maxHull < ship.combatClass and raiseExs:
+				log.warning("Cannot add tech", techID, tech.name)
+				raise GameException("Maximum hull requirement not satisfied.")
 			# check maximum installations
 			if tech.maxInstallations and installations[tech.id] > tech.maxInstallations \
 				and raiseExs:
@@ -127,37 +151,85 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
 			ship.buildProd += tech.buildProd
 			ship.buildSRes.extend(tech.buildSRes)
 			ship.storEn += tech.storEn * techEff
-			ship.weight += tech.weight
+			if (tech.weight > 0):
+                            ship.weight += tech.weight
+                        else:
+                            negweight[techID] = tech.slots + negweight.get(techID, 0) #this is complex for items with max installs...
+                        if (tech.slots > 0):
+                            ship.slots += tech.slots
+                        else:
+                            negslots[techID] = tech.slots + negslots.get(techID, 0) #this is complex for items with max installs...
 			ship.signature += tech.signature
 			ship.minSignature = max(ship.minSignature, tech.minSignature)
-			ship.combatDef += tech.combatDef * techEff
-			ship.missileDef += tech.missileDef * techEff
-			ship.slots += tech.slots
+			ship.signatureCloak = min(ship.signatureCloak, tech.signatureCloak)
+			ship.signatureDecloak = min(ship.signatureDecloak, tech.signatureDecloak)
+			if tech.subtype == "seq_mod": #not cumulative for equipment; pick best
+                            ship.combatAtt = max(ship.combatAtt, tech.combatAtt * techEff) 
+                            ship.combatDef = max(ship.combatDef, tech.combatDef * techEff)
+                            ship.missileDef = max(ship.missileDef, tech.missileDef * techEff)
+                        else :
+                            ship.combatDefBase += tech.combatDef * techEff
+                            ship.missileDefBase += tech.missileDef * techEff
+                            ship.combatAttBase += tech.combatAtt * techEff
+                        #not cumulative; pick best
+                        ship.combatAttMultiplier = max(ship.combatAttMultiplier, tech.combatAttPerc * techEff)           #NEW
+                        ship.combatDefMultiplier = max(ship.combatDefMultiplier, tech.combatDefPerc * techEff)           #NEW
+                        ship.missileDefMultiplier = max(ship.missileDefMultiplier, tech.missileDefPerc * techEff)        #NEW
+			
 			ship.engPwr += tech.engPwr * techEff
 			ship.maxHP += tech.maxHP * techEff
 			shieldPerc = max(shieldPerc, tech.shieldPerc * techEff)
 			ship.scannerPwr = max(ship.scannerPwr, tech.scannerPwr * techEff)
-			ship.combatAtt += tech.combatAtt * techEff
 			ship.operEn += tech.operEn
 			ship.autoRepairFix = max(ship.autoRepairFix, tech.autoRepairFix * techEff)
 			ship.autoRepairPerc = max(ship.autoRepairPerc, tech.autoRepairPerc * techEff)
+            		if ((ship.autoRepairFix < tech.autoRepairFix) or (ship.autoRepairPerc < tech.autoRepairPerc) and (ship.autoRepairMaxHP < tech.autoRepairMaxHP)):
+                            ship.autoRepairMaxHP = tech.autoRepairMaxHP #grab this ONLY if the tech repairs faster than another tech (prevent abuse through multiple repair systems)
 			ship.shieldRechargeFix = max(ship.shieldRechargeFix, tech.shieldRechargeFix * techEff)
 			ship.shieldRechargePerc = max(ship.shieldRechargePerc, tech.shieldRechargePerc * techEff)
+			ship.hardShield = max(ship.hardShield,tech.hardShield * techEff)
+			combatExtra += tech.addMP
 			# if weapon - register only
 			if tech.subtype == "seq_wpn":
 				ship.weaponIDs.append(techID)
 				ship.isMilitary = 1
 				weapon = Rules.techs[techID]
 				ship.baseExp += (weapon.weaponDmgMin + weapon.weaponDmgMax) / 2 * weapon.weaponROF
+			# deployables
 			if tech.unpackStruct != OID_NONE:
 				ship.deployStructs.append(tech.unpackStruct)
+				unpactStruct = 1
+              		if tech.deployHandlerID != '': #this calls another tech at execute time, so only need the ID
+                                ship.deployHandlers.append(tech.deployHandlerID)
+                                deployHandler = 1
+                        
+	#fix limiter based attibs; round when needed
+	currentNegWeight = 0
+	for negtech in negweight:
+            currentNegWeight = min(currentNegWeight,negweight[negtech])
+	currentNegSlots = 0
+	for negtech in negslots:
+            currentNegSlots = min(currentNegSlots,negslots[negtech])
+	ship.weight = max(ship.weight+currentNegWeight,int(hull.weight/2))
+	ship.slots = max(ship.slots+currentNegSlots,1)
+        ship.combatAtt += ship.combatAttBase
+        ship.combatDef = int((ship.combatDef + ship.combatDefBase) * ship.combatDefMultiplier)
+        ship.missileDef = int((ship.missileDef + ship.missileDefBase) * ship.missileDefMultiplier)
+        ship.hardShield = min(1.0,ship.hardShield) #don't allow this to be more than 100% blocking!!
+        #calculate final signature
+        ship.signature *= ship.signatureCloak * ship.signatureDecloak
+        #fix autorepair MaxHP / if nothing set autoRepairMaxHP, assume 100%; this is for legacy technologies
+        if ship.autoRepairMaxHP==0.0:
+            ship.autoRepairMaxHP = 1.0
 	# check various conditions
+#	if unpactStruct and deployHandler and raiseExs: #we don't 'need' this, so I'm leaving it disabled for now; however, we might 'want' it to prevent abuse --RC
+#                raise GameException("Cannot have both a deployable structure and a deployable project on the same ship") 
 	if counter.get("seq_ctrl", 0) == 0 and raiseExs:
 		raise GameException("No control module in the ship.")
 	if counter.get("seq_ctrl", 0) > 1 and raiseExs:
 		raise GameException("Only one control module in the ship allowed.")
 	if ship.slots > hull.slots and raiseExs:
-		raise GameException("Hull does not have so many slots to hold all equipment.")
+		raise GameException("Hull does not have enough slots to hold specified equipment.")
 	if ship.weight > hull.maxWeight and raiseExs:
 		raise GameException("Ship is too heavy.")
 	# compute secondary paramaters
@@ -200,15 +272,18 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
 	refDefence = 10.0
 	refAttack = 10.0
 	refDmg = 10.0
+	refSpeed = 5.0 #average speed of medium and large hulls
 	for weaponID in ship.weaponIDs:
 		weapon = Rules.techs[weaponID]
 		dmg = (weapon.weaponDmgMin + weapon.weaponDmgMax) / 2 * weapon.weaponROF
-		att = ship.combatAtt + weapon.weaponAtt
-		attackPwr += (att / float(att + refDefence) * dmg)
+		att = int((ship.combatAtt + weapon.weaponAtt) * ship.combatAttMultiplier) #added combat multiplier
+#		attackPwr += (att / float(att + refDefence) * dmg)
+		attackPwr += (att / float(att + refDefence) * dmg) / (max(1,weapon.weaponClass-1)) #9/11/06 - RC; reduce power of bombs and torps in calculation
 	# defence
-	ship.combatPwr = int(attackPwr * (ship.maxHP + ship.shieldHP) / (refAttack / (refAttack + ship.combatDef) * refDmg))
+#	ship.combatPwr = int(attackPwr * (ship.maxHP + ship.shieldHP) / (refAttack / (refAttack + ship.combatDef) * refDmg)) 
+	ship.combatPwr = int(attackPwr * (ship.maxHP + ship.shieldHP) / (refAttack / (refAttack + ship.combatDef) * refDmg) * min(1.33,max(0.5,(ship.speed / refSpeed))) + combatExtra)  #9/11/06 - RC; average speed ships get most weight)
 	# fix signature
-	ship.signature = max(1, ship.signature, ship.minSignature)
+	ship.signature = max(hull.minSignature, ship.signature, ship.minSignature) #removed 1 as min signature; use hulls to control that from now on; change Fleet controls to make min signature for fleet rather than ship so that we can have human stealth craft! :)
 	#
 	return ship
 

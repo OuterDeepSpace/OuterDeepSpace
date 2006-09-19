@@ -87,6 +87,10 @@ MSG_GAINED_FAME = 1031 # pirate gained fame
 MSG_LOST_FAME = 1032 # pirate lost some fame
 MSG_GAINED_TECH = 1033 # pirate gained technology
 MSG_EXTRACTED_ANTIMATTER_SYNTH = 1034 # Antimatter Synthesis success
+MSG_ENTERED_WORMHOLE = 1035 # Wormhole Entered
+MSG_NOT_ENTERED_WORMHOLE = 1036 # Failed to enter wormhole on enter wormhole command
+MSG_FOUND_WORMHOLE = 1037 #todo
+MSG_DELOY_HANDLER = 1038
 
 MSG_GNC_EMR_FORECAST = 2000 # Electromagnetic radiation (EMR) forecast
 MSG_GNC_EMR_CURRENT_LVL = 2001 # Curren level of EMR
@@ -149,6 +153,7 @@ FLACTION_REDIRECT = 1003
 FLACTION_REFUEL = 1004
 FLACTION_REPEATFROM = 1005
 FLACTION_WAIT = 1006
+FLACTION_ENTERWORMHOLE = 1007
 
 ## ship attributes
 SHIP_IDX_DESIGNID = 0

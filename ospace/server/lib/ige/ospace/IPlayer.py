@@ -374,7 +374,7 @@ class IPlayer(IObject):
 			active ships using this design."""
 		# check design ID
 		if designID not in obj.shipDesigns:
-			raise GameException("No such desing.")
+			raise GameException("No such design.")
 		# delete ships
 		for fleetID in obj.fleets[:]: # make copy, fleet can be deleted
 			fleet = tran.db[fleetID]
@@ -394,6 +394,11 @@ class IPlayer(IObject):
 
 	scrapShipDesign.public = 1
 	scrapShipDesign.accLevel = AL_OWNER
+
+        def getShipDesign(self,tran,obj,designID):
+            if designID not in obj.shipDesigns:
+                raise GameException("No such design.")
+            return obj.shipDesigns[designID]
 
 	def upgradeShipDesign(self, tran, obj, oldDesignID, newDesignID):
 		# check designs ID
