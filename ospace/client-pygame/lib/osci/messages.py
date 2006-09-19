@@ -123,6 +123,7 @@ addMsg(MSG_CANNOTBUILD_NOSLOT, N_('Cannot build on planet - no free slot.'), sev
 addMsg(MSG_WASTED_PRODPTS, N_('Construction problem: no task\n\n%(1)d construction points was not used because there was no task to fulfill.'), (int,), severity = INFO)
 addMsg(MSG_LOST_PLANET, N_('Planet lost.'), severity = CRI)
 addMsg(MSG_COMPLETED_STRUCTURE, N_('Structure completed: %(1)s'), (techID2Name,), MIN)
+addMsg(MSG_DELOY_HANDLER, N_('A deployment of "%(1)s" was completed on $(2)s'), (unicode,objID2Name), MIN)
 addMsg(MSG_COMPLETED_SHIP, N_('Ship completed: %(1)s'), (techID2Name,), MIN)
 addMsg(MSG_GAINED_PLANET, N_('New planet.'), severity = CRI)
 addMsg(MSG_COMBAT_RESULTS, N_('Combat with: %(4)s. HP lost: we %(1)d, they %(2)d.\n\nEnemy lost %(2)d HP, we lost %(1)d HP and %(3)d ships/structures. We attacked/were attacked by %(4)s.'), (int, int, int, objIDList2Names), MAJ)
@@ -149,6 +150,9 @@ addMsg(MSG_DAMAGE_BY_SG, N_('Malfunctional Star Gate, lost %(1)d %% HP\n\nOur fl
 addMsg(MSG_GAINED_FAME, N_('Gained %(1)d fame.'), severity = INFO)
 addMsg(MSG_LOST_FAME, N_('Lost %(1)d fame.'), severity = CRI)
 addMsg(MSG_GAINED_TECH, N_('Gained %(1)s technology at sublevel %(2)d.'), (techID2Name, int), severity = INFO)
+addMsg(MSG_ENTERED_WORMHOLE, N_('Your fleet entered wormhole at %(1)s and exited at %(2)s.'), (unicode,unicode), MIN)
+addMsg(MSG_NOT_ENTERED_WORMHOLE, N_('Cannot enter wormhole - ship may be lost.'), severity = MIN)
+addMsg(MSG_FOUND_WORMHOLE, N_('You have located a wormhole'), severity = MIN) #todo
 
 # GNC
 addMsg(MSG_GNC_EMR_FORECAST, N_("EMR Forecast\n\nLevel of the electromagnetic radiation is believed to be about %(1)d %% of the average level for the next %(2)s turns"), (float2percent, res.formatTime), severity = MIN)
