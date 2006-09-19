@@ -175,7 +175,7 @@ class StarSystemDlg:
 				for task in planet.prodQueue:
 					if not task.isShip and self.planetID == task.targetID and task.demolishStruct == 0:
 						tech = client.getFullTechInfo(task.techID)
-						if tech.isStructure:
+           					if tech.isStructure:
 							for i in range(0, task.quantity):
 								self.appendTechIcon(index, planet, task, items, False, False)
 								index += 1
@@ -192,7 +192,8 @@ class StarSystemDlg:
 							if not aTask.isShip and self.planetID == aTask.targetID and aTask.demolishStruct == 0:
 								aTech = client.getFullTechInfo(aTask.techID)
 								if aTech.isStructure:
-									for i in range(0, aTask.quantity):
+                                                                        taskQuantity = min(aTask.quantity,30) #30 is max displayable slots, including the line that "shouldn't be used" - fixes breakage of accidental million-slot build command!
+									for i in range(0, taskQuantity):
 										self.appendTechIcon(index, planet, aTask, items, False, False)
 										index += 1
 

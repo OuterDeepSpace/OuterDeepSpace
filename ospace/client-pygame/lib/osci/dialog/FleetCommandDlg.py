@@ -14,17 +14,18 @@
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-#  along with IGE - Outer Space; if not, write to the Free Software
+#  along with IGE - Outer Space; if not, write to the Free Software 
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
 import pygameui as ui
 from osci.StarMapWidget import StarMapWidget
 from ige.ospace import Rules
-from osci import gdata, res, client
+from osci import gdata, res, client, sequip
 from ige.ospace.Const import *
 import ige
 import math
+import string
 
 class FleetCommandDlg:
 
@@ -74,6 +75,7 @@ class FleetCommandDlg:
 		self.win.vWaitBtn.pressed =  self.command == FLACTION_WAIT
 		self.win.vRefuelBtn.pressed =  self.command == FLACTION_REFUEL
 		self.win.vRepeatBtn.pressed =  self.command == FLACTION_REPEATFROM
+		self.win.vWormholeBtn.pressed =  self.command == FLACTION_ENTERWORMHOLE
 		# hide/show widgets
 		for widget in self.win.widgets:
 			if widget.tags and self.command in widget.tags:
@@ -83,7 +85,7 @@ class FleetCommandDlg:
 		# target
 		if self.targetID == OID_NONE:
 			info = _('No target selected')
-		elif self.command in (FLACTION_MOVE, FLACTION_REFUEL):
+		elif self.command in (FLACTION_MOVE, FLACTION_REFUEL, FLACTION_ENTERWORMHOLE):
 			target = client.get(self.targetID, noUpdate = 1)
 			info = getattr(target, 'name', res.getUnknownName())
 		elif self.command == FLACTION_DEPLOY:
@@ -147,10 +149,12 @@ class FleetCommandDlg:
 		fleet = client.get(self.fleetDlg.fleetID, noUpdate = 1)
 		self.deplShips = []
 		# collect buildings
-		for designID, hp, shield, exp in fleet.ships:
+                for designID, a, b, c in fleet.ships: #fixed bug in reference of designID...added a, b, c to do it; breaks list lookup otherwise (not sure why) with hash error --RC
 			tech = client.getPlayer().shipDesigns[designID]
 			if tech.deployStructs:
 				self.deplShips.append(designID)
+			elif tech.deployHandlers:
+                                self.deplShips.append(designID)
 		# correct buildingIndex
 		if self.deplShipIndex >= len(self.deplShips):
 			self.deplShipIndex = 0
@@ -194,6 +198,15 @@ class FleetCommandDlg:
 		if self.command in (FLACTION_MOVE, FLACTION_REFUEL):
 			if self.targetID == OID_NONE:
 				self.win.setStatus(_('Select target, please.'))
+				return
+			commandData = None
+		elif self.command == FLACTION_ENTERWORMHOLE:
+                        if self.targetID == OID_NONE:
+				self.win.setStatus(_('Select target, please.'))
+				return
+			target = client.get(self.targetID, noUpdate = 1)
+			if target.type != T_WORMHOLE:
+				self.win.setStatus(_('Can only traverse wormholes.'))
 				return
 			commandData = None
 		elif self.command == FLACTION_DECLAREWAR:
@@ -276,14 +289,16 @@ class FleetCommandDlg:
 			id = 'vAttackBtn', action = 'onSelectCommand', data = FLACTION_DECLAREWAR)
 		ui.Button(self.win, layout = (25, 25, 5, 1), text = _('Repeat'), toggle = 1,
 			id = 'vRepeatBtn', action = 'onSelectCommand', data = FLACTION_REPEATFROM)
+		ui.Button(self.win, layout = (30, 25, 5, 1), text = _('Use Wormhole'), toggle = 1,
+			id = 'vWormholeBtn', action = 'onSelectCommand', data = FLACTION_ENTERWORMHOLE)
 		# Target indicator
 		ui.Label(self.win, layout = (0, 26, 5, 1), text = _('Target'),
-			align = ui.ALIGN_W, tags = [FLACTION_MOVE, FLACTION_DEPLOY, FLACTION_REFUEL])
+			align = ui.ALIGN_W, tags = [FLACTION_MOVE, FLACTION_DEPLOY, FLACTION_REFUEL, FLACTION_ENTERWORMHOLE])
 		ui.Label(self.win, layout = (0, 26, 5, 1), text = _('At commander'),
 			align = ui.ALIGN_W, tags = [FLACTION_DECLAREWAR])
 		ui.Label(self.win, layout = (5, 26, 10, 1), id = 'vTarget',
 			align = ui.ALIGN_E, tags = [FLACTION_MOVE, FLACTION_DEPLOY,
-			FLACTION_DECLAREWAR, FLACTION_REFUEL])
+			FLACTION_DECLAREWAR, FLACTION_REFUEL, FLACTION_ENTERWORMHOLE])
 		# Delay indicator
 		ui.Label(self.win, layout = (0, 26, 5, 1), text = _('Turns'),
 			align = ui.ALIGN_W, tags = [FLACTION_WAIT])
