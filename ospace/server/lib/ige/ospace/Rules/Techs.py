@@ -41,7 +41,7 @@ attrs = {
 	'isShipHull' : 0,
 	'isStarting' : 0,
 	"subtype": "techSubtype",
-	"level": 0,
+	"level": 0, #not implemented
 	"maxImprovement": 5, #Rules.techMaxImprovement,
 	"isMilitary": 0,
 	# construction costs & conditions
@@ -86,12 +86,21 @@ attrs = {
 	"fleetSpeedBoost": 0.0, # speed boost for stargates
 	"fullInfo": 0, # if True, show full tech info even player not own tech
 	# ship equipment
+        "addMP" : 0, #for extra MP to be added to ship equipment
 	'combatClass' : 0,
-	'combatAtt': 0,
-	'combatDef': 0,
-	"missileDef": 0,
+	'combatAtt': 0, #not cumulative for equipment; cumulative for hull, drives, cockpits, etc
+	'combatDef': 0, #not cumulative for equipment; cumulative for hull, drives, cockpits, etc
+	"missileDef": 0, #not cumulative for equipment; cumulative for hull, drives, cockpits, etc
+        "combatAttPerc": 1.0, #multiplier of ATT; min of 100%; not cumulative
+        "combatDefPerc": 1.0, #multiplier of DEF; min of 100%; not cumulative
+        "missileDefPerc": 1.0, #multiplier of missile DEF; min of 100%; not cumulative
 	'unpackStruct': '',
-	'signature': 0,
+        'deployHandlerID' : '', #technology ID of tech to find deployHandlerFunction & deployHandlerValidator (this can be the deployable device OR a project)
+        'deployHandlerFunction' : '', #function name of TechHandler
+        'deployHandlerValidator' : '', #function name of TechHandler Validator
+	'signature': 0, #cumulative
+        'signatureCloak': 1.0, #max of 1.0 is effective; not cumulative
+        'signatureDecloak': 1.0, #min of 1.0 is effective; not cumulative
 	"minSignature": 0,
 	"slots": 0,
 	"weight": 0,
@@ -99,12 +108,14 @@ attrs = {
 	"engPwr": 0,
 	"shieldPerc": 0.0, # how many percent of maxHP have shields
 	"minHull": 0,
+        "maxHull": 10, #just make this higher than the largest hull so we know it doesn't break anything
 	"maxInstallations": 0,
 	"shieldRechargeFix": 0, # fixed amount of HP/turn to recharge
 	"shieldRechargePerc": 0.0, # how many percent of shieldHP/turn is recharged
+        "hardShield": 0.0, #shield penetrating weapons will penetrate at 100%; use as 1-hardShield for penentration level (hardShield percent = %damage absorbed by shield)
 	"autoRepairFix": 0, # fixed amount of HP/turn to repair
 	"autoRepairPerc": 0.0, # how many percent of maxHP/turn is repaired
-	"autoRepairMaxHP": 1.0, # default is 100%
+	"autoRepairMaxHP": 0.0, # default is 100% in the engine, but leave at 0% here for proper calculation; out of total ship HPs
 	# weapons
 	'weaponDmgMin': 0,
 	'weaponDmgMax': 0,
