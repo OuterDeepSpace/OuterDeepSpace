@@ -37,6 +37,7 @@ class Select(table.Table):
         table.Table.add(self,self.top_arrow) #,hexpand=1,vexpand=1) #,1,0)
         
         self.options = table.Table() #style={'border':3})
+        self.options_first = None
         
         self.options.tr()
         self.spacer_top = basic.Spacer(0,0)
@@ -51,9 +52,9 @@ class Select(table.Table):
         self.options.add(self.spacer_bottom)
 
         
-        self.options.connect(BLUR,self.options.close,None)
-        self.spacer_top.connect(CLICK,self.options.close,None)
-        self.spacer_bottom.connect(CLICK,self.options.close,None)
+        self.options.connect(BLUR,self._close,None)
+        self.spacer_top.connect(CLICK,self._close,None)
+        self.spacer_bottom.connect(CLICK,self._close,None)
         
         self.values = []
         self.value = value
@@ -75,7 +76,7 @@ class Select(table.Table):
         
         self.spacer_top.style.width, self.spacer_top.style.height = w,h
         self.spacer_bottom.style.width, self.spacer_bottom.style.height = w,h
-        self._options.style.width = w - 2 #HACK, this depends on the theme, really...
+        self._options.style.width = w
         #HACK: sort of, but not a big one..
         self._options.resize()
         
@@ -107,6 +108,15 @@ class Select(table.Table):
         opts.rect.w, opts.rect.h = opts.resize()
             
         self.container.open(opts,self.rect.x,dy)
+        self.options_first.focus()
+        
+    def _close(self,value):
+#         print 'my close!'
+        self.options.close()
+        self.top_selected.focus()
+#         self.blur()
+#         self.focus()
+#         print self.container.myfocus == self
     
     def _setvalue(self,value):
         self.value = value._value
@@ -117,8 +127,10 @@ class Select(table.Table):
             pass
         #    #self._resize()
         
-        self.options.close()
-        self.repaint() #this will happen anyways
+        self._close(None)
+        #self.repaint() #this will happen anyways
+        
+    
     
     def __setattr__(self,k,v):
         mywidget = None
@@ -166,6 +178,9 @@ class Select(table.Table):
         
         self._options.tr()
         self._options.add(b) #,align=-1)
+        
+        if self.options_first == None:
+            self.options_first = b
         #self._options.td(b, align=-1, cls=self.cls+".option")
         #self._options.td(_List_Item(w,value=value),align=-1)
         

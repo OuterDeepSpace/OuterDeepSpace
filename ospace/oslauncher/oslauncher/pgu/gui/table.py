@@ -3,7 +3,6 @@
 from const import *
 import container
 
-
 class Table(container.Container):
     """A table style container.
     
@@ -264,8 +263,8 @@ class Table(container.Container):
                     widget.rect.x = x
                     widget.rect.y = y
                     if 1 and (w,h) != (widget.rect.w,widget.rect.h):
-                        #if h > 50:
-                        #    print widget.widget.__class__.__name__, (widget.rect.w,widget.rect.h),'=>',(w,h)
+#                         if h > 20:
+#                             print widget.widget.__class__.__name__, (widget.rect.w,widget.rect.h),'=>',(w,h)
                         widget.rect.w, widget.rect.h = widget.resize(w, h)
                     
                     #print self._rows[row][cell]["widget"].rect

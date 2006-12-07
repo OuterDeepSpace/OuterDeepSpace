@@ -64,6 +64,7 @@ class _High:
                 self._list.insert(n,_Score(score,name,data))
                 self._list = self._list[0:self.limit]
                 return n
+            n += 1
         if len(self._list) < self.limit:
             self._list.append(_Score(score,name,data))
             return len(self._list)-1
@@ -79,6 +80,7 @@ class _High:
         for e in self._list:
             if score > e.score:
                 return n
+            n += 1
         if len(self._list) < self.limit:
             return len(self._list)
         

@@ -18,7 +18,7 @@ from form import Form
 from group import Group
 
 from basic import Spacer, Color, Label, Image
-from button import Icon, Button, Switch, Checkbox, Radio, Tool 
+from button import Icon, Button, Switch, Checkbox, Radio, Tool, Link
 from input import Input, Password
 from keysym import Keysym
 from slider import VSlider, HSlider, VScrollBar, HScrollBar

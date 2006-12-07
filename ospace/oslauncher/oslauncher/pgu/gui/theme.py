@@ -71,22 +71,37 @@ class Theme:
         if not os.path.isdir(dname): 
             raise 'could not find theme '+name
             
-        fname = os.path.join(dname, "config.txt")
-        try:
-            f = open(fname)
-            for line in f.readlines():
-                vals = line.strip().split()
-                if len(vals) < 3: continue
-                cls = vals[0]
-                del vals[0]
-                pcls = ""
+        fname = os.path.join(dname,"config.txt")
+        if os.path.isfile(fname):
+            try:
+                f = open(fname)
+                for line in f.readlines():
+                    vals = line.strip().split()
+                    if len(vals) < 3: continue
+                    cls = vals[0]
+                    del vals[0]
+                    pcls = ""
+                    if cls.find(":")>=0:
+                        cls,pcls = cls.split(":")
+                    attr = vals[0]
+                    del vals[0]
+                    self.config[cls+":"+pcls+" "+attr] = (dname, vals)
+            finally:
+                f.close()
+        fname = os.path.join(dname,"style.ini")
+        if os.path.isfile(fname):
+            import ConfigParser
+            cfg = ConfigParser.ConfigParser()
+            f = open(fname,'r')
+            cfg.readfp(f)
+            for section in cfg.sections():
+                cls = section
+                pcls = ''
                 if cls.find(":")>=0:
                     cls,pcls = cls.split(":")
-                attr = vals[0]
-                del vals[0]
-                self.config[cls+":"+pcls+" "+attr] = (dname, vals)
-        finally:
-            f.close()
+                for attr in cfg.options(section):
+                    vals = cfg.get(section,attr).strip().split()
+                    self.config[cls+':'+pcls+' '+attr] = (dname,vals)
     
     is_image = re.compile('\.(gif|jpg|bmp|png|tga)$', re.I)
     def _get(self,key):
@@ -159,7 +174,6 @@ class Theme:
         
     def box(self,w,s):
         style = w.style
-        style.cache(1)
         
         c = (0,0,0)
         if style.border_color != 0: c = style.border_color
@@ -170,18 +184,15 @@ class Theme:
         s.fill(c,(0,0,style.border_left,h))
         s.fill(c,(w-style.border_right,0,style.border_right,h))
         
-        style.cache(0)
         
     def getspacing(self,w):
         # return the top, right, bottom, left spacing around the widget
         if not hasattr(w,'_spacing'): #HACK: assume spacing doesn't change re pcls
             s = w.style
-            s.cache(1)
             xt = s.margin_top+s.border_top+s.padding_top
             xr = s.padding_right+s.border_right+s.margin_right
             xb = s.padding_bottom+s.border_bottom+s.margin_bottom
             xl = s.margin_left+s.border_left+s.padding_left
-            s.cache(0)
             w._spacing = xt,xr,xb,xl
         return w._spacing
 
@@ -194,11 +205,9 @@ class Theme:
             
             s = w.style
             
-            s.cache(1)
             pt,pr,pb,pl = s.padding_top,s.padding_right,s.padding_bottom,s.padding_left
             bt,br,bb,bl = s.border_top,s.border_right,s.border_bottom,s.border_left
             mt,mr,mb,ml = s.margin_top,s.margin_right,s.margin_bottom,s.margin_left
-            s.cache(0)
             
             xt = pt+bt+mt
             xr = pr+br+mr
@@ -250,11 +259,25 @@ class Theme:
         
     def paint(self,w,m):
         def func(s):
+#             if w.disabled:
+#                 if not hasattr(w,'_disabled_bkgr'):
+#                     w._disabled_bkgr = s.convert()
+#                 orig = s
+#                 s = w._disabled_bkgr.convert()
+
+#             if not hasattr(w,'_theme_paint_bkgr'):
+#                 w._theme_paint_bkgr = s.convert()
+#             else:
+#                 s.blit(w._theme_paint_bkgr,(0,0))
+#             
+#             if w.disabled:
+#                 orig = s
+#                 s = w._theme_paint_bkgr.convert()
+
             if w.disabled:
                 orig = s
-                s = pygame.Surface((s.get_width(),s.get_height()),0,s)
-                s.blit(orig,(0,0))
-            
+                s = orig.copy()
+                
             if hasattr(w,'background'):
                 w.background.paint(surface.subsurface(s,w._rect_border))
             self.box(w,surface.subsurface(s,w._rect_border))
@@ -263,8 +286,13 @@ class Theme:
             if w.disabled:
                 s.set_alpha(128)
                 orig.blit(s,(0,0))
-                
             
+#             if w.disabled:
+#                 orig.blit(w._disabled_bkgr,(0,0))
+#                 s.set_alpha(128)
+#                 orig.blit(s,(0,0))
+            
+            w._painted = True
             return r
         return func
     
@@ -387,7 +415,7 @@ class Theme:
         s.blit(box,dest,src)
         
         s.set_clip(pygame.Rect(x+ww,yy-hh,w-ww*3,hh))
-        src.x,src.y,dest.y = ww,hh*2,y+h-hh
+        src.x,src.y,dest.y = ww,hh*2,yy-hh
         for dest.x in xrange(x+ww,xx-ww*2,ww): s.blit(box,dest,src)
         dest.x = xx-ww*2
         s.set_clip(pygame.Rect(x+ww,yy-hh,w-ww*2,hh))
@@ -401,7 +429,7 @@ class Theme:
         s.blit(box,dest,src)
     
         s.set_clip(pygame.Rect(xx-ww,y+hh,xx,h-hh*3))
-        src.y,src.x,dest.x=hh,ww*2,x+w-ww
+        src.y,src.x,dest.x=hh,ww*2,xx-ww
         for dest.y in xrange(y+hh,yy-hh*2,hh): s.blit(box,dest,src)
         dest.y = yy-hh*2
         s.set_clip(pygame.Rect(xx-ww,y+hh,xx,h-hh*2))
@@ -411,13 +439,13 @@ class Theme:
         src.x,src.y,dest.x,dest.y = 0,0,x,y
         s.blit(box,dest,src)
         
-        src.x,src.y,dest.x,dest.y = ww*2,0,x+w-ww,y
+        src.x,src.y,dest.x,dest.y = ww*2,0,xx-ww,y
         s.blit(box,dest,src)
         
-        src.x,src.y,dest.x,dest.y = 0,hh*2,x,y+h-hh
+        src.x,src.y,dest.x,dest.y = 0,hh*2,x,yy-hh
         s.blit(box,dest,src)
         
-        src.x,src.y,dest.x,dest.y = ww*2,hh*2,x+w-ww,y+h-hh
+        src.x,src.y,dest.x,dest.y = ww*2,hh*2,xx-ww,yy-hh
         s.blit(box,dest,src)
 
         

@@ -39,15 +39,18 @@ class Keysym(widget.Widget):
         #self.rect.h=h+self.style.padding_top+self.style.padding_bottom
     
     def event(self,e):
+        used = None
         if e.type == FOCUS or e.type == BLUR: self.repaint()
         elif e.type == KEYDOWN:
             if e.key != K_TAB:
                 self.value = e.key
                 self.repaint()
                 self.send(CHANGE)
+                used = True
             self.next()
         self.pcls = ""
         if self.container.myfocus is self: self.pcls = "focus"
+        return used
     
     def paint(self,s):
         r = pygame.rect.Rect(0,0,self.rect.w,self.rect.h)

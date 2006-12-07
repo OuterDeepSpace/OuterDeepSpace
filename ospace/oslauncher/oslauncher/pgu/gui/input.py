@@ -32,7 +32,8 @@ class Input(widget.Widget):
         self.vpos = 0
         self.font = self.style.font
         w,h = self.font.size("e"*size)
-        self.style.width,self.style.height = w,h
+        self.style.height = max(self.style.height,h)
+        self.style.width = max(self.style.width,w)
         #self.rect.w=w+self.style.padding_left+self.style.padding_right;
         #self.rect.h=h+self.style.padding_top+self.style.padding_bottom;
     
@@ -61,6 +62,7 @@ class Input(widget.Widget):
         self.send(CHANGE)
     
     def event(self,e):
+        used = None
         if e.type == KEYDOWN:    
             if e.key == K_BACKSPACE:
                 if self.pos:
@@ -75,12 +77,14 @@ class Input(widget.Widget):
                 self.pos = len(self.value)
             elif e.key == K_LEFT:
                 if self.pos > 0: self.pos -= 1
+                used = True
             elif e.key == K_RIGHT:
                 if self.pos < len(self.value): self.pos += 1
+                used = True
             elif e.key == K_RETURN:
                 self.next()
             elif e.key == K_TAB:
-                self.next()    
+                pass
             else:
                 #c = str(e.unicode)
                 c = (e.unicode).encode('latin-1')
@@ -95,6 +99,8 @@ class Input(widget.Widget):
         
         self.pcls = ""
         if self.container.myfocus is self: self.pcls = "focus"
+        
+        return used
     
     def __setattr__(self,k,v):
         if k == 'value':

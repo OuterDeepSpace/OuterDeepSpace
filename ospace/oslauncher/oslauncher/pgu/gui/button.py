@@ -18,18 +18,17 @@ class _button(widget.Widget):
         elif e.type == FOCUS: self.repaint()
         elif e.type == BLUR: self.repaint()
         elif e.type == KEYDOWN:
-            if e.key == K_SPACE:
+            if e.key == K_SPACE or e.key == K_RETURN:
                 self.state = 1
                 self.repaint()
-            elif e.key == K_TAB:
-                self.next()
         elif e.type == MOUSEBUTTONDOWN: 
             self.state = 1
             self.repaint()
         elif e.type == KEYUP:
-            if self.state == 1: 
-                sub = pygame.event.Event(CLICK,{})
-                self.send(sub.type,sub)
+            if self.state == 1:
+                sub = pygame.event.Event(CLICK,{'pos':(0,0),'button':1})
+                #self.send(sub.type,sub)
+                self._event(sub)
             
             self.state = 0
             self.repaint()
@@ -96,6 +95,7 @@ class Button(_button):
 #         self.value._resize(self.rect.w-(xl+xr),self.rect.h-(xt+xb))
 #     
     def paint(self,s):
+        self.value.pcls = self.pcls
         self.value.paint(surface.subsurface(s,self.value.rect))
 
 class Switch(_button):
@@ -308,9 +308,8 @@ class Icon(_button):
     """TODO - might be deprecated
     """
     def __init__(self,cls,**params):
+        params['cls'] = cls
         _button.__init__(self,**params)
-        self.cls = cls
-        self.pcls = ""        
         s = self.style.image
         self.style.width = s.get_width()
         self.style.height = s.get_height()
@@ -321,3 +320,32 @@ class Icon(_button):
         #if self.state == 0 and hasattr(self.container,'myhover') and self.container.myhover is self: self.pcls = "hover"
         #if self.state == 1 and hasattr(self.container,'myhover') and self.container.myhover is self: self.pcls = "down"
         s.blit(self.style.image,(0,0))
+
+class Link(_button):
+    """A link, links can be clicked, they are usually used to set up callbacks.  
+    Basically the same as the button widget, just text only with a different cls.  Made for
+    convenience.
+    
+    <pre>Link(value=None)</pre>
+    
+    <dl>
+    <dt>value<dd>a string
+    </dl>
+    
+    <strong>Example</strong>
+    <code>
+    w = gui.Link("Click Me")
+    w.connect(gui.CLICK,fnc,value)
+    </code>
+    """
+    def __init__(self,value,**params):
+        params.setdefault('focusable',True)
+        params.setdefault('cls','link')
+        _button.__init__(self,**params)
+        self.value = value
+        self.font = self.style.font
+        self.style.width, self.style.height = self.font.size(self.value)
+    
+    def paint(self,s):
+        s.blit(self.font.render(self.value, 1, self.style.color),(0,0))
+

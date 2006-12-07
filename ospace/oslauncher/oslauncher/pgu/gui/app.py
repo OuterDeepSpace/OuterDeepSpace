@@ -96,6 +96,8 @@ class App(container.Container):
         
         for w in self.windows:
             w.rect.w,w.rect.h = w.resize()
+            
+        self._chsize = False
 
     
     def init(self,widget=None,screen=None): #TODO widget= could conflict with module widget
@@ -150,8 +152,6 @@ class App(container.Container):
             self.send(sub.type,sub)
             container.Container.event(self,sub)
             
-            
-
     
     def loop(self):
         App.app = self
@@ -164,6 +164,7 @@ class App(container.Container):
         
         
     def paint(self,screen):
+        self.screen = screen
         if self._chsize:
             self.resize()
             self._chsize = False
@@ -178,6 +179,7 @@ class App(container.Container):
         <dt>screen<dd>pygame surface
         </dl>
         """
+        self.screen = screen
         if self._chsize:
             self.resize()
             self._chsize = False

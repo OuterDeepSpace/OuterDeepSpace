@@ -90,9 +90,21 @@ class Image(widget.Widget):
         params.setdefault('focusable',False)
         widget.Widget.__init__(self,**params)
         if type(value) == str: value = pygame.image.load(value)
+        
+        ow,oh = iw,ih = value.get_width(),value.get_height()
+        sw,sh = self.style.width,self.style.height
+        
+        if sw and not sh:
+            iw,ih = sw,ih*sw/iw
+        elif sh and not sw:
+            iw,ih = iw*sh/ih,sh
+        elif sw and sh:
+            iw,ih = sw,sh
+        
+        if (ow,oh) != (iw,ih):
+            value = pygame.transform.scale(value,(iw,ih))
+        self.style.width,self.style.height = iw,ih
         self.value = value
-        self.style.width = self.value.get_width()
-        self.style.height = self.value.get_height()
     
     def paint(self,s):
         s.blit(self.value,(0,0))

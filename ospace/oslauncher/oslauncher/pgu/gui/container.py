@@ -1,6 +1,7 @@
 """
 """
 import pygame
+from pygame.locals import *
 
 from const import *
 import widget, surface
@@ -30,7 +31,9 @@ class Container(widget.Widget):
             if w is self.mywindow:
                 continue
             else:
-                w.paint(surface.subsurface(s,w.rect))
+                sub = surface.subsurface(s,w.rect)
+                sub.blit(w._container_bkgr,(0,0))
+                w.paint(sub)
                 updates.append(pygame.rect.Rect(w.rect))
         
         for w in self.toupdate:
@@ -88,7 +91,9 @@ class Container(widget.Widget):
                 print 'container.paint(): %s not in %s'%(w.__class__.__name__,self.__class__.__name__)
                 print s.get_width(),s.get_height(),w.rect
                 ok = False
-            if ok: w.paint(sub)
+            if ok: 
+                w._container_bkgr = sub.copy()
+                w.paint(sub)
         
         for w in self.windows:
             w.paint(self.top_surface(s,w))
@@ -99,6 +104,8 @@ class Container(widget.Widget):
         return surface.subsurface(s,(x+w.rect.x,y+w.rect.y,w.rect.w,w.rect.h))
     
     def event(self,e):
+        used = False
+        
         if self.mywindow and e.type == MOUSEBUTTONDOWN:
             w = self.mywindow
             if self.myfocus is w:
@@ -120,9 +127,10 @@ class Container(widget.Widget):
             elif e.type == MOUSEBUTTONDOWN:
                 h = None
                 for w in self.widgets:
-                    if w.rect.collidepoint(e.pos):
-                        h = w
-                        if self.myfocus is not w: self.focus(w)
+                    if not w.disabled: #focusable not considered, since that is only for tabs
+                        if w.rect.collidepoint(e.pos):
+                            h = w
+                            if self.myfocus is not w: self.focus(w)
                 if not h and self.myfocus:
                     self.blur(self.myfocus)
             elif e.type == MOUSEMOTION:
@@ -145,7 +153,7 @@ class Container(widget.Widget):
                         'buttons':e.buttons,
                         'pos':(e.pos[0]-w.rect.x,e.pos[1]-w.rect.y),
                         'rel':e.rel})
-                    w._event(sub)
+                    used = w._event(sub)
         
         w = self.myfocus
         if w:
@@ -155,12 +163,12 @@ class Container(widget.Widget):
                 sub = pygame.event.Event(e.type,{
                     'button':e.button,
                     'pos':(e.pos[0]-w.rect.x,e.pos[1]-w.rect.y)})
-                w._event(sub)
+                used = w._event(sub)
             elif e.type == CLICK and self.myhover is w:
                 sub = pygame.event.Event(e.type,{
                     'button':e.button,
                     'pos':(e.pos[0]-w.rect.x,e.pos[1]-w.rect.y)})
-                w._event(sub)
+                used = w._event(sub)
             elif e.type == CLICK: #a dead click
                 pass
             elif e.type == MOUSEMOTION:
@@ -168,9 +176,76 @@ class Container(widget.Widget):
                     'buttons':e.buttons,
                     'pos':(e.pos[0]-w.rect.x,e.pos[1]-w.rect.y),
                     'rel':e.rel})
-                w._event(sub)
+                used = w._event(sub)
             else:
-                w._event(sub)
+                used = w._event(sub)
+                
+        if not used:
+            if e.type is KEYDOWN:
+                if e.key is K_TAB and self.myfocus:
+                    if (e.mod&KMOD_SHIFT) == 0:
+                        self.myfocus.next()
+                    else:
+                        self.myfocus.previous()
+                    return True
+                elif e.key == K_UP: 
+                    self._move_focus(0,-1)
+                    return True
+                elif e.key == K_RIGHT:
+                    self._move_focus(1,0)
+                    return True
+                elif e.key == K_DOWN:
+                    self._move_focus(0,1)
+                    return True
+                elif e.key == K_LEFT:
+                    self._move_focus(-1,0)
+                    return True
+        return used
+        
+    def _move_focus(self,dx_,dy_):
+        myfocus = self.myfocus
+        if not self.myfocus: return
+        
+        from pgu.gui import App
+        widgets = self._get_widgets(App.app)
+        #if myfocus not in widgets: return
+        #widgets.remove(myfocus)
+        if myfocus in widgets:
+            widgets.remove(myfocus)
+        rect = myfocus.get_abs_rect()
+        fx,fy = rect.centerx,rect.centery
+        
+        def sign(v):
+            if v < 0: return -1
+            if v > 0: return 1
+            return 0
+        
+        dist = []
+        for w in widgets:
+            wrect = w.get_abs_rect()
+            wx,wy = wrect.centerx,wrect.centery
+            dx,dy = wx-fx,wy-fy
+            if dx_ > 0 and wrect.left < rect.right: continue
+            if dx_ < 0 and wrect.right > rect.left: continue
+            if dy_ > 0 and wrect.top < rect.bottom: continue
+            if dy_ < 0 and wrect.bottom > rect.top: continue
+            dist.append((dx*dx+dy*dy,w))
+        if not len(dist): return
+        dist.sort()
+        d,w = dist.pop(0)
+        w.focus()
+        
+    def _get_widgets(self,c):
+        widgets = []
+        if c.mywindow:
+            widgets.extend(self._get_widgets(c.mywindow))
+        else:
+            for w in c.widgets:
+                if isinstance(w,Container):
+                    widgets.extend(self._get_widgets(w))
+                elif not w.disabled and w.focusable:
+                    widgets.append(w)
+        return widgets
     
     def remove(self,w):
         """Remove a widget from the container.
@@ -218,7 +293,9 @@ class Container(widget.Widget):
         w.container = self
         
         if w.rect.w == 0 or w.rect.h == 0: #this might be okay, not sure if needed.
+            #_chsize = App.app._chsize #HACK: we don't want this resize to trigger a chsize.
             w.rect.w,w.rect.h = w.resize()
+            #App.app._chsize = _chsize
         
         if x == None or y == None: #auto center the window
             #w.style.x,w.style.y = 0,0
@@ -273,6 +350,8 @@ class Container(widget.Widget):
         if self.myhover is not w: self.enter(w)
         self.myfocus = w
         w._event(pygame.event.Event(FOCUS))
+        
+        #print self.myfocus,self.myfocus.__class__.__name__
     
     def blur(self,w=None):
         if not w:
@@ -322,16 +401,34 @@ class Container(widget.Widget):
                     self.focus(w)
                     return True
         return False
+    
+    def _previous(self,orig=None):
+        end = len(self.widgets)
+        if orig in self.widgets: end = self.widgets.index(orig)
+        ws = self.widgets[:end]
+        ws.reverse()
+        for w in ws:
+            if not w.disabled and w.focusable:
+                if isinstance(w,Container):
+                    if w._previous():
+                        return True
+                else:
+                    self.focus(w)
+                    return True
+        return False
                 
-    def next(self,w):
-        if w not in self.widgets: return #HACK: maybe.  this happens in windows for some reason...
+    def next(self,w=None):
+        if w != None and w not in self.widgets: return #HACK: maybe.  this happens in windows for some reason...
         
         if self._next(w): return True
         if self.container: return self.container.next(self)
     
     
-    def previous(self,w):
-        print 'Container.previous: n/a'
+    def previous(self,w=None):
+        if w != None and w not in self.widgets: return #HACK: maybe.  this happens in windows for some reason...
+        
+        if self._previous(w): return True
+        if self.container: return self.container.previous(self)
     
     def resize(self,width=None,height=None):
         #r = self.rect

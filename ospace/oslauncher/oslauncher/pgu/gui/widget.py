@@ -19,7 +19,7 @@ class Widget:
     <dt>font, color, background<dd>other common parameters that are passed along to style
     <dt>cls<dd>class name as used by Theme
     <dt>name<dd>name of widget as used by Form.  If set, will call <tt>form.add(self,name)</tt> to add the widget to the most recently created Form.
-    <dt>focusable<dd>True if this widget can receive focus.  Defaults to True.
+    <dt>focusable<dd>True if this widget can receive focus via Tab, etc.  Defaults to True.
     <dt>disabled<dd>True of this widget is disabled.  Defaults to False.
     <dt>value<dd>initial value
     </dl>
@@ -83,7 +83,7 @@ class Widget:
                 print 'gui.widget: creating an App'
                 app.App.app = app.App()
             app.App.app.theme.decorate(self,params['decorate'])
-    
+            
     def focus(self):
         """Focus this Widget.
         
@@ -133,8 +133,12 @@ class Widget:
         
         <pre>Widget.chsize()</pre>
         """
+        
+        if not hasattr(self,'_painted'): return
+        
         if not hasattr(self,'container'): return
         import app
+        
         if hasattr(app.App,'app'):
             if app.App.app._chsize: return
             app.App.app.chsize()
@@ -214,11 +218,16 @@ class Widget:
         
         <pre>Widget.get_abs_rect(): return pygame.Rect</pre>
         """
-        x, y = self.rect[:2]
+        x, y = self.rect.x , self.rect.y
+        x += self._rect_content.x
+        y += self._rect_content.y
         c = getattr(self,'container',None)
         while c:
-            x += c.rect[0]
-            y += c.rect[1]
+            x += c.rect.x
+            y += c.rect.y
+            if hasattr(c,'_rect_content'):
+                x += c._rect_content.x
+                y += c._rect_content.y
             c = getattr(c,'container',None)
         return pygame.Rect(x, y, self.rect.w, self.rect.h)
 
@@ -288,14 +297,19 @@ class Widget:
     def _event(self,e):
         if self.disabled: return
         self.send(e.type,e)
-        self.event(e)
-        return
-        import app
-        if hasattr(app.App,'app'):
-            app.App.app.events.append((self,e))
+        return self.event(e)
+#         return
+#         import app
+#         if hasattr(app.App,'app'):
+#             app.App.app.events.append((self,e))
         
     def event(self,e):
         """Template method - called when an event is passed to this object.
+        
+        <p>Please note that if you use an event, returning the value True
+        will stop parent containers from also using the event.  (For example, if
+        your widget handles TABs or arrow keys, and you don't want those to 
+        also alter the focus.)</p>
         
         <dl>
         <dt>e<dd>event

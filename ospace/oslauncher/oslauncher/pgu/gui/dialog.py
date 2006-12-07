@@ -60,8 +60,7 @@ class Dialog(table.Table):
 #         self.td(main,cls=self.cls+".main")
 # 
         
-
-
+        
 class FileDialog(Dialog):
     """A file picker dialog window.
     
@@ -74,11 +73,13 @@ class FileDialog(Dialog):
     </dl>
     """
     
-    def __init__(self, title_txt="File Browser", button_txt="Okay", cls="filedialog", path=None):
+    def __init__(self, title_txt="File Browser", button_txt="Okay", cls="dialog", path=None):
+        
+        cls1 = 'filedialog'
         if not path: self.curdir = os.getcwd()
         else: self.curdir = path
         import app
-        self.dir_img = basic.Image(app.App.app.theme.get(cls+'.folder', '', 'image'))
+        self.dir_img = basic.Image(app.App.app.theme.get(cls1+'.folder', '', 'image'))
         td_style = {'padding_left': 4,
                     'padding_right': 4,
                     'padding_top': 2,
@@ -86,21 +87,21 @@ class FileDialog(Dialog):
         self.title = basic.Label(title_txt, cls=cls+".title.label")
         self.body = table.Table()
         self.list = area.List(width=350, height=150)
-        self.input_dir = input.Input(cls=cls+".input")
-        self.input_file = input.Input(cls=cls+".input")
+        self.input_dir = input.Input()
+        self.input_file = input.Input()
         self._list_dir_()
         self.button_ok = button.Button(button_txt)
         self.body.tr()
-        self.body.td(basic.Label("Path", cls=cls+".label"), style=td_style, align=-1)
+        self.body.td(basic.Label("Folder"), style=td_style, align=-1)
         self.body.td(self.input_dir, style=td_style)
-        self.body.tr()
-        self.body.td(basic.Label("File", cls=cls+".label"), style=td_style, align=-1)
-        self.body.td(self.input_file, style=td_style)
-        self.body.td(self.button_ok, style=td_style)
         self.body.tr()
         self.body.td(self.list, colspan=3, style=td_style)
         self.list.connect(CHANGE, self._item_select_changed_, None)
         self.button_ok.connect(CLICK, self._button_okay_clicked_, None)
+        self.body.tr()
+        self.body.td(basic.Label("File"), style=td_style, align=-1)
+        self.body.td(self.input_file, style=td_style)
+        self.body.td(self.button_ok, style=td_style)
         self.value = None
         Dialog.__init__(self, self.title, self.body)
         
@@ -116,8 +117,10 @@ class FileDialog(Dialog):
                 else: files.append(i)
         except:
             self.input_file.value = "Opps! no access"
-        if '..' not in dirs: dirs.append('..')
+        #if '..' not in dirs: dirs.append('..')
         dirs.sort()
+        dirs = ['..'] + dirs
+        
         files.sort()
         for i in dirs:
             #item = ListItem(image=self.dir_img, text=i, value=i)
