@@ -27,11 +27,30 @@ import string
 def cclass2Text(cclass):
 	return [_("small"), _("medium"), _("large"), _("planet")][cclass]
 
+def structWeapons2Text(array):
+    string = _('')
+    i = 0
+    j = 0
+    for weaponNum in array:
+        if weaponNum > 0:
+            if j > 0:
+                string += _(', ')
+            string += _('%d') % ( weaponNum )
+            string += _(' ')
+            string += [_("small"), _("medium"), _("large"), _("planet"), _("other"),_("other"),_("other"),_("other"),_("other"),_("other")][i]
+            j+=1
+        i+=1
+    return string
+
 def bool2Text(value):
 	if value:
 		return _("Yes")
 	else:
 		return _("No")
+
+def perc2Text(value):
+    string = _('%d%%') % (value * 100)
+    return string
 
 V_NONE = 0x00
 V_STRUCT = 0x01
@@ -51,10 +70,12 @@ def addAttr(attr, descr, props, showIfDefault, default = 0, convertor = int):
 
 
 addAttr('buildProd', _('Constr. reqs - construction points'), V_ALL, 0)
+
 addAttr('operBio', _('Operational reqs - biomatter'), V_ALL, 0)
 addAttr('operMin', _('Operational reqs - minerals'), V_ALL, 0)
 addAttr('operEn', _('Operational reqs - energy'), V_ALL, 0)
 addAttr('operWorkers', _('Operational reqs - workers'), V_ALL, 0)
+
 addAttr('prodBio', _('Production - biomatter'), V_STRUCT|V_EFF, 0)
 addAttr('prodMin', _('Production - minerals'), V_STRUCT|V_EFF, 0)
 addAttr('prodEn', _('Production - energy'), V_STRUCT|V_EFF, 0)
@@ -62,38 +83,61 @@ addAttr('prodPop', _('Production - population'), V_STRUCT|V_EFF, 0)
 addAttr('prodProd', _('Production - constr. points'), V_STRUCT|V_PROJECT|V_EFF, 0)
 addAttr('prodSci', _('Production - research points'), V_STRUCT|V_PROJECT|V_EFF, 0)
 addAttr('prodEnv', _('Production - env. effect'), V_STRUCT|V_EFF, 0)
+
 addAttr('storBio', _('Storage - biomatter'), V_STRUCT|V_EFF, 0)
 addAttr('storMin', _('Storage - minerals'), V_STRUCT|V_EFF, 0)
 addAttr('storEn', _('Storage - energy'), V_STRUCT|V_EFF, 0)
 addAttr('storPop', _('Accommodate population'), V_STRUCT|V_EFF, 0)
+
 addAttr('revoltThr', _('Lowers revolt threshold by'), V_STRUCT|V_PROJECT|V_EFF, 0)
 addAttr('moraleTrgt', _('Increases max morale by'), V_STRUCT|V_PROJECT|V_EFF, 0)
 addAttr('govPwr', _('Government power'), V_STRUCT|V_EFF, 0)
 addAttr('maxHP', _('Hit points'), V_STRUCT|V_HULL|V_SEQUIP|V_EFF, 0)
+
 addAttr('scannerPwr', _('Scanner power'), V_STRUCT|V_SEQUIP|V_EFF, 0)
-addAttr('weaponClass', _('Target class'), V_SEQUIP, True, convertor = cclass2Text)
-addAttr('weaponDmgMin', _('Weapon minimum damage'), V_SEQUIP|V_EFF, 0)
-addAttr('weaponDmgMax', _('Weapon maximum damage'), V_SEQUIP|V_EFF, 0)
-addAttr('weaponAtt', _('Weapon attack'), V_SEQUIP|V_EFF, 0)
-addAttr('weaponROF', _('Weapon Rate Of Fire'), V_SEQUIP, 0, convertor = float)
-addAttr('minHull', _('Minimum required hull'), V_SEQUIP|V_HULL, 0, convertor = cclass2Text)
-addAttr('weight', _('Weight'), V_SEQUIP|V_HULL, 0)
-addAttr('slots', _('Slots'), V_SEQUIP|V_HULL, 0)
-addAttr('signature', _('Scan signature'), V_SEQUIP|V_HULL, 0)
-addAttr('combatDef', _('Combat defence'), V_SEQUIP|V_HULL|V_EFF, 0)
-addAttr('combatAtt', _('Combat attack'), V_SEQUIP|V_HULL|V_EFF, 0)
-addAttr('maxWeight', _('Maximum payload'), V_HULL|V_EFF, 0)
-addAttr('engPwr', _('Engine power'), V_SEQUIP|V_EFF, 0)
-addAttr('missileDef', _('Missile defence'), V_SEQUIP|V_EFF, 0)
-addAttr('refuelMax', _('Maximum refuel percent'), V_STRUCT|V_EFF, 0)
-addAttr('refuelInc', _('Refuel increase percent'), V_STRUCT|V_EFF, 0)
+addAttr('planetShield',_('Planetary shield'), V_STRUCT|V_EFF, 0)
+addAttr('systemAtt',_('Fleet attack (bonus)'), V_STRUCT|V_EFF, 0)
+addAttr('systemDef',_('Fleet defense (bonus)'), V_STRUCT|V_EFF, 0)
+addAttr('refuelMax', _('Maximum refuel percent'), V_STRUCT|V_EFF, 0, convertor = perc2Text)
+addAttr('refuelInc', _('Refuel increase percent'), V_STRUCT|V_EFF, 0, convertor = perc2Text)
 addAttr('trainShipInc', _('Exp. points per turn'), V_STRUCT|V_EFF, 0, convertor = float)
 addAttr('trainShipMax', _('Exp. cap (base exp multiple)'), V_STRUCT|V_EFF, 0)
 addAttr('fleetSpeedBoost', _('Boost speed of fleets'), V_STRUCT|V_EFF, 0, convertor = float)
-addAttr('shieldRechargeFix', _('Shield recharge fixed'), V_SEQUIP|V_HULL|V_EFF, 0)
-addAttr('shieldRechargePerc', _('Shield recharge percent'), V_SEQUIP|V_HULL|V_EFF, 0, convertor = float)
-addAttr('weaponIgnoreShield', _('Weapon ignore shield'), V_SEQUIP|V_HULL, 0, convertor = bool2Text)
+addAttr('structWeapons', _('Weapons'), V_STRUCT, 0, convertor = structWeapons2Text)
+
+addAttr('weaponClass', _('Target class'), V_SEQUIP, True, convertor = cclass2Text)
+addAttr('weaponDmgMin', _('Weapon minimum damage'), V_SEQUIP|V_EFF, 0)
+addAttr('weaponDmgMax', _('Weapon maximum damage'), V_SEQUIP|V_EFF, 0)
 addAttr('weaponIsMissile', _('Missile weapon (ECM counts)'), V_SEQUIP|V_HULL, 0, convertor = bool2Text)
+addAttr('weaponIgnoreShield', _('Weapon ignore shield'), V_SEQUIP|V_HULL, 0, convertor = bool2Text)
+addAttr('weaponAtt', _('Weapon attack'), V_SEQUIP|V_EFF, 0)
+addAttr('weaponROF', _('Weapon Rate Of Fire'), V_SEQUIP, 0, convertor = float)
+
+addAttr('minHull', _('Minimum required hull'), V_SEQUIP|V_HULL, 0, convertor = cclass2Text)
+addAttr('weight', _('Weight'), V_SEQUIP|V_HULL, 0)
+addAttr('slots', _('Slots'), V_SEQUIP|V_HULL, 0)
+addAttr('maxWeight', _('Maximum payload'), V_HULL, 0)
+addAttr('engPwr', _('Engine power'), V_SEQUIP|V_EFF, 0)
+
+addAttr('signature', _('Scan signature'), V_SEQUIP|V_HULL, 0)
+addAttr('signatureCloak', _('Signature visibility'), V_SEQUIP|V_HULL, 0)
+addAttr('signatureDecloak', _('Signature visibility'), V_SEQUIP|V_HULL, 0)
+addAttr('minSignature', _('Min. signature'), V_SEQUIP|V_HULL, 0)
+
+addAttr('combatDef', _('Combat defence'), V_SEQUIP|V_HULL|V_EFF, 0)
+addAttr('combatAtt', _('Combat attack'), V_SEQUIP|V_HULL|V_EFF, 0)
+addAttr('missileDef', _('Missile defence'), V_SEQUIP|V_EFF, 0)
+addAttr('combatAttPerc', _('Combat defense (extra)'), V_SEQUIP|V_HULL|V_EFF, 0, convertor = perc2Text)
+addAttr('combatDefPerc', _('Combat attack (extra)'), V_SEQUIP|V_HULL|V_EFF, 0, convertor = perc2Text)
+addAttr('missileDefPerc', _('Missile defence (extra)'), V_SEQUIP|V_EFF, 0, convertor = perc2Text)
+
+addAttr('shieldPerc', _('Shield strength'), V_SEQUIP|V_HULL|V_EFF, 0, convertor = perc2Text)
+addAttr('shieldRechargeFix', _('Shield recharge fixed'), V_SEQUIP|V_HULL|V_EFF, 0)
+addAttr('shieldRechargePerc', _('Shield recharge percent'), V_SEQUIP|V_HULL|V_EFF, 0, convertor = perc2Text)
+addAttr('damageAbsorb', _('Armor damage absorbstion'), V_SEQUIP|V_HULL, 0)
+
+addAttr('addMP', _('Device MP'), V_SEQUIP|V_HULL, 0)
+
 
 class TechInfoDlg:
 

@@ -875,6 +875,112 @@
         />
         <preresearch>Fine-tuning shield generation has permitted us to produce a more effective model for protecting our ships.</preresearch>
     </technology>
+	<technology id="4500" symbol="AUTOREPAIR4" name="Auto Repair">
+		<discovery
+			researchMod="1.00 + 0.50 + 0.50"
+			level="4"
+			researchRequires="LIVMEDIUMHULL4-5"
+			researchRaces="H"
+		/>
+		<shipequip
+			subtype="seq_mod"
+			buildProd="640"
+			autoRepairFix="1"
+			autoRepairMaxHP="0.50"
+			slots="6"
+			weight="4"
+			operEn="12"
+			minHull="1"
+			maxInstallations="1"
+		/>
+		<preresearch>Dr. Oliphant has come to us with an intreaguing use of smart nano-fibers. He thinks he can create a device that can automatically repair a ship's hull.</preresearch>
+		<description>Utilizing smart nano-fibers directed by a central cyber-oganic brain, a ship can repair most minor damage over time. Due to the power requirements, this device cannot be used while in combat.</description>
+	</technology>
+	<technology id="4501" symbol="BTTLTAG4" name="Battle Tag">
+		<discovery
+			researchMod="1.00 + 0.50 + 0.50"
+			level="4"
+			researchRequires="COMSCAN3-5"
+			researchRaces="C"
+		/>
+		<shipequip
+			subtype="seq_mod"
+			buildProd="1200"
+			combatAttPerc="1.20"
+			slots="2"
+			weight="3"
+			operEn="8"
+			addMP="200"
+			maxInstallations="1"
+		/>
+		<preresearch>Smart robotic probes might be able to aid us in battle.</preresearch>
+		<description>Utilizing a sophisticated crystal-robotic matrix, the Battle Tag is actually a series of probes deployed from the host ship. These probes seek out enemy vessels, applying a hyper-responder tag to their hulls. Our weapons can then home on these tags causing a considerably higher chance-to-hit than ordinarily.</description>
+	</technology>
+	<technology id="4502" symbol="TERRAFORMPOD" name="Terraforming Pod">
+		<discovery
+			researchMod="(0.50 + 0.50) * 1.5"
+			level="4"
+			researchRequires="MUTAGENDISPMOD-3"
+			researchRaces="B"
+		/>
+		<shipequip
+			subtype="seq_struct"
+			buildProd="2880"
+
+			storEn="960"
+			operEn="10"
+
+			slots="8"
+			weight="15"
+			
+			deployHandlerValidator="validateDeployTERRAFORM3"
+			deployHandlerFunction="finishProjectTERRAFORM3"
+			minHull="1"
+			maxImprovement="1"
+		/>
+		<preresearch>To build a terraform event on a colony usually takes so long the colony self terraforms first. Let's fix that.</preresearch>
+		<description>The terraforming pod causes a planet to upgrade to </description>
+	</technology>
+    <technology id="4503" symbol="PLSHIELDHC" name="Planetary Shield">
+        <discovery
+            researchMod="1.25"
+            level="4"
+            researchRequires="FLAKBATTERY-3"
+            researchRaces="CH"
+        />
+        <structure
+            subtype="str50"
+            buildProd="1200"
+            operEn="100"
+            operWorkers="1750"
+            scannerPwr="20"
+            maxHP="500"
+            isMilitary="1"
+            planetShield="2800"
+        />
+        <preresearch>Protecting our planets is a major requirement. The planetary shield should do just that.</preresearch>
+	<description>High energy electrons targeted at the upper atompshere utlizes the planet's inherent magnetic field to create an impenetrable barrier. This barrier takes time to charge up, and once charged, will take substantial firepower for any fleet to punch through. Each planet needs only one planetary sheild. Planetary shields are not penetratable by shield penetrating weapons.</description>
+    </technology>
+    <technology id="4504" symbol="PLSHIELDB" name="Photo-absorbant Lichen Spreader">
+        <discovery
+            researchMod="1.25"
+            level="4"
+            researchRequires="SSFLAKBATTERY-3"
+            researchRaces="B"
+        />
+        <structure
+            subtype="str50"
+            buildProd="1200"
+            operEn="50"
+            operWorkers="1750"
+            scannerPwr="20"
+            maxHP="600"
+            isMilitary="1"
+            planetShield="2400"
+        />
+        <preresearch>Protecting our planets is a major requirement. The new photo-absorbant lichens should do the trick.</preresearch>
+	<description>The newly engineered photo-absorbant lichen has a knack for collecting orbital fire harmlessly in it's cellular storage banks. While this cover takes time to spread over the entire planetary surface, once completed it can retain a substantial quantity of energy before it has to start discharging it into the structures it protects. Each planet needs only one lichen layer for maximum effectiveness.</description>
+    </technology>
     <technology id="4990" symbol="BIONICTL5" name="Selective Mutations">
         <discovery
             researchMod="1.00 + 1.00 + 3.00"
@@ -884,7 +990,6 @@
             recheckWhenTechLost="1"
             researchRequires="BIONICTL4-5"
             researchRaces="B"
-            maxImprovement="3"
         />
         <preresearch>A theoretical research in the field of biology, which allows us to access advanced biology and biotechnology related technologies. Research in this field will raise our dependency on biomatter and lower our dependency on minerals eventually. When we improve this technology enough, we can advance to the next technological level.</preresearch>
     </technology>
@@ -897,7 +1002,6 @@
             recheckWhenTechLost="1"
             researchRequires="HUMANTL4-5"
             researchRaces="H"
-            maxImprovement="3"
         />
         <preresearch>A theoretical research of the human mind and thinking processes can lead to improvements in research and cooperation, which in turn will lead to access to the more advanced energy and research related technologies. Our dependencies on resources will remain on the same level as they are now. When we improve this technology enough, we can advance to the next technological level.</preresearch>
     </technology>
@@ -910,7 +1014,6 @@
             recheckWhenTechLost="1"
             researchRequires="ROBOTTL4-5"
             researchRaces="C"
-            maxImprovement="3"
         />
         <preresearch>A theoretical research in the field of robotics will allow us to access more advanced production and AI technologies in the future. Research in this field will raise our dependency on minerals and lower our dependency on biomatter eventually. When we improve this technology enough, we can advance to the next technological level.</preresearch>
     </technology>

@@ -66,6 +66,7 @@ def makeShipMinSpec(player, name, hullID, eqIDs, improvements,
 	spec.shieldRechargePerc = ship.shieldRechargePerc
 	spec.hardShield = ship.hardShield
 	spec.combatAttMultiplier = ship.combatAttMultiplier
+	spec.damageAbsorb = ship.damageAbsorb
 	return spec
 
 def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True):
@@ -119,6 +120,7 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
 	ship.deployHandlers = []
 	ship.isMilitary = 0
 	ship.baseExp = 0
+	ship.damageAbsorb = 0
 	combatExtra = 0
 	shieldPerc = 0.0
 	unpactStruct = 0
@@ -188,6 +190,7 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
 			ship.shieldRechargeFix = max(ship.shieldRechargeFix, tech.shieldRechargeFix * techEff)
 			ship.shieldRechargePerc = max(ship.shieldRechargePerc, tech.shieldRechargePerc * techEff)
 			ship.hardShield = max(ship.hardShield,tech.hardShield * techEff)
+			ship.damageAbsorb = min(ship.damageAbsorb + tech.damageAbsorb,Rules.maxDamageAbsorb) #limit this by rule
 			combatExtra += tech.addMP
 			# if weapon - register only
 			if tech.subtype == "seq_wpn":
@@ -202,6 +205,8 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
               		if tech.deployHandlerID != '': #this calls another tech at execute time, so only need the ID
                                 ship.deployHandlers.append(tech.deployHandlerID)
                                 deployHandler = 1
+                        if len(ship.deployHandlers) == 0 and tech.deployHandlerFunction != '': #this is for techs that don't have a master project tech
+                                ship.deployHandlers.append(techID)
                         
 	#fix limiter based attibs; round when needed
 	currentNegWeight = 0
@@ -216,6 +221,8 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
         ship.combatDef = int((ship.combatDef + ship.combatDefBase) * ship.combatDefMultiplier)
         ship.missileDef = int((ship.missileDef + ship.missileDefBase) * ship.missileDefMultiplier)
         ship.hardShield = min(1.0,ship.hardShield) #don't allow this to be more than 100% blocking!!
+        #add some MP for damage absorb:
+        combatExtra += ship.damageAbsorb * 1500
         #calculate final signature
         ship.signature *= ship.signatureCloak * ship.signatureDecloak
         #fix autorepair MaxHP / if nothing set autoRepairMaxHP, assume 100%; this is for legacy technologies

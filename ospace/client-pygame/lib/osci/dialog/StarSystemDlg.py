@@ -402,6 +402,30 @@ class StarSystemDlg:
 			self.win.vPCMorale.text = _('%d') % planet.morale
 		else:
 			self.win.vPCMorale.text = _('?')
+		if hasattr(planet, 'shield'):
+			self.win.vPCMorale.text = _('%d') % planet.shield
+			if (planet.shield < planet.prevShield):
+                            info = _('Sheild (%d/%d) charged by $+d last turn.') % (
+                                planet.shield,
+                                planet.maxShield,
+                                planet.shield - planet.prevShield,
+                            )
+                        elif (planet.shield > planet.prevShield):
+                            info = _('Sheild (%d/%d) was damaged by $+d last turn.') % (
+                                planet.shield,
+                                planet.maxShield,
+                                planet.shield - planet.prevShield,
+                            )
+                        elif (planet.shield < planet.maxShield):
+                            info = _('Sheild (%d/%d) is unable to charge.') % (
+                                planet.shield,
+                                planet.maxShield,
+                            )
+                        else:
+                            info = _('Sheild (%d/%d) is fully charged.') % (
+                                planet.shield,
+                                planet.maxShield,
+                            )
 		if hasattr(planet, 'revoltLen') and planet.revoltLen > 0:
 			self.win.vPCMorale.foreground = gdata.sevColors[gdata.CRI]
 		else:
@@ -1169,6 +1193,10 @@ class StarSystemDlg:
 		ui.Label(self.win, layout = (10, 19, 5, 1), text = _('Morale'),
 			align = ui.ALIGN_W, tags = ['pl'])
 		ui.Label(self.win, layout = (15, 19, 5, 1), id = 'vPCMorale',
+			align = ui.ALIGN_E, tags = ['pl'])
+		ui.Label(self.win, layout = (10, 21, 5, 1), text = _('Planetary shield'),
+			align = ui.ALIGN_W, tags = ['pl'])
+		ui.Label(self.win, layout = (15, 21, 5, 1), id = 'vPCShield',
 			align = ui.ALIGN_E, tags = ['pl'])
 		ui.Title(self.win, layout = (0, 24, 20, 1), text = _('System data'),
 			align = ui.ALIGN_W, font = 'normal-bold', tags = ['pl'])

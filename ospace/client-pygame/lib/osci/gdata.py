@@ -71,6 +71,7 @@ fleetActions = {
 	1004: N_("Refuel at"),
 	1005: N_("Repeat from"),
 	1006: N_("Wait"),
+        1007: N_("Enter Wormhole at"),
 }
 
 stratRes = {

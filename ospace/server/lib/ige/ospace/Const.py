@@ -99,6 +99,7 @@ MSG_GNC_VOTING_COMING = 2003 # new voting in 1:00 turna
 MSG_GNC_VOTING_NOWINNER = 2004 # no winner in elections
 MSG_GNC_VOTING_LEADER = 2005 # winner is leader
 MSG_GNC_VOTING_IMPERATOR = 2006 # winner is imperator
+MSG_GNC_GALAXY_GENERATOR = 2007 # galaxy generator information
 
 ## relations
 REL_ENEMY_LO = 0

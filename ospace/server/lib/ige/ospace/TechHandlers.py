@@ -66,6 +66,21 @@ def finishStructOUTPOST(tran, source, target, tech):
     target.storPop += tech.unpackPop
     target.maxPop += tech.unpackPop
 
+def finishStructSPORECOLONY(tran, source, target, tech):
+    log.debug("Finishing SPORE COLONY", tech.id, "target", target.oid)
+    # setup morale if colonizing noninhabited planet
+    if target.storPop == 0:
+        target.morale = Rules.maxMorale
+    # try to change owner of planet
+    tran.gameMngr.cmdPool[target.type].changeOwner(tran, target, source.owner)
+    # increase population
+    target.storPop += tech.unpackPop
+    target.maxPop += tech.unpackPop
+
+    if planet.plSlots > 1:
+        for i in range(len(planet.slots),planet.plSlots-1):
+            planet.slots.insert(0, Utils.newStructure(tran, 9013, obj.owner))
+
 def finishStructGOVCENTER(tran, source, target, tech):
     player = tran.db[source.owner]
     # delete old center
@@ -90,6 +105,9 @@ def finishStructGOVCENTER(tran, source, target, tech):
     # message
     Utils.sendMessage(tran, target, MSG_NEW_GOVCENTER, target.oid, None)
 
+def validateTRUE(tran,source,target,tech):
+    return 1;
+
 ## Ecosystem initiation
 def validateProjectECOINIT3(tran, source, target, tech):
     return target.plBio == 0 and target.plType not in ('G', 'A', '-')
@@ -105,6 +123,10 @@ def finishProjectADDSLOT3(tran, source, target, tech):
     target.plSlots += 1
 
 ## Terraforming
+def validateDeployTERRAFORM3(tran, source, target, tech):
+    return validateProjectTERRAFORM3(tran, source, target, tech) and \
+        target.owner==source.owner
+
 def validateProjectTERRAFORM3(tran, source, target, tech):
     spec = Rules.planetSpec[target.plType]
     return spec.upgradeTo != None and \
@@ -114,6 +136,28 @@ def validateProjectTERRAFORM3(tran, source, target, tech):
 
 def finishProjectTERRAFORM3(tran, source, target, tech):
     target.plType = Rules.planetSpec[target.plType].upgradeTo
+
+## Uber Terraforming
+def validateDeployTERRAFORMALIGNMENT6(tran, source, target, tech):
+    return validateProjectTERRAFORMALIGNMENT6(tran, source, target, tech) and \
+        target.owner==source.owner
+
+def validateProjectTERRAFORMALIGNMENT6(tran, source, target, tech):
+    spec = Rules.planetSpec[target.plType]
+    return (target.plBio < rules.envMax or target.plEn < spec.upgradeEnReqs[0] or target.plEn > specs.upgradeEnReqs[1])
+
+def finishProjectTERRAFORMALIGNMENT6(tran, source, target, tech):
+    spec = Rules.planetSpec[target.plType]
+    techEff = Utils.getTechEff(tran, tech.id, source.owner)
+    enAvg = int((spec.upgradeEnReqs[0] + spec.upgradeEnReqs[1]) / 2)
+    delta = int(float(tech.data) * techEff)
+    if target.plEn < enAvg:
+        target.plEn = min(target.plEn+delta,enAvg)
+    elif target.plEn > enAvg:
+        target.plEn = max(target.plEn-delta,enAvg)
+    target.plBio = min(target.plBio+delta,rules.envMax)
+    if validateProjectTERRAFORM3(tran, source, target, tech):
+        target.plType = Rules.planetSpec[target.plType].upgradeTo
 
 ## Tech level advancement
 def finishResTLAdvance(tran, player, tech):

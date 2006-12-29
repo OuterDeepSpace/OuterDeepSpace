@@ -1092,6 +1092,139 @@
 		<preresearch>Large-scale propulsion with its own built-in thermonuclear powerplant.  A welcome addition to any menacing warcruiser.</preresearch>
 		<description>Three issues have been observed with advancing ship design.  Increased mass, decreased effective range, and increased cost of assembly.  Dug up from some newly opened mines far off near the Galactic Core, a solution has been provided.  Using the inherently radioactive nature of Plutonium, a reactor has been created to harness this power, and directly integrated to massive FTL thruster assembly, enough to replace four standard FTL engines with a single one of these units.  The direct-power feed has resulted in greater thrust in addition to a larger power reserve.  With this, even our most massive battleships shall have greater range for persuit and conquest available to them.</description>
 	</technology>
+	<technology id="5501" symbol="INERTFTL5" name="Inertial Drive">
+		<discovery
+			researchMod="1.00 + 0.50"
+			level="5"
+			researchRequires="FTLENG5H-5"
+			researchRaces="H"
+		/>
+		<shipequip
+			subtype="seq_eng"
+			buildProd="720"
+			storEn="540"
+			operEn="8"
+			slots="7"
+			weight="1"
+			engPwr="84"
+			signature="2"
+			maxInstallations="1"
+		/>
+		<preresearch>A rogue scientist has come to us proposing a radical departure from the standard ideas behind FTL drives.</preresearch>
+		<description>Utilizing a hyperspacial bubble surrounding the ship, we can reduce the apparent weight of the ship and propel it forward at the same time. Since each ship can only be contained within one bubble, you can only install one such of these drives.</description>
+	</technology>
+	<technology id="5502" symbol="ENGCOMPLEX" name="Engineering Complex">
+		<discovery
+			researchMod="1.0"
+			level="5"
+			researchRequires="RESCENTRE1-3"
+			researchRaces="H"
+		/>
+		<structure
+			subtype="str40"
+			buildProd="1440"
+			operEn="30"
+			operWorkers="2500"
+			prodSci="16"
+			prodProd="16"
+			prodProdMod="0.0,0.4,0.0,0.6"
+			maxHP="1200"
+		/>
+		<preresearch>As our research reaches the highest levels, we find ourselves often needing a balance between science and production.</preresearch>
+		<description>Specially trained engineers placed in the most advanced engineering research facilities allow us to build stuff!</description>
+	</technology>
+	<technology id="5503" symbol="BIONICFRAMEROCKET4" name="Leech Missile">
+		<discovery
+			researchMod="1.00 + 0.50 + 1.25"
+			level="5"
+			researchRequires="BIONICROCKET5-4"
+			researchRaces="B"
+		/>
+
+		<shipequip
+			subtype="seq_wpn"
+			buildProd="720"
+			slots="6"
+			weight="6"
+			weaponDmgMin="12"
+			weaponDmgMax="22"
+			weaponAtt="4"
+			weaponClass="1"
+			weaponROF="1.5"
+			weaponIsMissile="1"
+			weaponIgnoreShield="1"
+			maxHull="0"
+			weaponGoodForFlak="0"
+			maxInstallations="2"
+		/>
+		<preresearch>We need the ability to launch devastating barrages of missiles from a small hull. Our Synthesizers think they have just the right thing.</preresearch>
+		<description>The Leech Missle is a rapid-fire missile launcher that attacks medium and large hulls with considerable firepower. It has two principle drawbacks: It has a low to-hit chance, and it can only be installed on small hulls due to it virtually becoming the ship's frame.</description>
+	</technology>
+	<technology id="5504" symbol="MUTAGENDISP5" name="Advanced Mutagen Dispenser">
+		<discovery
+			researchMod="1.50 + 1.25"
+			level="5"
+			researchRequires="MUTAGENDISP-5"
+			researchReqSRes="SR_BIO1"
+			researchRaces="B"
+		/>
+		<structure
+			subtype="str99"
+			buildProd="2600"
+			buildSRes="SR_BIO1"
+			operWorkers="1500"
+			operEn="35"
+			maxHP="600"
+			prodEnv="+112"
+		/>
+		<preresearch>Our Mutagen Dispenser has been invaluable. Our bio-engineers are now interested in improving the technology.</preresearch>
+		<description>Using the latest in photo-organics, the improved Mutagen Dispenser emits a specially formulated mutagenic compound that reacts with sunlight. This in turn causes a catalyst effect, increasing the environmental conditions of the planet at a very rapid rate.</description>
+	</technology>
+	<technology id="5505" symbol="FTLSLUG5" name="Slug Drive">
+		<discovery
+			researchMod="1.00 + 0.50 + 1.00"
+			level="5"
+			researchRequires="FTLENG5C-5"
+			researchRaces="C"
+		/>
+		<shipequip
+			subtype="seq_eng"
+			buildProd="540"
+			storEn="440"
+			operEn="6"
+			slots="4"
+			weight="5"
+			engPwr="88"
+			combatAtt="3"
+			maxHP="12"
+			signature="2"
+			signatureDecloak="1.1"
+			maxInstallations="4"
+		/>
+		<preresearch>Military combat experts believe that a drive designed to push heavy hulls will be benificial to our military strategy.</preresearch>
+		<description>Sometimes speed is less important that shear power. The Slug Drive is a hugely powerful sublight drive that lets us bring our weapons to bear on enemies quickly. Due to it's massive size and power, it makes the ship harder to kill but easier to find.</description>
+	</technology>
+	<technology id="5506" symbol="FLAKMINEFIELD" name="Mine Field">
+		<discovery
+			researchMod="1.7 + 0.75"
+			level="2"
+			researchRequires="EMCANNON-3"
+			researchRaces="CH"
+		/>
+		<structure
+			subtype="str50"
+			buildProd="240"
+			operWorkers="150"
+			operEn="15"
+			scannerPwr="20"
+			maxHP="5"
+			combatAtt="18"
+			structWeapons="60,80,100,0,0"
+			isMilitary="1"
+		/>
+		<preresearch>Mines present us with a problem: how do we adaquately deploy a mine field that completely covers a star system, protecting it from attack.</preresearch>
+		<description>Military powers have long desired to effectively mine a star system. The robotic mine field is just that: intelligent mines that track and destroy enemy vessels. While short lived, these ships can open the battle with massive firepower.</description>
+	</technology>
 	<technology id="5800" symbol="PLCOND5" name="Planetary Condensation">
 		<discovery
 			researchMod="1.00"
@@ -1103,6 +1236,8 @@
 			buildProd="19200"
 			finishConstrHandler="finishProjectCondPl"
 			validateConstrHandler="validateProjectCondPl"
+			deployHandlerFunction="finishProjectCondPl"
+			deployHandlerValidator="validateProjectCondPl"
 		/>
 		<preresearch>This project will convert the Gas Giant type planet into Rock type planet.</preresearch>
 	</technology>
@@ -1117,6 +1252,8 @@
 			buildProd="19200"
 			finishConstrHandler="finishProjectAssemblePl"
 			validateConstrHandler="validateProjectAssemblePl"
+			deployHandlerFunction="finishProjectAssemblePl"
+			deployHandlerValidator="validateProjectAssemblePl"
 		/>
 		<preresearch>This project will convert the Asteroids into Desert type planet.</preresearch>
 	</technology>
@@ -1131,6 +1268,8 @@
 			data="20"
 			finishConstrHandler="finishProjectShiftPlDown"
 			validateConstrHandler="validateProjectShiftPlDown"
+			deployHandlerFunction="finishProjectShiftPlDown"
+			deployHandlerValidator="validateProjectShiftPlDown"
 		/>
 		<preresearch>Move planet closer to the central star and increase it's energy abundance.</preresearch>
 	</technology>
@@ -1145,6 +1284,8 @@
 			data="20"
 			finishConstrHandler="finishProjectShiftPlUp"
 			validateConstrHandler="validateProjectShiftPlUp"
+			deployHandlerFunction="finishProjectShiftPlUp"
+			deployHandlerValidator="validateProjectShiftPlUp"
 		/>
 		<preresearch>Move planet away from the central star and decrease it's energy abundance.</preresearch>
 		<description>Move planet away from the central star and decrease it's energy abundance.</description>
@@ -1237,4 +1378,43 @@
 		<preresearch>Antimatter is a very adaptable substance.</preresearch>
 		<description>By employing quark-recombination techniques, we can transmute Antimatter into several units of more useful Carboneum.</description>
 	</technology>
+    <technology id="5990" symbol="BIONICTL6" name="Self Pollination">
+        <discovery
+            researchMod="1.00 + 1.00 + 3.00"
+            finishResearchHandler="finishResTLAdvance"
+            level="5"
+            data="B"
+            recheckWhenTechLost="1"
+            researchRequires="BIONICTL5-5"
+            researchRaces="B"
+            maxImprovement="3"
+        />
+        <preresearch>A theoretical research in the field of biology toward the ultimate goal: spore colonization of the galaxy.</preresearch>
+    </technology>
+    <technology id="5991" symbol="HUMANTL6" name="Mental Chameleonism">
+        <discovery
+            researchMod="1.00 + 1.00 + 3.00"
+            finishResearchHandler="finishResTLAdvance"
+            level="5"
+            data="H"
+            recheckWhenTechLost="1"
+            researchRequires="HUMANTL5-5"
+            researchRaces="H"
+            maxImprovement="3"
+        />
+        <preresearch>A theoretical research of the human mind and thinking processes that will raise our telepathic, telekentic, stealth, and innovative abilities.</preresearch>
+    </technology>
+    <technology id="5992" symbol="ROBOTTL6" name="High Energy Robotic Brains">
+        <discovery
+            researchMod="1.00 + 1.00 + 3.00"
+            finishResearchHandler="finishResTLAdvance"
+            level="5"
+            data="C"
+            recheckWhenTechLost="1"
+            researchRequires="ROBOTTL5-5"
+            researchRaces="C"
+            maxImprovement="3"
+        />
+        <preresearch>A theoretical research in the field of robotics that will allow us to power even more powerful systems than before.</preresearch>
+    </technology>
 </techtree>

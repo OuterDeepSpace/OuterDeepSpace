@@ -123,7 +123,7 @@ addMsg(MSG_CANNOTBUILD_NOSLOT, N_('Cannot build on planet - no free slot.'), sev
 addMsg(MSG_WASTED_PRODPTS, N_('Construction problem: no task\n\n%(1)d construction points was not used because there was no task to fulfill.'), (int,), severity = INFO)
 addMsg(MSG_LOST_PLANET, N_('Planet lost.'), severity = CRI)
 addMsg(MSG_COMPLETED_STRUCTURE, N_('Structure completed: %(1)s'), (techID2Name,), MIN)
-addMsg(MSG_DELOY_HANDLER, N_('A deployment of "%(1)s" was completed on $(2)s'), (unicode,objID2Name), MIN)
+addMsg(MSG_DELOY_HANDLER, N_('A deployment of "%(1)s" was completed on %(2)s'), (unicode,objID2Name), MIN)
 addMsg(MSG_COMPLETED_SHIP, N_('Ship completed: %(1)s'), (techID2Name,), MIN)
 addMsg(MSG_GAINED_PLANET, N_('New planet.'), severity = CRI)
 addMsg(MSG_COMBAT_RESULTS, N_('Combat with: %(4)s. HP lost: we %(1)d, they %(2)d.\n\nEnemy lost %(2)d HP, we lost %(1)d HP and %(3)d ships/structures. We attacked/were attacked by %(4)s.'), (int, int, int, objIDList2Names), MAJ)
@@ -163,6 +163,7 @@ addMsg(MSG_GNC_VOTING_LEADER, N_("Election results! Leader elected!\n\nThe resul
 addMsg(MSG_GNC_VOTING_IMPERATOR, N_("Election results! Imperator elected!\n\nThe results from the last elections have been published. %(1)s has proved to be the most supported person and has been elected as our glorified Imperator. Congratulations - you proved to be the best of all of us!\n\nThe official election results follow:\n\n%(2)s\n\n"), (unicode, votes2Txt,), severity = MAJ)
 
 addMsg(MSG_GNC_GALAXY_RESTARTED, N_("Galaxy %(2)s knows it's winner - Imperator %(1)s\n\nToday the galaxy %(2)s has been united and the peace has been restored. Majority of commanders voted for Imperator %(1)s as their supreme leader. Congratulations, Imperator, you were brave and wise!\n\nMessage from imperator:\n%(3)s"), (unicode, unicode, impMsg), severity = MAJ)
+addMsg(MSG_GNC_GALAXY_GENERATOR, N_("Galaxy %(1)s generation is completed. Galaxy specifications:\n\n%(2)s"), (unicode, votes2Txt,), severity = INFO)
 
 # i18n
 del N_

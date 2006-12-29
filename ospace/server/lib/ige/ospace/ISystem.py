@@ -351,14 +351,22 @@ class ISystem(IObject):
 		attack = {}
 		allies = {}
 		owners = {}
+		ownerIDs = {}
+		systemAtt = {}
+		systemDef = {}
 		isOwnedObject = 0
 		for objID in objects:
 			attack[objID] = []
 			allies[objID] = []
 			owner = tran.db[objID].owner
 			owners[objID] = owner
+			ownerIDs[owner] = owner
 			if owner != OID_NONE:
 				isOwnedObject = 1
+		for owner in ownerIDs:
+			tempAtt, tempDef = self.getSystemCombatBonuses(tran,system,owner)
+			systemAtt[owner] = tempAtt
+			systemDef[owner] = tempDef
 		if not isOwnedObject:
 			#@log.debug('ISystem', 'No combat')
 			# reset combat counters
@@ -546,7 +554,7 @@ class ISystem(IObject):
 									# targetID can be deleted at this point
 									anObj = tran.db.get(targetID, None)
 									if anObj:
-										dmg, destroyed, destroyedClass = self.cmd(anObj).applyShot(tran, anObj, combatAtt, weaponID, tmpWpnClass, target)
+										dmg, destroyed, destroyedClass = self.cmd(anObj).applyShot(tran, anObj, systemDef[owners[targetID]], combatAtt + systemAtt[owners[objID]], weaponID, tmpWpnClass, target)
 										#@log.debug("ISystem result", dmg, destroyed, destroyedClass, tmpWpnClass)
 										#@print objID, 'dmg, destroyed', dmg, destroyed
 										damageTaken[targetID] = damageTaken.get(targetID, 0) + dmg
@@ -710,6 +718,19 @@ class ISystem(IObject):
 		oid = tran.db.create(planet)
 		obj.planets.append(oid)
 		return oid
+
+	def getSystemCombatBonuses(self,tran,obj,playerID):
+		systemAtt = 0;
+		systemDef = 0;
+		for planetID in obj.planets:
+			planet = tran.db[planetID]
+			if planet.owner == playerID:
+				planetAtt, planetDef = planet.getSystemCombatBonuses(tran,planet);
+				systemAtt = max(systemAtt,planetAtt)
+				systemDef = max(systemDef,planetDef)
+		return (systemAtt,systemDef)
+
+	getSystemCombatBonus.public = 0
 
 	def loadDOMNode(self, tran, obj, xoff, yoff, node):
 		obj.x = float(node.getAttribute('x')) + xoff

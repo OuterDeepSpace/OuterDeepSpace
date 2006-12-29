@@ -385,9 +385,9 @@ def generateSystem(system, ranges = None):
 	elif num < 980000: system.starClass = 'dF'
 	elif num < 990000: system.starClass = 'dG'
 	elif num < 999500: system.starClass = 'dK'
-	elif num < 999995: system.starClass = 'n-'
-	elif num < 1000000: system.starClass = 'b-'
-	else: system.starClass = 'b-'
+	elif num < 999995: system.starClass = 'n-'  # 00.0495%
+	elif num < 1000000: system.starClass = 'b-' # 00.0005%
+	else: system.starClass = 'b-'               # 00.0001%
 	# planets
 	num = random.randrange(0, 100)
 	planets = (0, 0, 0)
@@ -450,39 +450,39 @@ def generatePlanet(zone, planet):
 	# diameter and type of planet
 	num = random.randrange(0, 100)
 	if zone == 0: # Zone A
-		if num < 5: planet.type = 'A'
-		elif num < 10: planet.type = 'G'; planet.diameter = dice(3, 6, 0) * 10000
-		elif num < 60: planet.type = 'R'; planet.diameter = dice(1, 10, 0) * 1000
-		elif num < 70: planet.type = 'D'; planet.diameter = dice(2, 6, 2) * 1000
-		elif num < 100: planet.type = 'H'; planet.diameter = dice(3, 6, 1) * 1000
+		if num < 5: planet.type = 'A'                                               # 5%
+		elif num < 10: planet.type = 'G'; planet.diameter = dice(3, 6, 0) * 10000   # 5%
+		elif num < 60: planet.type = 'R'; planet.diameter = dice(1, 10, 0) * 1000   # 50% - rock
+		elif num < 70: planet.type = 'D'; planet.diameter = dice(2, 6, 2) * 1000    # 10% - desert
+		elif num < 100: planet.type = 'H'; planet.diameter = dice(3, 6, 1) * 1000   # 30% - hostile
 	elif zone == 1: # Zone B
-		if num < 10: planet.type = 'A'
-		elif num < 15: planet.type = 'G'; planet.diameter = dice(3, 6, 0) * 10000
-		elif num < 25: planet.type = 'R'; planet.diameter = dice(1, 10, 0) * 1000
-		elif num < 45: planet.type = 'D'; planet.diameter = dice(2, 6, 2) * 1000
-		elif num < 70: planet.type = 'H'; planet.diameter = dice(3, 6, 1) * 1000
+		if num < 10: planet.type = 'A'                                              # 10%
+		elif num < 15: planet.type = 'G'; planet.diameter = dice(3, 6, 0) * 10000   # 5%
+		elif num < 25: planet.type = 'R'; planet.diameter = dice(1, 10, 0) * 1000   # 10% - rock
+		elif num < 45: planet.type = 'D'; planet.diameter = dice(2, 6, 2) * 1000    # 20% - desert
+		elif num < 70: planet.type = 'H'; planet.diameter = dice(3, 6, 1) * 1000    # 25% - hostile
 		elif num < 90:
 			if isFGK:
-				planet.type = 'M'; planet.diameter = dice(2, 6, 5) * 1000
+				planet.type = 'M'; planet.diameter = dice(2, 6, 5) * 1000   # FGK /  20% - marginal
 			else:
-				planet.type = 'H'; planet.diameter = dice(3, 6, 1) * 1000
+				planet.type = 'H'; planet.diameter = dice(3, 6, 1) * 1000   # Else / 20% - hostile
 		elif num < 100:
 			if isFGK:
 				# planet.type = 'E'; planet.diameter = dice(2, 6, 5) * 1000
-				planet.type = 'E'; planet.diameter = dice(1, 4, 13) * 1000
+				planet.type = 'E'; planet.diameter = dice(1, 4, 13) * 1000  # FGK / 10% - terran
 			else:
-				planet.type = 'H'; planet.diameter = dice(3, 6, 1) * 1000
+				planet.type = 'H'; planet.diameter = dice(3, 6, 1) * 1000   # Else / 10% - hostile
 	elif zone == 2: # Zone C
-		if num < 15: planet.type = 'A'
-		elif num < 75: planet.type = 'G'; planet.diameter = dice(3, 6, 0) * 10000
-		elif num < 80: planet.type = 'R'; planet.diameter = dice(1, 10, 0) * 1000
-		elif num < 90: planet.type = 'C'; planet.diameter = dice(1, 10, 0) * 1000
-		elif num < 95: planet.type = 'D'; planet.diameter = dice(2, 6, 2) * 1000
+		if num < 15: planet.type = 'A'                                              # 15%
+		elif num < 75: planet.type = 'G'; planet.diameter = dice(3, 6, 0) * 10000   # 60%
+		elif num < 80: planet.type = 'R'; planet.diameter = dice(1, 10, 0) * 1000   # 5% - rock
+		elif num < 90: planet.type = 'C'; planet.diameter = dice(1, 10, 0) * 1000   # 10% - cold
+		elif num < 95: planet.type = 'D'; planet.diameter = dice(2, 6, 2) * 1000    # 5% - desert
 		elif num < 100:
 			if isDNB:
-				planet.type = 'C'; planet.diameter = dice(1, 10, 0) * 1000
+				planet.type = 'C'; planet.diameter = dice(1, 10, 0) * 1000  # DNB / 5% - cold
 			else:
-				planet.type = 'H'; planet.diameter = dice(3, 6, 1) * 1000
+				planet.type = 'H'; planet.diameter = dice(3, 6, 1) * 1000   # Else / 5% - hostile
 	# energy
 	planet.energy = random.randrange(100 - zone * 50, 150 - zone * 50)
 	# minerals

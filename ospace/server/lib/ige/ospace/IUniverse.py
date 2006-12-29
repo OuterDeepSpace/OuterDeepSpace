@@ -462,8 +462,17 @@ class IUniverse(IObject):
 		self.cmd(newGalaxy).loadFromXML(tran, newGalaxy, galaxyFileName, strGalaxyID, oldX, oldY, oldName)
 		log.debug("Setup Enviroment", newGalaxyID)
 		self.cmd(newGalaxy).setupEnvironment(tran, newGalaxy)
+		log.debug("Sending Announcement Message", newGalaxyID)
+		#self.cmd(newGalaxy).announceGalaxy(tran,newGalaxy)
 		log.debug("Removing temp file", galaxyFileName)
 		os.remove(galaxyFileName)
+		message = {
+		    "sender": 'Galaxy'+galaxyName,
+		    "senderID": obj.oid,
+		    "forum": "NEWS",
+		    "data": (obj.oid, MSG_GNC_GALAXY_GENERATOR, obj.oid, tran.db[OID_UNIVERSE].turn, (galaxyName, newGalaxy.description)),
+		    "topic": "EVENT",
+                }
 		log.debug("Galaxy Restarting END")
 
 
@@ -513,8 +522,17 @@ class IUniverse(IObject):
 		self.cmd(newGalaxy).loadFromXML(tran, newGalaxy, galaxyFileName, strGalaxyID, oldX, oldY, oldName)
 		log.debug("Setup Enviroment", newGalaxyID)
 		self.cmd(newGalaxy).setupEnvironment(tran, newGalaxy)
+		log.debug("Sending Announcement Message", newGalaxyID)
+		#self.cmd(newGalaxy).announceGalaxy(tran,newGalaxy)
 		log.debug("Removing temp file", galaxyFileName)
 		os.remove(galaxyFileName)
+		message = {
+		    "sender": 'Galaxy'+galaxyName,
+		    "senderID": obj.oid,
+		    "forum": "NEWS",
+		    "data": (obj.oid, MSG_GNC_GALAXY_GENERATOR, obj.oid, tran.db[OID_UNIVERSE].turn, (galaxyName, newGalaxy.description)),
+		    "topic": "EVENT",
+                }
 		log.debug("Galaxy Restarting END")
 
 
@@ -535,8 +553,17 @@ class IUniverse(IObject):
 		self.cmd(newGalaxy).loadFromXML(tran, newGalaxy, galaxyFileName, strGalaxyID, x, y, galaxyName)
 		log.debug("Setup Enviroment", newGalaxyID)
 		self.cmd(newGalaxy).setupEnvironment(tran, newGalaxy)
+		log.debug("Sending Announcement Message", newGalaxyID)
+		#self.cmd(newGalaxy).announceGalaxy(tran,newGalaxy)
 		log.debug("Removing temp file", galaxyFileName)
 		os.remove(galaxyFileName)
+		message = {
+		    "sender": 'Galaxy'+galaxyName,
+		    "senderID": obj.oid,
+		    "forum": "NEWS",
+		    "data": (obj.oid, MSG_GNC_GALAXY_GENERATOR, obj.oid, tran.db[OID_UNIVERSE].turn, (galaxyName, newGalaxy.description)),
+		    "topic": "EVENT",
+                }
 		log.debug("Galaxy Restarting END")
 
 	createNewGalaxy.public = 1

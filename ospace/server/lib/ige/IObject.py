@@ -102,6 +102,8 @@ class IObject:
 					value = float(attr.nodeValue)
 				elif attrType == types.UnicodeType:
 					value = attr.nodeValue
+				elif attrType == types.StringType:
+					value = attr.nodeValue
 				else:
 					raise 'Unsupported attribute type %s' % attrType
 				setattr(obj, attr.nodeName, value)

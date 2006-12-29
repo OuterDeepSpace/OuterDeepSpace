@@ -57,6 +57,13 @@ class IAIEDENPlayer(IPlayer):
 		obj.techs[Rules.Tech.TORPEDO] = Rules.techMaxImprovement
 		# call super method
 		IPlayer.update(self, tran, obj)
+		#add TL99 techs
+		obj.techLevel = 99
+		obj.techs[Rules.Tech.EDENCANNON] = Rules.techMaxImprovement
+		obj.techs[Rules.Tech.EDENMISSLE] = Rules.techMaxImprovement
+		obj.techs[Rules.Tech.EDENTORP] = Rules.techMaxImprovement
+		obj.techs[Rules.Tech.EDENBOMB] = Rules.techMaxImprovement
+		obj.techs[Rules.Tech.EDENSTATION] = Rules.techMaxImprovement
 
 	def processINITPhase(self, tran, obj, data):
 		IPlayer.processINITPhase(self, tran, obj, data)

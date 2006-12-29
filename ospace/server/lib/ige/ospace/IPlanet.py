@@ -72,7 +72,7 @@ class IPlanet(IObject):
 		obj.popEatBio = 10
 		obj.popEatEn = 0
 		obj.maxPop = 0
-		#
+		# extra goodies
 		obj.scannerPwr = 0
 		obj.signature = 75
 		obj.autoMinStor = 1
@@ -90,6 +90,9 @@ class IPlanet(IObject):
 		obj.trainShipMax = 0
 		obj.fleetSpeedBoost = 1.0
 		obj.ownerSince = 0
+		obj.shield = 0          #current planetary shield level
+		obj.maxShield = 0       #structural max sheild (best structure method)
+		obj.prevShield = 0      #previous turn's shield level (for client growth calculation)
 
 	def startConstruction(self, tran, obj, techID, quantity, targetID, isShip, reportFinished,
 		demolishStruct):
@@ -350,6 +353,7 @@ class IPlanet(IObject):
 		obj.maxPop = 0
 		# process all structures
 		destroyed = []
+		obj.maxShield = 0
 		#@log.debug("Morale bonus/penalty for planet", obj.oid, moraleBonus)
 		for struct in obj.slots:
 			tech = Rules.techs[struct[STRUCT_IDX_TECHID]]
@@ -415,6 +419,8 @@ class IPlanet(IObject):
 				# train
 				obj.trainShipMax = max(obj.trainShipMax, tech.trainShipMax)
 				obj.trainShipInc = max(obj.trainShipInc, tech.trainShipInc * techEff * opStatus)
+			# shielding
+			obj.maxShield = max(tech.planetShield * techEff * opStatus, obj.maxShield)
 			# stargates
 			obj.fleetSpeedBoost = max(obj.fleetSpeedBoost, tech.fleetSpeedBoost * techEff * opStatus)
 			# storage
@@ -440,7 +446,14 @@ class IPlanet(IObject):
 				if struct[STRUCT_IDX_HP] <= 0:
 					# destroy building only if there is no population
 					destroyed.append(struct)
-		# pass scanner/... to the system
+		# do shield self generation
+		obj.prevShield = obj.shield #for planet display of shield growth
+		if shieldMax < obj.shield:
+                    obj.shield = obj.maxShield
+                if shieldMax > obj.shield and not isCombat:
+                    regenTemp = max(1, rules.plShieldRegen* obj.maxShield) #always regen at at least 1
+                    obj.shield = min(obj.shield + regenTemp, obj.maxShield) #don't let it regen over shieldMax
+                # pass scanner/... to the system
 		#@log.debug(obj.oid, "IPlanet scanner", obj.scannerPwr)
 		system.scannerPwrs[obj.owner] = max(obj.scannerPwr, system.scannerPwrs.get(obj.owner, 0))
 		# destroy destroyed buildings
@@ -910,6 +923,8 @@ class IPlanet(IObject):
 		system = tran.db[obj.compOf]
 		desCount = {}
 		firing = False
+		systemAtt = 0;
+		systemDef = 0;
 		for struct in obj.slots:
 			structTechID = struct[STRUCT_IDX_TECHID]
 			opStatus = struct[STRUCT_IDX_OPSTATUS] / 100.0
@@ -949,10 +964,22 @@ class IPlanet(IObject):
 
 	getPreCombatData.public = 0
 
-	def applyShot(self, tran, obj, attack, weaponID, cClass, count):
+	def getSystemCombatBonus(self,tran,obj):
+		systemAtt = 0;
+		systemDef = 0;
+		for struct in obj.slots:
+			techEff = Utils.getTechEff(tran, struct[STRUCT_IDX_TECHID], obj.owner)
+			if tech.systemAtt > 0 or tech.systemDef > 0:
+				systemAtt = max(systemAtt,tech.systemAtt*techEff)
+				systemDef = max(systemAtt,tech.systemDef*techEff)
+
+	getSystemCombatBonus.public = 0
+
+	def applyShot(self, tran, obj, defense, attack, weaponID, cClass, count):
 		#@log.debug('IPlanet', 'Apply shot', weaponID, attack, cClass, count)
 		# compute chance to hit
 		weapon = Rules.techs[weaponID]
+		#system defense bonus is dropped for planets...structures can't move; just calculate defense off structure defense
 		defense = Rules.combatStructDefense
 		destroyed = 0
 		dmg = 0
@@ -980,8 +1007,13 @@ class IPlanet(IObject):
 			# hit
 			dmg = ShipUtils.computeDamage(weapon.weaponClass, 3, weapon.weaponDmgMin, weapon.weaponDmgMax)
 			#@log.debug(obj.oid, 'HIT! att=%d vs def=%d, dmg=%d '% (attack, defense, dmg))
+                        #shield strike
+                        if obj.shield > 0:
+                                absorb = min(dmg,obj.shield)
+                                obj.shield -= absorb
+                                dmg -= absorb
 			if dmg == 0:
-				return 0, 0, 3
+				return 0+absorb, 0, 3
 			# select slot
 			if count == 7 or not obj.slots:
 				#@log.debug('IPlanet', 'Population hit')
@@ -1037,7 +1069,7 @@ class IPlanet(IObject):
 					#@log.debug('IPlanet', obj.oid, 'Morale penalty', dmg, sumHP, Rules.moraleModPlHit * float(dmg) / float(sumHP))
 		#@log.debug('IPlanet', 'Shot applied', dmg, destroyed)
 		# when destroyed, only class 3 (structure) i valid
-		return dmg, destroyed, 3
+		return dmg+absorb, destroyed, 3
 
 	applyShot.public = 0
 

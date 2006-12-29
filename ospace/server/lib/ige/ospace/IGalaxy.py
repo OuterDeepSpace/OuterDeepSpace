@@ -1,4 +1,4 @@
-﻿#
+#
 #  Copyright 2001 - 2006 Ludek Smid [http://www.ospace.net/]
 #
 #  This file is part of IGE - Outer Space.
@@ -38,6 +38,7 @@ class IGalaxy(IObject):
 	def init(self, obj):
 		IObject.init(self, obj)
 		#
+		obj.description = ''
 		obj.x = 0.0
 		obj.y = 0.0
 		obj.radius = 0.0
@@ -383,6 +384,12 @@ class IGalaxy(IObject):
 
 	getPublicInfo.public = 1
 	getPublicInfo.accLevel = AL_NONE
+
+	def getDescription(self,obj):
+            return obj.description
+        
+	getPublicInfo.public = 1
+	getPublicInfo.accLevel = AL_NONE
 	
 	def setupEnvironment(self, tran, obj):
 		# check required players
@@ -432,6 +439,7 @@ class IGalaxy(IObject):
 					log.debug("Adding EDEN", planetID)
 					self.cmd(planet).changeOwner(tran, planet, players[T_AIEDENPLAYER].oid, 1)
 					planet.slots.append(Utils.newStructure(tran, Rules.Tech.EDENBASE, planet.owner))
+					planet.slots.append(Utils.newStructure(tran, Rules.Tech.EDENSTATION, planet.owner))
 					planet.storPop = 3000
 				# mutants
 				if planet.plDisease != 0 and planet.owner == OID_NONE:

@@ -129,8 +129,7 @@ class FleetDlg:
 				elif action == FLACTION_WAIT:
 					info = _("%d / %d") % (fleet.actionWaitCounter, data)
 				# create item
-				item = ui.Item(gdata.fleetActions[action], targetName = targetName,
-					data = info, tIndex = index + 1, current = current)
+				item = ui.Item(gdata.fleetActions[action], targetName = targetName, data = info, tIndex = index + 1, current = current)
 				items.append(item)
 				index += 1
 		self.win.vCommands.items = items

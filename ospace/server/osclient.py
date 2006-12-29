@@ -29,6 +29,7 @@ import pprint, traceback
 from getpass import getpass
 from code import InteractiveConsole
 from ige.ospace import Rules
+import time
 
 levelTechs = {1: [
 1000,
@@ -103,6 +104,12 @@ levelTechs = {1: [
 5801,
 5802,
 5803,
+],
+99: [
+99001,
+99002,
+99003,
+99004,
 ]}
 
 levelTechsRaces = {
@@ -119,7 +126,8 @@ levelTechsRaces = {
 5: {
 'B': [5400, 5401, 5402, 5403, 5404, 5405, 5406, 5431, 5433, 5465, 5467, 5470, 5805, ],
 'H': [5003, 5004, 5005, 5408, 5409, 5410, 5411, 5412, 5413, 5414, 5430, 5466, 5468, 5471, 5474, 5804, ],
-'C': [5006, 5416, 5417, 5418, 5419, 5420, 5421, 5432, 5466, 5469, 5472, 5473, ]}
+'C': [5006, 5416, 5417, 5418, 5419, 5420, 5421, 5432, 5466, 5469, 5472, 5473, ]},
+99: {'B': [], 'H': [], 'C': []},
 }
 
 advTechLevel = {
@@ -281,6 +289,28 @@ def giveStratRes(objID):
 	print "Player %d has now %d pieces of %d." % (objID, stratRes[stratResID], stratResID)
 	return objID
 
+def startGalaxy():
+        showGalaxies()
+	objId = raw_input("oid: ")
+	newObjID = 0
+	try:
+		newObjID = int(objId)
+	except:
+		print "Invalid object"
+	un = s.getInfo(1)
+	galaxyObj = 0
+        print newObjID
+	for galaxyID in un.galaxies:
+            print galaxyID
+            if galaxyID==newObjID:
+                galaxyObj = newObjID
+	if galaxyObj == 0:
+		print "Not a galaxy"
+	else:
+                s.enableTime(galaxyObj,1)
+                print "Galaxy will start on next turn process"
+
+
 def showMenu(objID):
 	print
 	print "----- OSPace admin console menu -----"
@@ -298,6 +328,7 @@ def showMenu(objID):
 	print "C. Interactive console"
 	print "T. Process turn"
 	print "R. Process X turns"
+	print "S. Start Galaxy Time"
 	print
 	print "Ctrl+Z to End"
 	print
@@ -344,6 +375,8 @@ def processMenu(inp, objId, s):
 	elif string.upper(inp) == "C":
 		console = InteractiveConsole(locals())
 		console.interact()
+	elif string.upper(inp) == "S":
+		startGalaxy()
 
 	return objId
 
@@ -371,6 +404,6 @@ try:
 		showMenu(objID)
 		objID = processMenu(raw_input(), objID, s)
 except EOFError:
-	pass
+       pass
 
 s.logout()

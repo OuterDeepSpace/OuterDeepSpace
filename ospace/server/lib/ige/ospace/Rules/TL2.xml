@@ -218,6 +218,7 @@
 			prodEnv="+56"
 		/>
 		<preresearch>This structure improves environment by spreading Mutagen into the atmosphere.</preresearch>
+		<description>By dispersing mutagen into the atmosphere through specially tuned venting systems, the Mutagen Dispensor rapidly improves a planet's health.</description>
 	</technology>
 	<technology id="2400" symbol="COLONYMOD2" name="Colony Module">
 		<discovery

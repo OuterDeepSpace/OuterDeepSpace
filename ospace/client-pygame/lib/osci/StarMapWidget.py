@@ -88,7 +88,7 @@ class StarMapWidget(Widget):
 		self.highlightPos = None
 		self.alwaysShowRangeFor = None
 		self.showBuoyDlg = ShowBuoyDlg(self.app)
-		self._miniMapRect = Rect(0, 20, 200, 150)
+		self._miniMapRect = Rect(0, 20, 175, 175)
 		self.miniMap = MiniMap(self._miniMapRect.width, self._miniMapRect.height)
 		# flags
 		self.processKWArguments(kwargs)

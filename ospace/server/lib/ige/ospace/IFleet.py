@@ -1145,7 +1145,7 @@ class IFleet(IObject):
 
 	getPreCombatData.public = 0
 
-	def applyShot(self, tran, obj, attack, weaponID, targetClass, target):
+	def applyShot(self, tran, obj, defense, attack, weaponID, targetClass, target):
 		#@log.debug(obj.oid, 'IFleet', 'Apply shot', attack, weaponID, targetClass, target)
 		player = tran.db[obj.owner]
 		# find correct ship to hit
@@ -1177,10 +1177,11 @@ class IFleet(IObject):
 		# compute if ship has been hit
 		weapon = Rules.techs[weaponID]
 		level = Rules.shipExpToLevel.get(int(exp / ship.baseExp), Rules.shipDefLevel)
+		# add system defense bonus to ship inate defense
 		if weapon.weaponIsMissile:
-			defense = int(ship.missileDef * Rules.shipLevelEff[level])
+			defense += int(ship.missileDef * Rules.shipLevelEff[level])
 		else:
-			defense = int(ship.combatDef * Rules.shipLevelEff[level])
+			defense += int(ship.combatDef * Rules.shipLevelEff[level])
 		destroyed = 0
 		destroyedClass = ship.combatClass
 		dmg = 0
@@ -1229,6 +1230,9 @@ class IFleet(IObject):
                                 blocked = min(shield, int(dmg*(ship.hardShield))) #hard shields also reduce penetrating weapons
                                 obj.ships[target][2] -= blocked
                                 dmg -= blocked
+                        #damage absorbsion by armor
+                        if ship.damageAbsorb > 0 and dmg > 0:
+                                dmg = max(0,dmg-ship.damageAbsorb)
 			# armour
 			if dmg >= hp:
 				destroyed = 1

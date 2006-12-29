@@ -77,6 +77,9 @@ attrs = {
 	'maxHP' : 0,
 	'scannerPwr': 0,
 	"structWeapons": [0],
+        "planetShield": 0, #planetary shield; when structure built, shield = 0; shield will regenerate at 2% per turn until equal to this value. Structures do not add shield strength; strongest shield = planet shield
+        "systemAtt": 0,
+        "systemDef": 0,
 	"refuelMax": 0,
 	"refuelInc": 0,
 	"repairShip": 0.0,
@@ -116,6 +119,7 @@ attrs = {
 	"autoRepairFix": 0, # fixed amount of HP/turn to repair
 	"autoRepairPerc": 0.0, # how many percent of maxHP/turn is repaired
 	"autoRepairMaxHP": 0.0, # default is 100% in the engine, but leave at 0% here for proper calculation; out of total ship HPs
+        "damageAbsorb": 0, #amount of damage absorbed by the hull (not shield!); max sum is 5 damage (set in Rules)
 	# weapons
 	'weaponDmgMin': 0,
 	'weaponDmgMax': 0,

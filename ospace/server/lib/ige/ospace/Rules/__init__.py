@@ -47,6 +47,7 @@ unusedProdMod = 0.75
 ## Environment
 envInterval = 1000
 envAutoMod = 10.0
+envMax = 200
 envSelfUpgradeChance = {"H": 5, "C": 1, "B": 500} # in ten thousandths (10 000)
 planetSpec = {}
 planetSpec[u'A'] = makeIDataHolder(
@@ -147,11 +148,14 @@ popSlotHP = 100 # HP of habitable structures on slot (where people live)
 maxRsrchQueueLen = 10
 techBaseImprovement = 1
 techMaxImprovement = 5
-techImprCostMod = {1:480, 2:480, 3:720, 4:960, 5:1200}
-techImprEff = {1:0.750, 2:0.875, 3:1.000, 4:1.125, 5:1.250}
+
+techImprCostMod = {1:480, 2:480, 3:720, 4:960, 5:1200, 6: 1440, 7: 1680} #per level
+sciPtsPerCitizen = {1: 0, 2: 0.00075, 3: 0.00150, 4: 0.00175, 5: 0.00200, 6: 0.002125, 7: 0.00225} #per level
+
+techImprEff = {1:0.750, 2:0.875, 3:1.000, 4:1.125, 5:1.250} #per sublevel
+
 #maxSciPtsTL = {1:100, 2:200, 3:300, 4:400, 5:500, 6:600, 7:700}
 #sciPtsStepFraction = 0.25
-sciPtsPerCitizen = {1: 0, 2: 0.00075, 3: 0.00150, 4: 0.00175, 5: 0.00200}
 
 ## Scanner
 maxSignature = 100
@@ -171,12 +175,14 @@ operProdRatio = 0.001
 combatRetreatWait = 3
 starGateDamage = 0.2 # damage for 100% speed boost (double for 200%, etc...)
 shipDecayRatio = 0.04
+maxDamageAbsorb = 5 # max absorbed damage for tech "damageAbsorb" property.
 
 ## Buildings
 repairRatio = 0.02
 repairRunningRatio = 0.01
 decayRatio = 0.02
 storCapacityOfOfflineStruct = 1.0
+plShieldRegen = 0.05 #regen rate of planetary shield
 
 ## Diplomacy
 baseRelationChange = -5
