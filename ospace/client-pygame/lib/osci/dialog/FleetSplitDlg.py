@@ -35,10 +35,13 @@ LEVEL = 16
 SPEED = 32
 
 speedDesc = {
-	0: _("< 5"),
-	1: _("5 - 6"),
-	2: _("6 - 7"),
-	3: _("> 7"),
+	0: _("0"),
+	1: _("0 - 4"),
+	2: _("4 - 5"),
+	3: _("5 - 6"),
+	4: _("6 - 7"),
+	5: _("7 - 8"),
+	6: _("> 8"),
 }
 
 dmgDesc = {
@@ -137,14 +140,20 @@ def getDamageLevel(ship):
 
 def getSpeedLevel(ship):
 	speed = getTech(ship).speed
-	if speed < 5:
+	if speed <= 0:
 		return 0
-	elif speed >= 5 and speed < 6:
+	elif speed > 0 and speed < 4:
 		return 1
-	elif speed >= 6 and speed < 7:
+	elif speed >= 4 and speed < 5:
 		return 2
-	else: # > 7
+	elif speed >= 5 and speed < 6:
 		return 3
+	elif speed >= 6 and speed < 7:
+		return 4
+	elif speed >= 7 and speed < 8:
+		return 5
+	else: # >= 8
+		return 6
 
 class FleetSplitDlg:
 
@@ -286,18 +295,24 @@ class FleetSplitDlg:
 		if checks & CLASS:
 			tech = getTech(listData[0])
 			className = _(gdata.shipClasses[tech.combatClass])
-
+			
 		if checks & EXPERIENCE:
 			exp = listData[0][3]
-
-		if checks & DESIGN:
-			designName = getTech(listData[0]).name
 
 		if checks & LEVEL:
 			level = getExperienceLevel(listData[0])
 
 		if checks & SPEED:
 			speed = speedDesc[getSpeedLevel(listData[0])]
+
+		if checks & DESIGN:
+			designName = getTech(listData[0]).name
+			if not (checks & CLASS):
+				tech = getTech(listData[0])
+				className = _(gdata.shipClasses[tech.combatClass])
+			if not (checks & SPEED):
+				speed = _("%.2f") % getTech(listData[0]).speed
+
 
 		item = ui.Item(designName,
 			tHP = hpText,

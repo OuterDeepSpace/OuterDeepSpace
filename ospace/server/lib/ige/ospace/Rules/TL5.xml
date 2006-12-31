@@ -1209,7 +1209,7 @@
 			researchMod="1.7 + 0.75"
 			level="2"
 			researchRequires="EMCANNON-3"
-			researchRaces="CH"
+			researchRaces="C"
 		/>
 		<structure
 			subtype="str50"

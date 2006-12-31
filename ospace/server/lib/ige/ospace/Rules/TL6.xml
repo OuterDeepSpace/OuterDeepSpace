@@ -74,7 +74,7 @@
 		/>
 		<preresearch>A pod version of the planet assembly project.</preresearch>
 	</technology>
-	<technology id="6005" symbol="COLONYMOD6" name="Colony Module">
+	<technology id="6005" symbol="COLONYMOD6" name="Advanced Colony Module">
 		<discovery
 			researchMod="1.00 + 0.50"
 			level="6"
@@ -94,7 +94,7 @@
 		/>
 		<preresearch>Our old colony modules are getting outdated.</preresearch>
 	</technology>
-	<technology id="6025" symbol="OUTPOST6" name="Outpost">
+	<technology id="6025" symbol="OUTPOST6" name="Advanced Outpost">
 		<starting/>
 		<discovery
 			researchMod="1.0"

@@ -32,12 +32,13 @@ def structWeapons2Text(array):
     i = 0
     j = 0
     for weaponNum in array:
+        if i>3:
+            break
         if weaponNum > 0:
             if j > 0:
                 string += _(', ')
             string += _('%d') % ( weaponNum )
-            string += _(' ')
-            string += [_("small"), _("medium"), _("large"), _("planet"), _("other"),_("other"),_("other"),_("other"),_("other"),_("other")][i]
+            string += [_("S"), _("M"), _("L"), _("P"), _("?"),_("?"),_("?"),_("?"),_("?"),_("?")][i]
             j+=1
         i+=1
     return string
@@ -315,25 +316,29 @@ class TechInfoDlg:
 		)
 		self.win.subscribeAction('*', self)
 		# tech data
-		ui.Title(self.win, layout = (0, 0, 16, 1), text = _('Data'),
+		ui.Title(self.win, layout = (0, 0, 18, 1), text = _('Data'),
 			align = ui.ALIGN_W, font = 'normal-bold')
-		ui.Listbox(self.win, layout = (0, 1, 16, 25), id = 'vData',
+		ui.Listbox(self.win, layout = (0, 1, 18, 25), id = 'vData',
 			columns = ((_('Property'), 'text', 11, ui.ALIGN_W),
-			(_('Value'), 'tValue', 5, ui.ALIGN_E)),
+			(_('Value'), 'tValue', 7, ui.ALIGN_E)),
 			columnLabels = 0)
-		ui.Button(self.win, layout = (0, 26, 4, 1), text = _('Structure'),
+		ui.Button(self.win, layout = (1, 26, 4, 1), text = _('Structure'),
 			id = 'vStruct', toggle = 1, action = 'onShowType', data = V_STRUCT)
-		ui.Button(self.win, layout = (4, 26, 4, 1), text = _('Ship Hull'),
+		ui.Button(self.win, layout = (5, 26, 4, 1), text = _('Ship Hull'),
 			id = 'vHull', toggle = 1, action = 'onShowType', data = V_HULL)
-		ui.Button(self.win, layout = (8, 26, 4, 1), text = _('Ship Eq.'),
+		ui.Button(self.win, layout = (9, 26, 4, 1), text = _('Ship Eq.'),
 			id = 'vSEquip', toggle = 1, action = 'onShowType', data = V_SEQUIP)
-		ui.Button(self.win, layout = (12, 26, 4, 1), text = _('Project'),
+		ui.Button(self.win, layout = (13, 26, 4, 1), text = _('Project'),
 			id = 'vProject', toggle = 1, action = 'onShowType', data = V_PROJECT)
+		ui.Button(self.win, layout = (17, 26, 1, 1), text = _(''),
+			id = 'vEmpty1', toggle = 0)
+		ui.Button(self.win, layout = (0, 26, 1, 1), text = _(''),
+			id = 'vEmpty2', toggle = 0)
 		# text field
-		ui.Title(self.win, layout = (16, 0, 24, 1), text = _('Description'),
+		ui.Title(self.win, layout = (18, 0, 22, 1), text = _('Description'),
 			align = ui.ALIGN_W, font = 'normal-bold')
 		s = ui.Scrollbar(self.win, layout = (39, 1, 1, 26))
-		t = ui.Text(self.win, layout = (16, 1, 23, 26), id = 'vDescr', editable = 0)
+		t = ui.Text(self.win, layout = (18, 1, 21, 26), id = 'vDescr', editable = 0)
 		t.attachVScrollbar(s)
 		# status bar + submit/cancel
 		ui.TitleButton(self.win, layout = (35, 27, 5, 1), text = _('Close'), action = 'onClose')

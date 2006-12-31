@@ -44,6 +44,7 @@ INFO_SLOT = 2
 class StarSystemDlg:
 
 	def __init__(self, app):
+		self.wormhole = 0
 		self.app = app
 		self.createUI()
 		self.newTaskDlg = NewTaskDlg(self.app)
@@ -58,6 +59,7 @@ class StarSystemDlg:
 
 	def display(self, objID):
 		# set initial state
+		self.wormhole = 0
 		obj = client.get(objID, noUpdate = 1)
 		if obj.type == T_PLANET:
 			self.systemID = obj.compOf
@@ -65,6 +67,8 @@ class StarSystemDlg:
 		elif obj.type in (T_SYSTEM, T_WORMHOLE):
 			self.systemID = objID
 			self.planetID = None
+			if obj.type == T_WORMHOLE:
+				self.wormhole = 1
 		else:
 			raise 'Unsupported type of object %d' % obj.type
 		self.plInfoType = 0
@@ -141,6 +145,7 @@ class StarSystemDlg:
 	def showPlanet(self):
 		self.win.setTagAttr('pl', 'visible', 1)
 		self.win.setTagAttr('sys', 'visible', 0)
+		self.win.setTagAttr('hidden', 'visible', 0)
 		planet = client.get(self.planetID, noUpdate = 1)
 		player = client.getPlayer()
 		if hasattr(planet, 'revoltLen') and planet.revoltLen > 0:
@@ -479,6 +484,7 @@ class StarSystemDlg:
 	def showSystem(self):
 		self.win.setTagAttr('pl', 'visible', 0)
 		self.win.setTagAttr('sys', 'visible', 1)
+		self.win.setTagAttr('hidden', 'visible', 0)
 		system = client.get(self.systemID, noUpdate = 1)
 		self.win.vSystemMap.selectedObjID = self.systemID
 		# star info
@@ -982,6 +988,21 @@ class StarSystemDlg:
 	def onRedirectFleets(self, widget, action, data):
 		self.fleetRedirectionDlg.display(self.systemID, self)
 
+	def onFindWormholeExit(self, widget, action, data):
+		source = client.get(self.systemID, noUpdate = 1)
+		try:
+			dest = client.get(source.destinationOid)
+			try:
+				gdata.mainGameDlg.win.vStarMap.highlightPos = (dest.x, dest.y)
+				gdata.mainGameDlg.win.vStarMap.setPos(dest.x, dest.y)
+				self.hide()
+				return
+			except:
+				log.debug("Invalid object information during wormhole find. Obj. Type: ", dest.typeID)
+				self.win.setStatus(_("Destination not explored")) #don't show the end user this error
+		except:
+			self.win.setStatus(_("Destination not explored"))
+
 	def onBuoy(self, widget, action, data):
 		buoyText = ""
 		buoyType = BUOY_PRIVATE
@@ -1096,8 +1117,16 @@ class StarSystemDlg:
 		ui.Title(self.win, layout = (30, 25, 10, 1), tags = ['sys'])
 		ui.Button(self.win, layout = (0, 26, 5, 1), text = _('Rename'),
 			id = 'vSRename', tags = ['sys'], action = 'onRenameSystem')
-		ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Redirection OFF'),
-			id = 'vSRedirect', tags = ['sys'], action = 'onRedirectFleets')
+		if self.wormhole:
+			ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Find Wormhole Exit'),
+				id = 'vSFWHExit', tags = ['sys'], action = 'onFindWormholeExit')
+			ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Redirection OFF'),
+				id = 'vSRedirect', tags = ['hidden'], action = 'onRedirectFleets')
+		else:
+			ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Find Wormhole Exit'),
+				id = 'vSFWHExit', tags = ['hidden'], action = 'onFindWormholeExit')
+			ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Redirection OFF'),
+				id = 'vSRedirect', tags = ['sys'], action = 'onRedirectFleets')
 		ui.Button(self.win, layout = (15, 26, 5, 1), text = _('Add buoy'),
 			id = 'vSBuoy', tags = ['sys'], action = 'onBuoy')
 		ui.Button(self.win, layout = (20, 26, 5, 1), text = _('Delete buoy'),

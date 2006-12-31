@@ -247,6 +247,14 @@ class StarMapWidget(Widget):
 				info = []
 				info.append(_('Worm hole: %s [ID: %d]') % (name or res.getUnknownName(), obj.oid))
 				info.append(_('Coordinates: [%.2f, %.2f]') % (obj.x, obj.y))
+				try:
+                                    whDestObj = client.db[obj.destinationOid] #except if the client doesn't have this in their DB
+                                    whDestName = getattr(whDestObj, 'name', None)
+                                    info.append(_('Destination: %s [ID: %d]') % (whDestName or res.getUnknownName()), obj.oid)
+                                    info.append(_('Dest. Coords: [%.2f, %.2f]') % (whDestName.x, whDestName.y))
+                                except:
+                                    info.append(_('Destination: ? [ID: ?]'))
+                                    info.append(_('Dest. Coords: [?, ?]'))
 				if pirProb > 0.0:
 					info.append(_("Pirate get fame chance: %d %%") % (pirProb * 100))
 				self._popupInfo[obj.oid] = info
@@ -422,7 +430,7 @@ class StarMapWidget(Widget):
 						getattr(player, 'oid', '?')
 					))
 				self._popupInfo[obj.oid] = info
-			elif obj.type in (T_GALAXY, T_AIRENPLAYER, T_AIMUTPLAYER, T_AIPIRPLAYER, T_AIEDENPLAYER):
+			elif obj.type in (T_GALAXY, T_AIRENPLAYER, T_AIMUTPLAYER, T_AIPIRPLAYER, T_AIEDENPLAYER, T_PIRPLAYER):
 				pass
 			elif obj.type == T_UNKNOWN:
 				# pop up info

@@ -28,6 +28,8 @@ from MessagesDlg import MessagesDlg
 from ConstructionDlg import ConstructionDlg
 from PlanetsOverviewDlg import PlanetsOverviewDlg
 from FleetsOverviewDlg import FleetsOverviewDlg
+from PlanetsAnalysisDlg import PlanetsAnalysisDlg
+from FleetsAnalysisDlg import FleetsAnalysisDlg
 from GalaxyRestartDlg import GalaxyRestartDlg
 from ConfirmDlg import ConfirmDlg
 from OptionsDlg import OptionsDlg
@@ -59,6 +61,8 @@ class MainGameDlg:
 		self.problemsDlg = ProblemsDlg.ProblemsDlg(self.app)
 		self.empireOverviewDlg = EmpireOverviewDlg.EmpireOverviewDlg(self.app)
 		self.galaxyRestartDlg = GalaxyRestartDlg(self.app)
+		self.planetsAnalysisDlg = PlanetsAnalysisDlg(app)
+		self.fleetsAnalysisDlg = FleetsAnalysisDlg(app)
 		self.createUI()
 		self.centered = 0
 
@@ -110,12 +114,24 @@ class MainGameDlg:
 	def onConstruction(self, widget, action, data):
 		self.constructionDlg.display()
 
+	def onPlanetsMenu(self, widget, action, data):
+		self.systemPlanetMenu.show((16*20, 0))
+		
 	def onPlanets(self, widget, action, data):
 		self.planetsOverviewDlg.display()
 
+	def onPlanetAnalysis(self, widget, action, data):
+		self.planetsAnalysisDlg.display()
+		
+	def onFleetsMenu(self, widget, action, data):
+		self.systemFleetMenu.show((20*20, 0))
+		
 	def onFleets(self, widget, action, data):
 		self.fleetsOverviewDlg.display()
 
+	def onFleetAnalysis(self, widget, action, data):
+		self.fleetsAnalysisDlg.display()
+		
 	def onOptions(self, widget, action, data):
 		self.optionsDlg.display()
 
@@ -147,7 +163,7 @@ class MainGameDlg:
 
 	def onMenu(self, widget, action, data):
 		w, h = gdata.scrnSize
-		self.systemMenu.show((w - self.systemMenu.width * 20, 0))
+		self.systemMenu.show((w - self.systemMenu.width * 20 - 4, 0))
 
 	def onResignConfirmed(self):
 		client.cmdProxy.resign(client.getPlayerID())
@@ -272,15 +288,15 @@ class MainGameDlg:
 		ui.Button(self.win, layout = (12, 0, 4, 1), text = _('Constr'),
 			id = "vConstruction", action = 'onConstruction', enabled = 0)
 		ui.Button(self.win, layout = (16, 0, 4, 1), text = _('Planets'),
-			id = "vPlanets", action = 'onPlanets', enabled = 1)
+			id = "vPlanetsMenu", action = 'onPlanetsMenu', enabled = 1)
 		ui.Button(self.win, layout = (20, 0, 4, 1), text = _('Fleets'),
-			id = "vFleets", action = 'onFleets', enabled = 1)
+			id = "vFleetsMenu", action = 'onFleetsMenu', enabled = 1)
 		ui.Button(self.win, layout = (24, 0, 4, 1), text = _('Overview'),
 			id = "vOverview", action = 'onOverview', enabled = 1)
-		ui.Title(self.win, layout = (28, 0, lw - 36, 1))
-		ui.Button(self.win, layout = (lw - 8, 0, 4, 1), text = _('Problems'),
+		ui.Title(self.win, layout = (28, 0, lw - 37, 1))
+		ui.Button(self.win, layout = (lw - 9, 0, 4, 1), text = _('Problems'),
 			action = 'onProblems')
-		ui.Button(self.win, layout = (lw - 4, 0, 4, 1), text = _('Menu'),
+		ui.Button(self.win, layout = (lw - 5, 0, 5, 1), text = _('Menu'),
 			action = 'onMenu')
 		self.app.statusBar = self.win.vStatus
 		self.app.setStatus(_('Ready.'))
@@ -290,10 +306,28 @@ class MainGameDlg:
 			items = [
 				ui.Item(_("Find system"), action = "onSearch"),
 				ui.Item(_("Statistics"), action = "onStats"),
-				ui.Item(_("Resign"), action = "onResign"),
 				ui.Item(_("Galaxy restart"), action = "galaxyRestart", enabled = False, data = True),
 				ui.Item(_("Options"), action = "onOptions"),
 				ui.Item(_("Quit"), action = "onQuit"),
+				ui.Item(_("________")),
+				ui.Item(_("Resign"), action = "onResign"),
 			]
 		)
 		self.systemMenu.subscribeAction("*", self)
+		self.systemFleetMenu = ui.Menu(self.app, title = _("Fleets"),
+			width = 4,
+			items = [
+				ui.Item(_("Fleet List"), action = "onFleets"),
+				ui.Item(_("Analysis"), action = "onFleetAnalysis"),
+			]
+		)
+		self.systemFleetMenu.subscribeAction("*", self)
+		self.systemPlanetMenu = ui.Menu(self.app, title = _("Planets"),
+			width = 4,
+			items = [
+				ui.Item(_("Planet List"), action = "onPlanets"),
+				ui.Item(_("Analysis"), action = "onPlanetAnalysis"),
+			]
+		)
+		self.systemPlanetMenu.subscribeAction("*", self)
+		

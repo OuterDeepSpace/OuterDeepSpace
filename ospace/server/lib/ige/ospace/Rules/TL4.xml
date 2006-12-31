@@ -961,7 +961,7 @@
         <preresearch>Protecting our planets is a major requirement. The planetary shield should do just that.</preresearch>
 	<description>High energy electrons targeted at the upper atompshere utlizes the planet's inherent magnetic field to create an impenetrable barrier. This barrier takes time to charge up, and once charged, will take substantial firepower for any fleet to punch through. Each planet needs only one planetary sheild. Planetary shields are not penetratable by shield penetrating weapons.</description>
     </technology>
-    <technology id="4504" symbol="PLSHIELDB" name="Photo-absorbant Lichen Spreader">
+    <technology id="4504" symbol="PLSHIELDB" name="Photo-absorbant Lichen Shield">
         <discovery
             researchMod="1.25"
             level="4"
