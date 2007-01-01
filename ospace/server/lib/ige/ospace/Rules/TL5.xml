@@ -806,7 +806,7 @@
 			signature="-30"
 			missileDef="26"
 			combatAtt="16"
-			combatDef="16"
+			combatDef="21"
 			minHull="1"
 			maxInstallations="1"
 		/>

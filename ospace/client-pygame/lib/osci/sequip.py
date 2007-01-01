@@ -29,6 +29,20 @@ descr = {}
 def id2Class(id):
 	return gdata.shipClasses[id]
 
+def num2Perc(num):
+        return (num*100)
+
+def num2ZeroPerc(num):
+        val = ((num-1)*100)
+        return val
+
+def num2PlusZeroPerc(num): #make it positive without the + sign
+        val = ((num-1)*100)
+        if val < 0:
+            val = -1*val
+        return val
+
+
 def add(subtype, detail, attr, text, filter, eff):
 	global descr
 	if subtype not in descr: descr[subtype] = []
@@ -40,7 +54,7 @@ def N_(msg): return msg
 add("*", SHORT, "engPwr", N_("power %+d"), int, 1)
 
 add("seq_wpn", LONG, "weaponAtt", N_("wpn att %+d"), int, 1)
-add("seq_wpn", SHORT, "weaponClass", N_("trgt class %s"), id2Class, 0)
+#add("seq_wpn", SHORT, "weaponClass", N_("trgt %s"), id2Class, 0)
 add("seq_wpn", SHORT, "weaponDmgMin", N_("min dmg %d"), int, 1)
 add("seq_wpn", SHORT, "weaponDmgMax", N_("max dmg %d"), int, 1)
 add("seq_wpn", SHORT, "weaponROF", N_("ROF %.1f"), float, 0)
@@ -48,6 +62,9 @@ add("seq_wpn", SHORT, "weaponIgnoreShield", N_("ignores shield"), None, 0)
 
 add("*", SHORT, "scannerPwr", N_("scanner %d"), int, 1)
 
+add("*", LONG, "minHull", N_("min hull %s"), id2Class, 0)
+add("*", LONG, "maxHull", N_("max hull %s"), id2Class, 0)
+add("*", LONG, "maxInstallations", N_("max %s"), int, 0)
 add("*", LONG, "maxHP", N_("HP %+d"), int, 1)
 add("*", LONG, "slots", N_("slots %d"), int, 0)
 add("*", LONG, "weight", N_("weight %d"), int, 0)
@@ -55,7 +72,17 @@ add("*", LONG, "combatAtt", N_("att %+d"), int, 1)
 add("*", LONG, "combatDef", N_("def %+d"), int, 1)
 add("*", LONG, "missileDef", N_("mis. def %+d"), int, 1)
 add("*", LONG, "signature", N_("sign. %+d"), int, 1)
-add("*", LONG, "minHull", N_("min hull %s"), id2Class, 0)
+add("*", LONG, "signatureCloak", N_("%d%% cloaking"), num2PlusZeroPerc, 0)
+add("*", LONG, "signatureDecloak", N_("visibility %+d%%"), num2ZeroPerc, 0)
+add("*", LONG, "combatAttPerc", N_("att %+d%%"), num2ZeroPerc, 1)
+add("*", LONG, "combatDefPerc", N_("def %+d%%"), num2ZeroPerc, 1)
+add("*", LONG, "missileDefPerc", N_("mis. def %+d%%"), num2ZeroPerc, 1)
+add("*", LONG, "shieldPerc", N_("shield %d%%"), num2Perc, 1)
+add("*", LONG, "hardShield", N_("hard shield %d%%"), num2Perc, 1)
+add("*", LONG, "damageAbsorb", N_("absorb dmg %d"), int, 0)
+add("*", LONG, "autoRepairPerc", N_("repair %d%%"), num2Perc, 1)
+add("*", LONG, "autoRepairFix", N_("repair %d"), int, 1)
+
 
 # i18n
 del N_

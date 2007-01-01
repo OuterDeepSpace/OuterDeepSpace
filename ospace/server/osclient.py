@@ -77,8 +77,8 @@ levelTechsRaces = {
 'C': [3001, 3005, 3006, 3411, 3453, 3456, ]},
 4: {
 'B': [4003, 4400, 4401, 4402, 4403, 4404, 4405, 4406, 4458, 4460, 4476, 4502, 4504, ],
-'H': [4002, 4407, 4408, 4409, 4410, 4411, 4412, 4413, 4459, 4461, 4477, 4479, 4480, 4501, 4503, ],
-'C': [4001, 4414, 4415, 4416, 4417, 4418, 4419, 4420, 4459, 4462, 4477, 4479, 4500, 4503, ]},
+'H': [4002, 4407, 4408, 4409, 4410, 4411, 4412, 4413, 4459, 4461, 4477, 4479, 4480, 4500, 4503, ],
+'C': [4001, 4414, 4415, 4416, 4417, 4418, 4419, 4420, 4459, 4462, 4477, 4479, 4501, 4503, ]},
 5: {
 'B': [5400, 5401, 5402, 5403, 5404, 5405, 5406, 5431, 5433, 5465, 5467, 5470, 5475, 5503, 5504, 5805, 5808],
 'H': [5003, 5004, 5005, 5408, 5409, 5410, 5411, 5412, 5413, 5414, 5430, 5434, 5466, 5468, 5471, 5474, 5501, 5502, 5804, 5807],
@@ -155,6 +155,25 @@ def setCurrentObject():
 
 	return newObjID
 
+def initDevelTesting(objID):
+	levels = 6
+	resources = 9
+	
+	race = string.upper(raw_input("race: "))
+	if not (race=='b' or race=='B' or race=='c' or race=='C' or race =='h' or race =='H'):
+		print "Invalid race"
+		return objID
+	
+	for level in range(2,levels+1):
+		advanceLevelRace(objID,level,race)
+	for level in range(1,levels+1):
+		giveTechsNum(objID,level)
+	giveTechsNum(objID,99)
+	for stratResID in range(1,resources+1):
+		giveStratResNum(objID,stratResID,50)
+	
+	return objID
+
 def giveTechs(objID):
 	lvl = raw_input("level: ")
 	level = 0
@@ -167,7 +186,9 @@ def giveTechs(objID):
 	if level > 6 and not level == 99:
 		print "Invalid level"
 		return objId
+	giveTechsNum(objID,level)
 
+def giveTechsNum(objID,level):
 	player = s.getInfo(objID)
 	plTechs = player.techs
 	for techId in levelTechs[level]:
@@ -188,7 +209,7 @@ def giveTech(objID):
 		techId = int(tid)
 	except:
 		print "Invalid techId"
-		return objId
+		return objID
 
 	player = s.getInfo(objID)
 	plTechs = player.techs
@@ -196,7 +217,7 @@ def giveTech(objID):
         	plTechs[techId] = 5
 	except:
 		print "Invalid techId"
-		return objId
+		return objID
 
 	s.set(objID, "techs", plTechs)
 	print "Tech %d added to player %d." % (techId, objID)
@@ -208,13 +229,18 @@ def advanceLevel(objID):
 		level = int(lvl)
 	except:
 		print "Invalid level"
-		return objId
+		return objID
 
-	if level > 6 and not level == 99:
+	if level > 6 or level < 2:
 		print "Invalid level"
-		return objId
-
+		return objID
 	race = string.upper(raw_input("race: "))
+	if not (race=='b' or race=='B' or race=='c' or race=='C' or race =='h' or race =='H'):
+		print "Invalid race"
+		return objID
+	advanceLevelRace(objID,level)
+
+def advanceLevelRace(objID,level,race):
 	player = s.getInfo(objID)
 	plTechs = player.techs
 	plTechs[advTechLevel[level][race]] = 5
@@ -231,7 +257,7 @@ def promoteToImperator(objID):
 		galaxyID = int(galID)
 	except:
 		print "Invalid galaxy id"
-		return objId
+		return objID
 
 	s.set(objID, "imperator", 3)
 	s.set(galaxyID, "imperator", objID)
@@ -245,20 +271,20 @@ def giveStratRes(objID):
                     stratResID = int(resID)
             except:
                     print "Invalid strategy resource"
-                    return objId
+                    return objID
 
 	qty = raw_input("qty: ")
 	try:
 		quantity = int(qty)
 	except:
 		print "Invalid quantity"
-		return objId
+		return objID
 
 	if (resID == 'a'):
-            for stratResID in range(1,8):
+            for stratResID in range(1,9):
                 giveStratResNum(objID,stratResID,quantity)
         else:
-            giveStratResNum(objID,resNum,quantity)
+            giveStratResNum(objID,stratResID,quantity)
 	return objID
 
 def giveStratResNum(objID,stratResID,quantity):
@@ -297,7 +323,7 @@ def startGalaxy():
 
 def showMenu(objID):
 	print
-	print "----- OSPace admin console menu -----"
+	print "----- OSpace admin console menu -----"
 	print "Current object: %s" % objID
 	print
 	print "1. Show players"
@@ -313,6 +339,7 @@ def showMenu(objID):
 	print "T. Process turn"
 	print "R. Process X turns"
 	print "S. Start Galaxy Time"
+	print "D. Init Developer testing race (all techs, 50 each strat resource)"
 	print
 	print "Ctrl+Z to End"
 	print
@@ -361,6 +388,8 @@ def processMenu(inp, objId, s):
 		console.interact()
 	elif string.upper(inp) == "S":
 		startGalaxy()
+	elif string.upper(inp) == "D":
+		initDevelTesting(objID)
 
 	return objId
 

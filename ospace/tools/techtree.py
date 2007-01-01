@@ -19,37 +19,40 @@ sys.modules["__builtin__"].N_ = N_
 
 # os web style
 foreground = 0xff, 0xff, 0xff
+#hForeground = 0xff, 0xff, 0x55
 hForeground = 0xff, 0xff, 0xce
-disablesForeground = 0xc0, 0xff, 0xc0
+disablesForeground = 0xff, 0xff, 0x55
+#disablesForeground = 0xc0, 0xff, 0xc0
 background = 0x3d, 0x7a, 0x99
 screenbg = 0x2d, 0x5a, 0x71
 
 tl2color = {
-    1: (255, 128, 64),
-    2: (255, 255, 128),
-    3: (0, 128, 255),
-    4: (128, 255, 0),
-    5: (0, 255, 255),
+    1: (255, 128, 64),  #orange
+    2: (255, 255, 128), #yellow
+    3: (128, 255, 0),   #green
+    4: (0, 128, 255),   #blue
+    5: (196, 0, 255),   #purple
+    6: (196, 0, 0),     #red
 }
 
 stratRes = {
 	0: "None",
-	1: "Uranium",
-	2: "Titanium",
-	3: "Chromium",
-	4: "Silicium",
-	5: "Carboneum",
-	6: "Antimatter",
-	7: "Plutonium",
-	8: "Wolframium",
+	1: "Ur",
+	2: "Ti",
+	3: "Chrom",
+	4: "Silic",
+	5: "Carb",
+	6: "Anti",
+	7: "Plut",
+	8: "Wolf",
 	100: "Mutagen",
 	1000: "Unnilseptium"
 }
 
 race2Name = {
-    "B": "Bionics",
-    "C": "Cyborgs",
-    "H": "Humans",
+    "B": "Bionic",
+    "C": "Cyborg",
+    "H": "Human",
 }
 
 # imports

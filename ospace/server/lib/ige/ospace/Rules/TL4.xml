@@ -920,7 +920,7 @@
 		<discovery
 			researchMod="(0.50 + 0.50) * 1.5"
 			level="4"
-			researchRequires="MUTAGENDISPMOD-3"
+			researchRequires="TERRAFORM3-3"
 			researchRaces="B"
 		/>
 		<shipequip
