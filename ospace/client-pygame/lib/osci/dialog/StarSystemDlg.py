@@ -408,18 +408,19 @@ class StarSystemDlg:
 		else:
 			self.win.vPCMorale.text = _('?')
 		if hasattr(planet, 'shield'):
-			self.win.vPCMorale.text = _('%d') % planet.shield
-			if (planet.shield < planet.prevShield):
-                            info = _('Sheild (%d/%d) charged by $+d last turn.') % (
+			self.win.vPCShield.text = _('%d') % planet.shield
+			delta = planet.shield - planet.prevShield
+			if (planet.shield > planet.prevShield):
+                            info = _('Sheild (%d/%d) charged by %+d last turn.') % (
                                 planet.shield,
                                 planet.maxShield,
-                                planet.shield - planet.prevShield,
+                                delta
                             )
-                        elif (planet.shield > planet.prevShield):
-                            info = _('Sheild (%d/%d) was damaged by $+d last turn.') % (
+                        elif (planet.shield < planet.prevShield):
+                            info = _('Sheild (%d/%d) was damaged by %+d last turn.') % (
                                 planet.shield,
                                 planet.maxShield,
-                                planet.shield - planet.prevShield,
+                                delta
                             )
                         elif (planet.shield < planet.maxShield):
                             info = _('Sheild (%d/%d) is unable to charge.') % (
@@ -431,6 +432,8 @@ class StarSystemDlg:
                                 planet.shield,
                                 planet.maxShield,
                             )
+			self.win.vPCShield.tooltip = info
+			self.win.vPCShield.statustip = info
 		if hasattr(planet, 'revoltLen') and planet.revoltLen > 0:
 			self.win.vPCMorale.foreground = gdata.sevColors[gdata.CRI]
 		else:

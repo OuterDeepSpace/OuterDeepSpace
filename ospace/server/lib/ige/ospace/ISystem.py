@@ -725,12 +725,15 @@ class ISystem(IObject):
 		for planetID in obj.planets:
 			planet = tran.db[planetID]
 			if planet.owner == playerID:
-				planetAtt, planetDef = planet.getSystemCombatBonuses(tran,planet);
-				systemAtt = max(systemAtt,planetAtt)
-				systemDef = max(systemDef,planetDef)
+                                for struct in planet.slots:
+                                        tech = Rules.techs[struct[STRUCT_IDX_TECHID]]
+                                        techEff = Utils.getTechEff(tran, struct[STRUCT_IDX_TECHID], planet.owner)
+                                        if tech.systemAtt > 0 or tech.systemDef > 0:
+                                                systemAtt = max(systemAtt,tech.systemAtt*techEff)
+                                                systemDef = max(systemDef,tech.systemDef*techEff)
 		return (systemAtt,systemDef)
 
-	getSystemCombatBonus.public = 0
+	getSystemCombatBonuses.public = 0
 
 	def loadDOMNode(self, tran, obj, xoff, yoff, node):
 		obj.x = float(node.getAttribute('x')) + xoff

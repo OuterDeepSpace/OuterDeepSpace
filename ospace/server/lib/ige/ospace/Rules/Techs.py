@@ -99,8 +99,8 @@ attrs = {
         "missileDefPerc": 1.0, #multiplier of missile DEF; min of 100%; not cumulative
 	'unpackStruct': '',
         'deployHandlerID' : '', #technology ID of tech to find deployHandlerFunction & deployHandlerValidator (this can be the deployable device OR a project)
-        'deployHandlerFunction' : '', #function name of TechHandler
-        'deployHandlerValidator' : '', #function name of TechHandler Validator
+        'deployHandlerFunction' : noop, #function name of TechHandler
+        'deployHandlerValidator' : noop, #function name of TechHandler Validator
 	'signature': 0, #cumulative
         'signatureCloak': 1.0, #max of 1.0 is effective; not cumulative
         'signatureDecloak': 1.0, #min of 1.0 is effective; not cumulative

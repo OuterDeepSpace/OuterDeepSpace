@@ -77,9 +77,9 @@ def finishStructSPORECOLONY(tran, source, target, tech):
     target.storPop += tech.unpackPop
     target.maxPop += tech.unpackPop
 
-    if planet.plSlots > 1:
-        for i in range(len(planet.slots),planet.plSlots-1):
-            planet.slots.insert(0, Utils.newStructure(tran, 9013, obj.owner))
+    if target.plSlots > 1:
+        for i in range(len(target.slots),target.plSlots-1):
+            target.slots.insert(0, Utils.newStructure(tran, 9013, source.owner))
 
 def finishStructGOVCENTER(tran, source, target, tech):
     player = tran.db[source.owner]
@@ -143,10 +143,12 @@ def validateDeployTERRAFORMALIGNMENT6(tran, source, target, tech):
         target.owner==source.owner
 
 def validateProjectTERRAFORMALIGNMENT6(tran, source, target, tech):
+    log.debug('Validating TERRAFORM ALIGNMENT');
     spec = Rules.planetSpec[target.plType]
-    return (target.plBio < rules.envMax or target.plEn < spec.upgradeEnReqs[0] or target.plEn > specs.upgradeEnReqs[1])
+    return (target.plEnv < Rules.envMax or target.plBio < spec.upgradeEnReqs[0] or target.plBio > spec.upgradeEnReqs[1])
 
 def finishProjectTERRAFORMALIGNMENT6(tran, source, target, tech):
+    log.debug('Finishing TERRAFORM ALIGNMENT');
     spec = Rules.planetSpec[target.plType]
     techEff = Utils.getTechEff(tran, tech.id, source.owner)
     enAvg = int((spec.upgradeEnReqs[0] + spec.upgradeEnReqs[1]) / 2)
@@ -155,7 +157,7 @@ def finishProjectTERRAFORMALIGNMENT6(tran, source, target, tech):
         target.plEn = min(target.plEn+delta,enAvg)
     elif target.plEn > enAvg:
         target.plEn = max(target.plEn-delta,enAvg)
-    target.plBio = min(target.plBio+delta,rules.envMax)
+    target.plBio = min(target.plBio+int(delta/2),Rules.envMax)
     if validateProjectTERRAFORM3(tran, source, target, tech):
         target.plType = Rules.planetSpec[target.plType].upgradeTo
 

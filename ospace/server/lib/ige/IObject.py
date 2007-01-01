@@ -224,7 +224,7 @@ class IObject:
 	def canGetMsgs(self, tran, obj, oid):
 		return oid == obj.oid
 
-	canSendMsg.public = 0
+	canGetMsgs.public = 0
 
 	def canManageMsgs(self, tran, obj, oid):
 		return oid == obj.oid or oid == OID_ADMIN

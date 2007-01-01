@@ -202,11 +202,9 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
 			if tech.unpackStruct != OID_NONE:
 				ship.deployStructs.append(tech.unpackStruct)
 				unpactStruct = 1
-              		if tech.deployHandlerID != '': #this calls another tech at execute time, so only need the ID
+              		if tech.deployHandlerID != OID_NONE: #this calls another tech at execute time, so only need the ID
                                 ship.deployHandlers.append(tech.deployHandlerID)
                                 deployHandler = 1
-                        if len(ship.deployHandlers) == 0 and tech.deployHandlerFunction != '': #this is for techs that don't have a master project tech
-                                ship.deployHandlers.append(techID)
                         
 	#fix limiter based attibs; round when needed
 	currentNegWeight = 0

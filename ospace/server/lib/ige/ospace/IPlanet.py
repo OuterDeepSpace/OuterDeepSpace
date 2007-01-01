@@ -373,7 +373,11 @@ class IPlanet(IObject):
 			obj.maxPop += tech.operWorkers
 			# produce/consume resources
 			# find most limitating condition
-			opStatus = min(1.0, float(struct[STRUCT_IDX_HP]) / maxHP)
+			try:
+				opStatus = min(1.0, float(struct[STRUCT_IDX_HP]) / maxHP)
+			except:
+                		opStatus = 0.0
+                		log.warning('Invalid max HP of structure',STRUCT_IDX_TECHID)
 			if tech.operBio > 0:
 				opStatus = min(opStatus, float(obj.storBio) / tech.operBio)
 			if tech.operEn > 0:
@@ -448,10 +452,10 @@ class IPlanet(IObject):
 					destroyed.append(struct)
 		# do shield self generation
 		obj.prevShield = obj.shield #for planet display of shield growth
-		if shieldMax < obj.shield:
+		if obj.maxShield < obj.shield:
                     obj.shield = obj.maxShield
-                if shieldMax > obj.shield and not isCombat:
-                    regenTemp = max(1, rules.plShieldRegen* obj.maxShield) #always regen at at least 1
+                if obj.maxShield > obj.shield and not isCombat:
+                    regenTemp = max(1, Rules.plShieldRegen* obj.maxShield) #always regen at at least 1
                     obj.shield = min(obj.shield + regenTemp, obj.maxShield) #don't let it regen over shieldMax
                 # pass scanner/... to the system
 		#@log.debug(obj.oid, "IPlanet scanner", obj.scannerPwr)
@@ -964,17 +968,6 @@ class IPlanet(IObject):
 
 	getPreCombatData.public = 0
 
-	def getSystemCombatBonus(self,tran,obj):
-		systemAtt = 0;
-		systemDef = 0;
-		for struct in obj.slots:
-			techEff = Utils.getTechEff(tran, struct[STRUCT_IDX_TECHID], obj.owner)
-			if tech.systemAtt > 0 or tech.systemDef > 0:
-				systemAtt = max(systemAtt,tech.systemAtt*techEff)
-				systemDef = max(systemAtt,tech.systemDef*techEff)
-
-	getSystemCombatBonus.public = 0
-
 	def applyShot(self, tran, obj, defense, attack, weaponID, cClass, count):
 		#@log.debug('IPlanet', 'Apply shot', weaponID, attack, cClass, count)
 		# compute chance to hit
@@ -1003,6 +996,7 @@ class IPlanet(IObject):
 		#@log.debug(obj.oid, "Chance to attack", attackChance, obj.hitMod, obj.hitCounter, obj.maxHits,
 		#@	"without penalty:", float(attack) / (attack + defense))
 		#@log.debug('IPlanet', obj.oid, 'HIT?', attack + defense + 1, defense)
+		absorb = 0 #for when it doesn't hit
 		if random.random() <= attackChance:
 			# hit
 			dmg = ShipUtils.computeDamage(weapon.weaponClass, 3, weapon.weaponDmgMin, weapon.weaponDmgMax)

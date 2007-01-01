@@ -71,6 +71,9 @@ class IAIPiratePlayer(IPlayer):
             if planet.prodQueue:
                 # something is in production queue
                 continue
+            if not Rules.Tech.PIRATEBASE in obj.techs:
+                log.warning('Pirate player in INIT phase without techs; granting again')
+                self.cmd(obj).update(tran, obj) #grant the techs because something screwed up
             if planet.plSlots > len(planet.slots):
                 # build PIRBASE
                 log.debug(obj.oid, "PIRATEAI - building pirate base", planet.oid)
@@ -90,7 +93,7 @@ class IAIPiratePlayer(IPlayer):
                 if build:
                     continue
                 # try to expand slots
-                if Rules.Tech.ADDSLOT3 in self.techs and planet.plSlots < planet.plMaxSlots:
+                if Rules.Tech.ADDSLOT3 in obj.techs and planet.plSlots < planet.plMaxSlots:
                     log.debug(obj.oid, "PIRATEAI - building surface expansion", planet.oid)
                     self.cmd(planet).startConstruction(tran, planet, Rules.Tech.ADDSLOT3, 1, planet.oid, False, False, OID_NONE)
                     continue
@@ -100,19 +103,23 @@ class IAIPiratePlayer(IPlayer):
         if not hasattr(self, "techs"):
             self.techs = {}
         
-        obj.techLevel = 3
-        # grant technologies
-        obj.techs[Rules.Tech.EMCANNONTUR] = Rules.techMaxImprovement
-        obj.techs[Rules.Tech.SSROCKET2] = Rules.techMaxImprovement
-        obj.techs[Rules.Tech.TORPEDO] = Rules.techMaxImprovement
+        obj.techLevel = 99
         # call super method
         IPlayer.update(self, tran, obj)
         #
         obj.techLevel = 99
+        # grant technologies
+        obj.techs[Rules.Tech.EMCANNONTUR] = Rules.techMaxImprovement
+        obj.techs[Rules.Tech.SSROCKET2] = Rules.techMaxImprovement
+        obj.techs[Rules.Tech.TORPEDO] = Rules.techMaxImprovement
         # grant special technologies
         obj.techs[Rules.Tech.PIRATEBASE] = Rules.techMaxImprovement
         obj.techs[Rules.Tech.PIRATEDEN] = Rules.techMaxImprovement
         obj.techs[Rules.Tech.PIRATESD] = Rules.techMaxImprovement
+        obj.techs[Rules.Tech.PIRATEBREWERY] = Rules.techMaxImprovement
+        obj.techs[Rules.Tech.PIRATEPRISON] = Rules.techMaxImprovement
+        obj.techs[Rules.Tech.PIRATEPRISON] = Rules.techMaxImprovement
+        obj.techs[Rules.Tech.PIRSMCOLONYMOD] = Rules.techMaxImprovement
         obj.techs[Rules.Tech.PIRATEFTLENG] = Rules.techMaxImprovement
         obj.techs[Rules.Tech.PIRCOLONYMOD] = Rules.techMaxImprovement
 

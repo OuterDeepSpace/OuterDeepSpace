@@ -933,6 +933,7 @@
 			slots="8"
 			weight="15"
 			
+			deployHandlerID="4502"
 			deployHandlerValidator="validateDeployTERRAFORM3"
 			deployHandlerFunction="finishProjectTERRAFORM3"
 			minHull="1"

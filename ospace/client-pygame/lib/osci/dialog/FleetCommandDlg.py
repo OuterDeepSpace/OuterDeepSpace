@@ -23,6 +23,7 @@ from osci.StarMapWidget import StarMapWidget
 from ige.ospace import Rules
 from osci import gdata, res, client, sequip
 from ige.ospace.Const import *
+from ige import log
 import ige
 import math
 import string
@@ -153,8 +154,10 @@ class FleetCommandDlg:
 			tech = client.getPlayer().shipDesigns[designID]
 			if tech.deployStructs:
 				self.deplShips.append(designID)
+				log.debug('Adding design with structure',designID)
 			elif tech.deployHandlers:
                                 self.deplShips.append(designID)
+				log.debug('Adding design with project',designID)
 		# correct buildingIndex
 		if self.deplShipIndex >= len(self.deplShips):
 			self.deplShipIndex = 0

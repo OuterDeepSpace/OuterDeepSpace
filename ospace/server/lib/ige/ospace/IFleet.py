@@ -716,24 +716,32 @@ class IFleet(IObject):
 			if designID == actionData:
 				removeShip = 0
 				for deployHandlerID in tech.deployHandlers: #do handlers first so that structures can deploy on new planets
-                                        if not (type(deployHandlerID) in (int,long)): #just a double check...
+					if not (type(deployHandlerID) in (str,int,long)): #just a double check...
+					    continue
+					if not deployHandlerID.isdigit():
                                             continue
-                                        deployHandler = Rules.techs[deployHandlerID]
-                                        if deployHandler.deployHandlerValidator(tran, obj, planet, deployHandler):
-                                               try:
-                                                      deployHandler.deployHandlerFunction(tran, obj, planet, deployHandler)
-                                                      Utils.sendMessage(tran, obj, MSG_COMPLETED_STRUCTURE, (deployMessage,planet.oid), structTech.id)
-                                                      removeShip = 1
-                                               except GameException, e:
-                                                      log.warning('IFleet','Deploy handler error - internal error')
-                                                      Utils.sendMessage(tran, obj, MSG_CANNOTBUILD_SHLOST, planet.oid, None)
-                                        else:
-                                               log.debug('IFleet', 'Deploy handler - validation failed')
-                                               Utils.sendMessage(tran, obj, MSG_CANNOTBUILD_SHLOST, planet.oid, None)
-                                            
+					log.debug('IFleet -', 'Attempting deploy of',deployHandlerID)
+					try:
+					    deployHandlerID = int(deployHandlerID) #just a double check...
+					except:
+					    log.warning('IFleet -','Deployment failed: NAN')
+					    continue
+					deployHandler = Rules.techs[deployHandlerID]
+					if deployHandler.deployHandlerValidator(tran, obj, planet, deployHandler):
+					       try:
+						      deployHandler.deployHandlerFunction(tran, obj, planet, deployHandler)
+						      Utils.sendMessage(tran, obj, MSG_DELOY_HANDLER, planet.oid, deployHandlerID)
+						      removeShip = 1
+					       except GameException, e:
+						      log.warning('IFleet -','Deploy handler error - internal error')
+						      Utils.sendMessage(tran, obj, MSG_CANNOTBUILD_SHLOST, planet.oid, None)
+					else:
+					       log.debug('IFleet -', 'Deploy handler - validation failed')
+					       Utils.sendMessage(tran, obj, MSG_CANNOTBUILD_SHLOST, planet.oid, None)
+					    
 				for structTechID in tech.deployStructs:
-                                        if not (type(structTechID) in (int,long)): #just a double check...
-                                            continue
+					if not (type(structTechID) in (int,long)): #just a double check...
+					    continue
 					structTech = Rules.techs[structTechID]
 					# validate
 					if structTech.validateConstrHandler(tran, obj, planet, structTech):
@@ -746,21 +754,21 @@ class IFleet(IObject):
 								Utils.sendMessage(tran, obj, MSG_COMPLETED_STRUCTURE, planet.oid, structTech.id)
 							except GameException, e:
 								# cannot build (planet already occupied?)
-								log.warning('IFleet', 'Build on planet - cannot complete')
+								log.warning('IFleet -', 'Build on planet - cannot complete')
 								Utils.sendMessage(tran, obj, MSG_CANNOTBUILD_SHLOST, planet.oid, None)
 						else:
 							# no free slot
-							log.debug('IFleet', 'Build on planet - no free slot')
+							log.debug('IFleet -', 'Build on planet - no free slot')
 							Utils.sendMessage(tran, obj, MSG_CANNOTBUILD_NOSLOT, planet.oid, None)
 					else:
 						# cannot build this here TODO report it
-						log.debug('IFleet', 'Build on planet - cannot build here (validation)')
+						log.debug('IFleet -', 'Build on planet - cannot build here (validation)')
 				if removeShip:
 					self.cmd(obj).removeShips(tran, obj, [[designID, hp, shield, exp]])
 					# ship has been deployed
 					return 1
 		# no suitable ship in fleet TODO report it
-		log.debug('IFleet', 'Deploy ship - no suitable ship')
+		log.debug('IFleet -', 'Deploy ship - no suitable ship')
 		return 1
 
 		actionDeploy.public = 0

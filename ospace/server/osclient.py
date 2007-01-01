@@ -98,6 +98,7 @@ advTechLevel = {
 4: {"B" : 3990, "H" : 3991, "C" : 3992},
 5: {"B" : 4990, "H" : 4991, "C" : 4992},
 6: {"B" : 5990, "H" : 5991, "C" : 5992},
+99: {}
 }
 
 def msgHandler(id, data):
@@ -209,7 +210,7 @@ def advanceLevel(objID):
 		print "Invalid level"
 		return objId
 
-	if level > 6:
+	if level > 6 and not level == 99:
 		print "Invalid level"
 		return objId
 
@@ -238,12 +239,13 @@ def promoteToImperator(objID):
 	return objID
 
 def giveStratRes(objID):
-	resID = raw_input("strategy resource: ")
-	try:
-		stratResID = int(resID)
-	except:
-		print "Invalid strategy resource"
-		return objId
+	resID = raw_input("strategy resource ('a' for all resources): ")
+	if not (resID == 'a'):
+            try:
+                    stratResID = int(resID)
+            except:
+                    print "Invalid strategy resource"
+                    return objId
 
 	qty = raw_input("qty: ")
 	try:
@@ -252,6 +254,14 @@ def giveStratRes(objID):
 		print "Invalid quantity"
 		return objId
 
+	if (resID == 'a'):
+            for stratResID in range(1,8):
+                giveStratResNum(objID,stratResID,quantity)
+        else:
+            giveStratResNum(objID,resNum,quantity)
+	return objID
+
+def giveStratResNum(objID,stratResID,quantity):
 	plQty = 0
 	player = s.getInfo(objID)
 	if stratResID in player.stratRes:
@@ -261,7 +271,7 @@ def giveStratRes(objID):
 	stratRes[stratResID] = plQty + quantity
 	s.set(objID, "stratRes", stratRes)
 	print "Player %d has now %d pieces of %d." % (objID, stratRes[stratResID], stratResID)
-	return objID
+    
 
 def startGalaxy():
         showGalaxies()

@@ -53,6 +53,11 @@ def perc2Text(value):
     string = _('%d%%') % (value * 100)
     return string
 
+def perc100_2Text(value):
+    string = _('%d%%') % (value)
+    return string
+
+
 V_NONE = 0x00
 V_STRUCT = 0x01
 V_HULL = 0x02
@@ -99,8 +104,8 @@ addAttr('scannerPwr', _('Scanner power'), V_STRUCT|V_SEQUIP|V_EFF, 0)
 addAttr('planetShield',_('Planetary shield'), V_STRUCT|V_EFF, 0)
 addAttr('systemAtt',_('Fleet attack (bonus)'), V_STRUCT|V_EFF, 0)
 addAttr('systemDef',_('Fleet defense (bonus)'), V_STRUCT|V_EFF, 0)
-addAttr('refuelMax', _('Maximum refuel percent'), V_STRUCT|V_EFF, 0, convertor = perc2Text)
-addAttr('refuelInc', _('Refuel increase percent'), V_STRUCT|V_EFF, 0, convertor = perc2Text)
+addAttr('refuelMax', _('Maximum refuel percent'), V_STRUCT|V_EFF, 0, convertor = perc100_2Text)
+addAttr('refuelInc', _('Refuel increase percent'), V_STRUCT|V_EFF, 0, convertor = perc100_2Text)
 addAttr('trainShipInc', _('Exp. points per turn'), V_STRUCT|V_EFF, 0, convertor = float)
 addAttr('trainShipMax', _('Exp. cap (base exp multiple)'), V_STRUCT|V_EFF, 0)
 addAttr('fleetSpeedBoost', _('Boost speed of fleets'), V_STRUCT|V_EFF, 0, convertor = float)

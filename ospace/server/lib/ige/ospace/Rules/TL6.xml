@@ -474,12 +474,11 @@
 		<shipequip
 			subtype="seq_struct"
 			buildProd="720"
-			buildSRes="SR_TL5C"
 			operEn="20"
 			storEn="400"
 			slots="36"
 			weight="20"
-			unpackStruct="SPORECOLONY"
+			unpackStruct="SPOREOUTPOST"
 			minHull="2"
 		/>
 		<preresearch>To colonize the deep ranges of space, we send forth our spores!</preresearch>
@@ -490,11 +489,13 @@
 			researchMod="(1.00 + 0.50) * 1.5"
 			level="6"
 			researchRequires="TERRAFORMPOD-1"
+			researchReqSRes="SR_TL3C"
 			researchRaces="B"
 		/>
 		<shipequip
 			subtype="seq_struct"
-			buildProd="3600"
+			buildProd="36000"
+			buildSRes="SR_TL3C"
 
 			storEn="960"
 			operEn="10"
@@ -502,6 +503,7 @@
 			slots="24"
 			weight="45"
 			
+			deployHandlerID="6205"
 			deployHandlerValidator="validateDeployTERRAFORMALIGNMENT6"
 			deployHandlerFunction="finishProjectTERRAFORMALIGNMENT6"
 			data="16"
