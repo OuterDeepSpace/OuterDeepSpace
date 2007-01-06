@@ -156,7 +156,7 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
 			if (tech.weight > 0):
                             ship.weight += tech.weight
                         else:
-                            negweight[techID] = tech.slots + negweight.get(techID, 0) #this is complex for items with max installs...
+                            negweight[techID] = tech.weight + negweight.get(techID, 0) #this is complex for items with max installs...
                         if (tech.slots > 0):
                             ship.slots += tech.slots
                         else:

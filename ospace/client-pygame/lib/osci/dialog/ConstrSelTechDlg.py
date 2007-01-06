@@ -107,6 +107,8 @@ class ConstrSelTechDlg:
 			# skip equipment not suitable for this hull
 			if tech.minHull > self.hullType:
 				continue
+			if tech.maxHull < self.hullType:
+				continue
 
 			techType = self.getTechType(tech)
 			if self.typeFilter & techType == 0:

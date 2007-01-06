@@ -879,7 +879,7 @@
 		<discovery
 			researchMod="1.00 + 0.50 + 0.50"
 			level="4"
-			researchRequires="LIVMEDIUMHULL4-5"
+			researchRequires="ADVMEDIUMHULL4-5"
 			researchRaces="H"
 		/>
 		<shipequip

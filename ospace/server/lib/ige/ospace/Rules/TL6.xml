@@ -346,7 +346,7 @@
 			combatAtt="-5"
 			combatDef="5"
 			scannerPwr="52"
-			combatClass="1"
+			combatClass="0"
 		/>
 		<preresearch>The ultimate stealth technology will allow us to penetrate enemy space without detection.</preresearch>
 		<description>This high powered small hull creates an active cloaking field around it, effectively reducing it's visibility to scanners by an astonishing 80%. Most weapons, therefore, miss it. To fire a weapon, however, the cloak is momentarily disrupted. Because the pilots are always worried that visbility will make them vunerable, their hesitantcy to fire means less shots hit.</description>
