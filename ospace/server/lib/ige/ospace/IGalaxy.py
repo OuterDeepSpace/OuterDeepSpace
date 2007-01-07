@@ -438,6 +438,10 @@ class IGalaxy(IObject):
 					# populate planet
 					log.debug("Adding EDEN", planetID)
 					self.cmd(planet).changeOwner(tran, planet, players[T_AIEDENPLAYER].oid, 1)
+					if planet.plSlots < 2:
+						planet.plSlots = 2
+						if planet.plMaxSlots < 2:
+							planet.plMaxSlots = 2
 					planet.slots.append(Utils.newStructure(tran, Rules.Tech.EDENBASE, planet.owner))
 					planet.slots.append(Utils.newStructure(tran, Rules.Tech.EDENSTATION, planet.owner))
 					planet.storPop = 3000
@@ -460,6 +464,8 @@ class IGalaxy(IObject):
 
 	def canSendMsg(self, tran, obj, oid, forum):
 		if forum == "PUBLIC":
+			return 1
+		elif forum == "NEWS":
 			return 1
 		return 0
 

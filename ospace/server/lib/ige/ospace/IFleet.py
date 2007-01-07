@@ -1234,7 +1234,7 @@ class IFleet(IObject):
 				blocked = min(shield, dmg)
 				obj.ships[target][2] -= blocked
 				dmg -= blocked
-			elif weapon.weaponIgnoreSheild and ship.hardShield > 0 and shield > 0:
+			elif weapon.weaponIgnoreShield and ship.hardShield > 0 and shield > 0:
                                 blocked = min(shield, int(dmg*(ship.hardShield))) #hard shields also reduce penetrating weapons
                                 obj.ships[target][2] -= blocked
                                 dmg -= blocked

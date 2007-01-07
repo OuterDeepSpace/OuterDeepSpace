@@ -38,6 +38,27 @@ class IPiratePlayer(IPlayer):
 	def XXXgetDiplomacyWith(self, tran, obj, playerID):
 		if obj.oid == playerID:
 			return REL_UNITY
+		player = tran.db.get(playerID, None)
+		if player.type == T_AIEDENPLAYER:
+			dipl = obj.diplomacyRels.get(playerID, None)
+			if not dipl:
+				# make default
+				dipl = IDataHolder()
+				dipl.type = T_DIPLREL
+				dipl.pacts = {
+						PACT_ALLOW_CIVILIAN_SHIPS: [PACT_ACTIVE, PACT_ALLOW_CIVILIAN_SHIPS],
+						PACT_ALLOW_MILITARY_SHIPS: [PACT_ACTIVE, PACT_ALLOW_MILITARY_SHIPS]
+				}
+				dipl.relation = REL_FRIENDLY
+				dipl.relChng = 0
+				dipl.lastContact = tran.db[OID_UNIVERSE].turn
+				dipl.contactType = CONTACT_NONE
+				dipl.stats = None
+				if playerID != obj.oid:
+					obj.diplomacyRels[playerID] = dipl
+				else:
+					log.debug("getDiplomacyWith myself", obj.oid)
+			return dipl
 		# this AI battles with overyone
 		# make default
 		dipl = IDataHolder()
@@ -79,7 +100,14 @@ class IPiratePlayer(IPlayer):
 			log.debug(obj.oid, "New pirate fame is", obj.pirateFame, obj.enslavedPop)
 			del obj.enslavedPop
 
+	def processDIPLPhase(self, tran, obj, data):
+		self.forceAllyWithEDEN(tran,obj)
+		IPlayer.processDIPLPhase(self,tran, obj, data)
+
 	def processFINALPhase(self, tran, obj, data):
+		if not Rules.Tech.PIRATEBREWERY in obj.techs:
+			log.warning('Adding new pirate structures to human pirate player.')
+			self.cmd(obj).update(tran, obj) #grant the techs because something screwed up
 		obj.govPwr = Rules.pirateGovPwr
 		IPlayer.processFINALPhase(self, tran, obj, data)
 		# get fame every 1:00 turns
@@ -144,4 +172,32 @@ class IPiratePlayer(IPlayer):
 	def givePirateTech(self, tran, piratePlayer, oldOwner, techID, stealFromPlanetID):
 		piratePlayer.techs[techID] = min(piratePlayer.techs.get(techID, 0) + 1, oldOwner.techs[techID])
 		Utils.sendMessage(tran, piratePlayer, MSG_GAINED_TECH, stealFromPlanetID, (techID, piratePlayer.techs[techID]))
-		
+
+	def forceAllyWithEDEN(self,tran,obj):
+		for partyID in obj.diplomacyRels.keys():
+			party = tran.db.get(partyID, None)
+			if party.type == T_AIEDENPLAYER:
+				diplSelf = obj.diplomacyRels.get(party.oid, None)
+				log.debug("Allying Pirate with EDEN (forced)", obj.oid, partyID)
+				diplEDEN = IDataHolder()
+				diplEDEN.type = T_DIPLREL
+				diplEDEN.pacts = {
+						PACT_ALLOW_CIVILIAN_SHIPS: [PACT_ACTIVE, PACT_ALLOW_CIVILIAN_SHIPS],
+						PACT_ALLOW_MILITARY_SHIPS: [PACT_ACTIVE, PACT_ALLOW_MILITARY_SHIPS]
+				}
+				diplEDEN.relation = REL_FRIENDLY
+				diplEDEN.relChng = 0
+				diplEDEN.lastContact = tran.db[OID_UNIVERSE].turn
+				diplEDEN.contactType = CONTACT_STATIC
+				diplEDEN.stats = None
+
+				diplSelf.relation = REL_FRIENDLY
+				diplSelf.pacts = {
+					PACT_ALLOW_CIVILIAN_SHIPS: [PACT_ACTIVE, PACT_ALLOW_CIVILIAN_SHIPS],
+					PACT_ALLOW_MILITARY_SHIPS: [PACT_ACTIVE, PACT_ALLOW_MILITARY_SHIPS]
+				}
+				
+				obj.diplomacyRels[party.oid] = diplSelf
+				party.diplomacyRels[obj.oid] = diplEDEN
+				
+

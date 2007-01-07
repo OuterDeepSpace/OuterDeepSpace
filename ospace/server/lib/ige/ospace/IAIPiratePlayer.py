@@ -71,7 +71,7 @@ class IAIPiratePlayer(IPlayer):
             if planet.prodQueue:
                 # something is in production queue
                 continue
-            if not Rules.Tech.PIRATEBASE in obj.techs:
+            if not Rules.Tech.PIRATEBREWERY in obj.techs:
                 log.warning('Pirate player in INIT phase without techs; granting again')
                 self.cmd(obj).update(tran, obj) #grant the techs because something screwed up
             if planet.plSlots > len(planet.slots):
@@ -90,13 +90,44 @@ class IAIPiratePlayer(IPlayer):
                         log.debug(obj.oid, "PIRATEAI - colonizing planet", target.oid)
                         self.cmd(planet).startConstruction(tran, planet, Rules.Tech.PIRATEBASE, 1, targetID, False, False, OID_NONE)
                         build = True
+                    if build:
+                        break
                 if build:
                     continue
                 # try to expand slots
                 if Rules.Tech.ADDSLOT3 in obj.techs and planet.plSlots < planet.plMaxSlots:
                     log.debug(obj.oid, "PIRATEAI - building surface expansion", planet.oid)
                     self.cmd(planet).startConstruction(tran, planet, Rules.Tech.ADDSLOT3, 1, planet.oid, False, False, OID_NONE)
+                    build = True
+                if build:
                     continue
+                #try to assemble/condense planets
+                if Rules.Tech.PLASSEMBL5 in obj.techs or Rules.Tech.PLCOND5 in obj.techs:
+                    for targetID in system.planets:
+                        target = tran.db[targetID]
+                        if target.plType == 'A' and Rules.Tech.PLASSEMBL5 in obj.techs:
+                            log.debug(obj.oid, "PIRATEAI - assembling asteroid", target.oid)
+                            self.cmd(planet).startConstruction(tran, planet, Rules.Tech.PLASSEMBL5, 1, planet.oid, False, False, OID_NONE)
+                            build = True
+                        elif target.plType == 'G' and Rules.Tech.PLCOND5 in obj.techs:
+                            log.debug(obj.oid, "PIRATEAI - assembling asteroid", target.oid)
+                            self.cmd(planet).startConstruction(tran, planet, Rules.Tech.PLCOND5, 1, planet.oid, False, False, OID_NONE)
+                            build = True
+                        if build:
+                            break
+                    continue
+        #grant time based techs as needed:
+	if obj.galaxies:
+                if not (Rules.Tech.ADDSLOT3 in obj.techs and Rules.Tech.PLASSEMBL5 in obj.techs and Rules.Tech.PLCOND5 in obj.techs):
+        		galaxy = tran.db[obj.galaxies[0]]
+        		if galaxy.creationTime + Rules.pirateGrantHSE < time.time() and not Rules.Tech.ADDSLOT3 in obj.techs:
+                                obj.techs[Rules.Tech.ADDSLOT3] = Rules.techMaxImprovement
+        		if galaxy.creationTime + Rules.pirateGrantASSEM < time.time() and not Rules.Tech.PLASSEMBL5 in obj.techs:
+                                obj.techs[Rules.Tech.PLASSEMBL5] = Rules.techMaxImprovement
+        		if galaxy.creationTime + Rules.pirateGrantCOND < time.time() and not Rules.Tech.PLCOND5 in obj.techs:
+                                obj.techs[Rules.Tech.PLCOND5] = Rules.techMaxImprovement
+		
+		
 
     def update(self, tran, obj):
         # TODO: remove in 0.5.59
@@ -141,6 +172,10 @@ class IAIPiratePlayer(IPlayer):
     def isPactActive(self, tran, obj, partnerID, pactID):
         return 0
 
+    def processDIPLPhase(self, tran, obj, data):
+        self.forceAllyWithEDEN(tran,obj)
+        IPlayer.processDIPLPhase(self,tran, obj, data)
+
     def processFINALPhase(self, tran, obj, data):
         obj.govPwr = Rules.pirateGovPwr
         IPlayer.processFINALPhase(self, tran, obj, data)
@@ -162,3 +197,32 @@ class IAIPiratePlayer(IPlayer):
 
     processRSRCHPhase.public = 1
     processRSRCHPhase.accLevel = AL_ADMIN
+
+    def forceAllyWithEDEN(self,tran,obj):
+        for partyID in obj.diplomacyRels.keys():
+            party = tran.db.get(partyID, None)
+            if party.type == T_AIEDENPLAYER:
+                diplSelf = obj.diplomacyRels.get(party.oid, None)
+                log.debug("Allying Pirate with EDEN (forced)", obj.oid, partyID)
+                diplEDEN = IDataHolder()
+                diplEDEN.type = T_DIPLREL
+                diplEDEN.pacts = {
+                        PACT_ALLOW_CIVILIAN_SHIPS: [PACT_ACTIVE, PACT_ALLOW_CIVILIAN_SHIPS],
+                        PACT_ALLOW_MILITARY_SHIPS: [PACT_ACTIVE, PACT_ALLOW_MILITARY_SHIPS]
+                }
+                diplEDEN.relation = REL_FRIENDLY
+                diplEDEN.relChng = 0
+                diplEDEN.lastContact = tran.db[OID_UNIVERSE].turn
+                diplEDEN.contactType = CONTACT_STATIC
+                diplEDEN.stats = None
+
+                diplSelf.relation = REL_FRIENDLY
+                diplSelf.pacts = {
+                    PACT_ALLOW_CIVILIAN_SHIPS: [PACT_ACTIVE, PACT_ALLOW_CIVILIAN_SHIPS],
+                    PACT_ALLOW_MILITARY_SHIPS: [PACT_ACTIVE, PACT_ALLOW_MILITARY_SHIPS]
+                }
+                
+                obj.diplomacyRels[party.oid] = diplSelf
+                party.diplomacyRels[obj.oid] = diplEDEN
+                
+

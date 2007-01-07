@@ -346,6 +346,9 @@ pirateColonyCostMod = 1.5
 pirateTL3StratResColonyCostMod = 0.25
 pirateGovPwr = int(500000 * 1.25)
 pirateCanStealImprovements = 3
+pirateGrantHSE = 60*24*3600    #60 days
+pirateGrantASSEM = 105*24*3600  #105 days
+pirateGrantCOND = 105*24*3600   #105 days
 
 ## Bonuses
 galLeaderBonus = 0.05
