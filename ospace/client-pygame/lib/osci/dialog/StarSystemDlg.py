@@ -59,7 +59,6 @@ class StarSystemDlg:
 
 	def display(self, objID):
 		# set initial state
-		self.wormhole = 0
 		obj = client.get(objID, noUpdate = 1)
 		if obj.type == T_PLANET:
 			self.systemID = obj.compOf
@@ -69,6 +68,8 @@ class StarSystemDlg:
 			self.planetID = None
 			if obj.type == T_WORMHOLE:
 				self.wormhole = 1
+				self.win.vSFWHExit.tags=['sys']
+				self.win.vSRedirect.tags=['hidden']
 		else:
 			raise 'Unsupported type of object %d' % obj.type
 		self.plInfoType = 0
@@ -1120,16 +1121,10 @@ class StarSystemDlg:
 		ui.Title(self.win, layout = (30, 25, 10, 1), tags = ['sys'])
 		ui.Button(self.win, layout = (0, 26, 5, 1), text = _('Rename'),
 			id = 'vSRename', tags = ['sys'], action = 'onRenameSystem')
-		if self.wormhole:
-			ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Find Wormhole Exit'),
-				id = 'vSFWHExit', tags = ['sys'], action = 'onFindWormholeExit')
-			ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Redirection OFF'),
-				id = 'vSRedirect', tags = ['hidden'], action = 'onRedirectFleets')
-		else:
-			ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Find Wormhole Exit'),
-				id = 'vSFWHExit', tags = ['hidden'], action = 'onFindWormholeExit')
-			ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Redirection OFF'),
-				id = 'vSRedirect', tags = ['sys'], action = 'onRedirectFleets')
+		ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Find Wormhole Exit'),
+			id = 'vSFWHExit', tags = ['hidden'], action = 'onFindWormholeExit')
+		ui.Button(self.win, layout = (5, 26, 10, 1), text = _('Redirection OFF'),
+			id = 'vSRedirect', tags = ['sys'], action = 'onRedirectFleets')
 		ui.Button(self.win, layout = (15, 26, 5, 1), text = _('Add buoy'),
 			id = 'vSBuoy', tags = ['sys'], action = 'onBuoy')
 		ui.Button(self.win, layout = (20, 26, 5, 1), text = _('Delete buoy'),

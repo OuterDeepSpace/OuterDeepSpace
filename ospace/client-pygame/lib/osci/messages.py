@@ -150,7 +150,7 @@ addMsg(MSG_DAMAGE_BY_SG, N_('Malfunctional Star Gate, lost %(1)d %% HP\n\nOur fl
 addMsg(MSG_GAINED_FAME, N_('Gained %(1)d fame.'), severity = INFO)
 addMsg(MSG_LOST_FAME, N_('Lost %(1)d fame.'), severity = CRI)
 addMsg(MSG_GAINED_TECH, N_('Gained %(1)s technology at sublevel %(2)d.'), (techID2Name, int), severity = INFO)
-addMsg(MSG_ENTERED_WORMHOLE, N_('Your fleet entered wormhole at %(1)s and exited at %(2)s.'), (unicode,unicode), MIN)
+addMsg(MSG_ENTERED_WORMHOLE, N_('Your fleet entered a wormhole at %(1)s and exited at %(2)s.'), (unicode,unicode), MIN)
 addMsg(MSG_NOT_ENTERED_WORMHOLE, N_('Cannot enter wormhole - ship may be lost.'), severity = MIN)
 addMsg(MSG_FOUND_WORMHOLE, N_('You have located a wormhole'), severity = MIN) #todo
 

@@ -242,13 +242,13 @@ def keepAlive(force = False):
 		except ige.NoAccountException:
 			pass
 
-def get(objID, forceUpdate = 0, noUpdate = 0, canBePublic = 1):
+def get(objID, forceUpdate = 0, noUpdate = 0, canBePublic = 1, publicOnly = 0):
 	global nonexistingObj
 	if nonexistingObj.has_key(objID) and not forceUpdate:
 		return None
 	if noUpdate:
 		return db.get(objID, None)
-	if db.needsUpdate(objID) or forceUpdate:
+	if (db.needsUpdate(objID) or forceUpdate) and not publicOnly:
 		try:
 			db[objID] = cmdProxy.getInfo(objID)
 		except ige.SecurityException:
@@ -256,6 +256,14 @@ def get(objID, forceUpdate = 0, noUpdate = 0, canBePublic = 1):
 				db[objID] = cmdProxy.getPublicInfo(objID)
 			else:
 				return db.get(objID, None)
+		except ige.NoSuchObjectException:
+			if db.has_key(objID):
+				del db[objID]
+			nonexistingObj[objID] = None
+			return None
+	if (db.needsUpdate(objID) or forceUpdate) and publicOnly: #for when the data you need is never anything but public
+		try:
+			db[objID] = cmdProxy.getPublicInfo(objID)
 		except ige.NoSuchObjectException:
 			if db.has_key(objID):
 				del db[objID]

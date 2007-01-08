@@ -117,13 +117,15 @@ class StarMapWidget(Widget):
 		self._fleetRanges = {}
 		# find all pirate planets
 		pirates = {}
-		log.debug("Checking pirate planets")
+		log.debug("Checking pirate planets and wormholes")
 		for objID in client.db.keys():
 			if objID < OID_FREESTART:
 				continue
 			obj = client.get(objID, noUpdate = 1)
 			if not hasattr(obj, "type"):
 				continue
+			if obj.type == T_WORMHOLE and not hasattr(obj, 'destinationOid'):
+				obj = client.get(objID, forceUpdate = 1, publicOnly = 1)
 			if obj.type == T_PLANET and hasattr(obj, "x"):
 				ownerID = getattr(obj, 'owner', OID_NONE)
 				if ownerID == OID_NONE:
@@ -235,6 +237,7 @@ class StarMapWidget(Widget):
 					info.append(_("Pirate get fame chance: %d %%") % (pirProb * 100))
 				self._popupInfo[obj.oid] = info
 			elif obj.type == T_WORMHOLE:
+				log.debug("Displaying wormhole",obj.oid)
 				img = res.getSmallStarImg(obj.starClass[1])
 				icons = []
 				name = getattr(obj, 'name', None)
@@ -248,13 +251,15 @@ class StarMapWidget(Widget):
 				info.append(_('Worm hole: %s [ID: %d]') % (name or res.getUnknownName(), obj.oid))
 				info.append(_('Coordinates: [%.2f, %.2f]') % (obj.x, obj.y))
 				try:
-                                    whDestObj = client.db[obj.destinationOid] #except if the client doesn't have this in their DB
-                                    whDestName = getattr(whDestObj, 'name', None)
-                                    info.append(_('Destination: %s [ID: %d]') % (whDestName or res.getUnknownName()), obj.oid)
-                                    info.append(_('Dest. Coords: [%.2f, %.2f]') % (whDestName.x, whDestName.y))
-                                except:
-                                    info.append(_('Destination: ? [ID: ?]'))
-                                    info.append(_('Dest. Coords: [?, ?]'))
+                                    log.debug("Attempting to get wormhole destination (",obj.destinationOid,") from client.")
+				    whDestObj = client.get(obj.destinationOid, noUpdate = 1) #except if the client doesn't have this in their DB
+				    whDestName = getattr(whDestObj, 'name', None)
+				    info.append(_('Destination: %s [ID: %d]') % (whDestName or res.getUnknownName(), obj.oid))
+				    info.append(_('Dest. Coords: [%.2f, %.2f]') % (whDestObj.x, whDestObj.y))
+				except:
+                                    log.debug("Failed getting wormhole destination from client.")
+				    info.append(_('Destination: ? [ID: ?]'))
+				    info.append(_('Dest. Coords: [?, ?]'))
 				if pirProb > 0.0:
 					info.append(_("Pirate get fame chance: %d %%") % (pirProb * 100))
 				self._popupInfo[obj.oid] = info

@@ -258,6 +258,8 @@ class IUniverse(IObject):
 					continue
 				# compute votes
 				activePlayerCount = 0
+				piratePlayer = False
+				selfName = None
 				sum = 0
 				votes = {}
 				votesID = {}
@@ -266,9 +268,14 @@ class IUniverse(IObject):
 					player = tran.db[playerID]
 					if galaxyID not in player.galaxies:
 						continue
+					if player.type == T_PIRPLAYER:
+						piratePlayer = True
+						activePlayerCount += 1
+						continue
 					if player.type != T_PLAYER:
 						# skip non-regular players
 						continue
+					selfName = player.name
 					# add to sum
 					log.debug(playerID, "votes for", player.voteFor, "with votes", player.stats.slots)
 					activePlayerCount += 1
@@ -343,10 +350,16 @@ class IUniverse(IObject):
 					}
 					self.cmd(galaxy).sendMsg(tran, galaxy, message)
                                 if activePlayerCount <= 1:
-                                        if galaxy.imperator == OID_NONE:
-                                                restartGalaxy2(self,tran,OID_NONE,galaxyID,"The galaxy was ended with no active players.")
-                                        else:
-                                                restartGalaxy2(self,tran,galaxy.imperator,galaxyID,"Message from OSCI Administrator: The galaxy was automatically ended with only one active player.")
+					if galaxy.imperator == OID_NONE:
+						if piratePlayer: #if the pirate is still alive, then he must be the victor.
+							self.restartGalaxy2(tran,obj,OID_NONE,galaxyID,"Message from OSCI Administrator: The galaxy was automatically ended with the Pirate as victor!")
+						else:
+							self.restartGalaxy2(tran,obj,OID_NONE,galaxyID,"The galaxy was ended with no active players.")
+					else:
+						if selfName: #if there is only one player, selfName must be themselves if it isn't null
+							self.restartGalaxy2(tran,obj,galaxy.imperator,galaxyID,("Message from OSCI Administrator: The galaxy was automatically ended with %s as the imperator." % voteFor))
+						else:
+							self.restartGalaxy2(tran,obj,galaxy.imperator,galaxyID,"Message from OSCI Administrator: The galaxy was automatically ended with only one active player.")
 		# collect mailboxes
 		used = [self.cmd(obj).getMailboxName(tran, obj)]
 		for galaxyID in obj.galaxies:
@@ -480,7 +493,7 @@ class IUniverse(IObject):
 	restartGalaxy.accLevel = AL_NONE
 
 
-	def restartGalaxy2(self, tran, imperatorOID, galaxyID, imperatorMessage): #server-initiated restart
+	def restartGalaxy2(self, tran, obj, imperatorOID, galaxyID, imperatorMessage): #server-initiated restart
 		log.debug("Restarting Galaxy", galaxyID)
 		galaxy = tran.db[galaxyID]
 		log.debug("Sending message", imperatorMessage)

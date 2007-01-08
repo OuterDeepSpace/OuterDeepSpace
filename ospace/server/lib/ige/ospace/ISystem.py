@@ -184,6 +184,8 @@ class ISystem(IObject):
 			result.oid = obj.oid
 			result.x = obj.x
 			result.y = obj.y
+			if hasattr(obj, 'destinationOid'):
+				result.destinationOid = obj.destinationOid
 			# multiply by 1000 to increase accuracy
 			#~ result.dist = obj.dist * 1000
 			#~ result.dAngle = obj.dAngle * 1000

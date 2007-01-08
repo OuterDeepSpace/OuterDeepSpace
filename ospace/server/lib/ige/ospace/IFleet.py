@@ -958,23 +958,34 @@ class IFleet(IObject):
 			idx += 1
 
 	def moveToWormhole(self, tran, obj, targetID):
-		if not self.cmd(obj).moveToTarget(tran, obj, targetID):
-			return 0 #ship hasn't arrived
-		# enter wormhole
                 origin = tran.db[targetID]
+                if not (obj.x==origin.x and obj.y==origin.y):
+			if not self.cmd(obj).moveToTarget(tran, obj, targetID):
+				return 0 #ship hasn't arrived
+		# enter wormhole
                 if origin.type == T_WORMHOLE: #is wormhole, now enter it!
-			destinationWormHole = tran.db[target.destinationOid]
-			destinationWormHole.fleets.append(obj.oid)
+			destinationWormHole = tran.db[origin.destinationOid]
+			if destinationWormHole.oid == targetID:
+				return 1
+			if obj.oid not in destinationWormHole.fleets:
+				destinationWormHole.fleets.append(obj.oid)
+			if obj.oid not in destinationWormHole.closeFleets:
+				destinationWormHole.closeFleets.append(obj.oid)
+			if obj.oid in origin.fleets:
+				origin.fleets.remove(obj.oid)
+			if obj.oid in origin.closeFleets:
+				origin.closeFleets.remove(obj.oid)
+			obj.closeSystem = destinationWormHole.oid
                         log.debug('IFleet', 'Entering Wormhole - destination ', destinationWormHole.oid)
 			obj.orbiting = destinationWormHole.oid
 			obj.x = destinationWormHole.x
 			obj.y = destinationWormHole.y
 			destinationWormHole.scannerPwrs[obj.owner] = max(obj.scannerPwr, destinationWormHole.scannerPwrs.get(obj.owner, 0))
-                        Utils.sendMessage(tran, obj, MSG_ENTERED_WORMHOLE, (origin.name,destinationWormHole.name), structTech.id)
+                        Utils.sendMessage(tran, obj, MSG_ENTERED_WORMHOLE, destinationWormHole.oid , (origin.name,destinationWormHole.name))
 			arrived = 1
 		else: #is not wormhole...how'd you ever execute this command? Or is there some weird "terraform wormhole" technology we never forsaw?
                         log.warning('IFleet', 'Cannot enter non-existant wormhole at location ', origin.oid)
-                        Utils.sendMessage(tran, obj, MSG_ENTERED_WORMHOLE, (origin.name,destinationWormHole.name), structTech.id)
+                        #Utils.sendMessage(tran, obj, MSG_ENTERED_WORMHOLE, destinationWormHole.oid , (origin.name,destinationWormHole.name))
                         arrived = 1 #since the move part was successful, just ignore this problem for the player
                 return arrived
 	
