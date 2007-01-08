@@ -161,9 +161,8 @@ class IObject:
 		#
 		message["recipient"] = obj.name
 		message["recipientID"] = obj.oid
-		mailbox = "%s-%d" % (tran.gameMngr.gameID, obj.oid)
 		# send message
-		return tran.gameMngr.msgMngr.send(mailbox, message)
+		return tran.gameMngr.msgMngr.send(tran.gameMngr.gameID, obj.oid, message)
 
 	sendMsg.public = 1
 	sendMsg.accLevel = AL_NONE
@@ -181,9 +180,8 @@ class IObject:
 		#
 		message["recipient"] = obj.name
 		message["recipientID"] = obj.oid
-		mailbox = "%s-%d" % (tran.gameMngr.gameID, obj.oid)
 		# send message
-		return tran.gameMngr.msgMngr.send(mailbox, message)
+		return tran.gameMngr.msgMngr.send(tran.gameMngr.gameID, obj.oid, message)
 
 	sendAdminMsg.public = 1
 	sendAdminMsg.accLevel = AL_ADMIN
@@ -192,8 +190,7 @@ class IObject:
 		if not self.canGetMsgs(tran, obj, tran.session.cid):
 			raise SecurityException("You cannot read messages of this entity.")
 		# get messages
-		mailbox = "%s-%d" % (tran.gameMngr.gameID, obj.oid)
-		return tran.gameMngr.msgMngr.get(mailbox, lastID)
+		return tran.gameMngr.msgMngr.get(tran.gameMngr.gameID, obj.oid, lastID)
 
 	getMsgs.public = 1
 	getMsgs.accLevel = AL_NONE
@@ -202,16 +199,14 @@ class IObject:
 		if not self.canManageMsgs(tran, obj, tran.session.cid):
 			raise SecurityException("You cannot manage messages of this entity.")
 		# get messages
-		mailbox = "%s-%d" % (tran.gameMngr.gameID, obj.oid)
-		return tran.gameMngr.msgMngr.delete(mailbox, ids)
+		return tran.gameMngr.msgMngr.delete(tran.gameMngr.gameID, obj.oid, ids)
 
 	deleteMsgs.public = 1
 	deleteMsgs.accLevel = AL_NONE
 
 	def deleteOldMsgs(self, tran, obj):
 		for forum in self.forums:
-			mailbox = "%s-%d" % (tran.gameMngr.gameID, obj.oid)
-			tran.gameMngr.msgMngr.deleteOld(mailbox, forum, maxAge = self.forums[forum])
+			tran.gameMngr.msgMngr.deleteOld(tran.gameMngr.gameID, obj.oid, forum, maxAge = self.forums[forum])
 
 	deleteOldMsgs.public = 1
 	deleteOldMsgs.accLevel = AL_ADMIN

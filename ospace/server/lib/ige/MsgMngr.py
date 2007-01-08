@@ -68,7 +68,8 @@ class MsgMngr:
 				except MsgMngrException:
 					log.warning("Cannot upgrade mailbox")
 
-	def getMailbox(self, name, recreate = True):
+	def getMailbox(self, gameID, oid, recreate = True):
+		name = "%s-%s" % (gameID, oid)
 		try:
 			mailbox = self.database.get(name, None)
 		except:
@@ -90,31 +91,31 @@ class MsgMngr:
 		return mailbox
 
 	# send message
-	def send(self, mailbox, messageDict):
-		self.getMailbox(mailbox).add(messageDict)
+	def send(self, gameID, oid, messageDict):
+		self.getMailbox(gameID, oid).add(messageDict)
 		return 1
 
 	# get messages from mailbox
-	def get(self, mailbox, lastID):
-		response = self.getMailbox(mailbox).get(lastID)
+	def get(self, gameID, oid, lastID):
+		response = self.getMailbox(gameID, oid).get(lastID)
 		return response
 
 	# delete messages from mailbox
-	def delete(self, mailbox, msgIDs):
-		self.getMailbox(mailbox).delete(msgIDs)
+	def delete(self, gameID, oid, msgIDs):
+		self.getMailbox(gameID, oid).delete(msgIDs)
 		return 1
 
 	# delete old messages from mailbox
-	def deleteOld(self, mailbox, forum, maxAge):
+	def deleteOld(self, gameID, oid, forum, maxAge):
 		# do this only during night TODO this is a hack!
 		hour = time.localtime()[3]
 		if hour == 1:
-			log.debug("Compresing mailbox", mailbox, forum)
-			self.deleted += self.getMailbox(mailbox).deleteOld(forum, maxAge)
+			log.debug("Compresing mailbox", gameID, oid, forum)
+			self.deleted += self.getMailbox(gameID, oid).deleteOld(forum, maxAge)
 			if self.deleted >= 200:
 				self.database.checkpoint()
 				self.deleted = 0
-			log.debug("Compression finished", mailbox, forum)
+			log.debug("Compression finished", gameID, oid, forum)
 		else:
 			#@log.debug("Skipping compression of", mailbox, forum)
 			pass

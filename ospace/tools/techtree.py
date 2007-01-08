@@ -81,13 +81,13 @@ def getDescription(tech):
     )
 
 def getMinSize(tech):
-    font = pygame.font.Font("vera.ttf", 13)
+    font = pygame.font.Font("Vera.ttf", 13)
     w, h = font.size(getDescription(tech))
     return w + 6 + 12, h + 6
 
 def renderNode(tech, width, height):
     surface = pygame.Surface((width, height))
-    font = pygame.font.Font("vera.ttf", 13)
+    font = pygame.font.Font("Vera.ttf", 13)
     surface.fill(foreground)
     surface.fill(background, (1, 1, width - 2, height - 2))
     # TL label
