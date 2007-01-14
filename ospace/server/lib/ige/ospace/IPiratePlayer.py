@@ -152,18 +152,22 @@ class IPiratePlayer(IPlayer):
 		log.debug(piratePlayer.oid, "IPiratePlayer stealing techs")
 		oldOwner = tran.db[oldOwnerID]
 		canSteal = Rules.pirateCanStealImprovements
-		for techID in oldOwner.techs:
-			tech = Rules.techs[techID]
-			if oldOwner.techs[techID] <= piratePlayer.techs.get(techID, 0):
-				# skip techs that are already stealed
-				continue
-			if (tech.isShipEquip or tech.isShipHull) and not tech.unpackStruct:
-				self.givePirateTech(tran, piratePlayer, oldOwner, techID, stealFromPlanetID)
-				canSteal -= 1
-				if canSteal == 0:
-					break
-			if (tech.isProject):
-				self.givePirateTech(tran, piratePlayer, oldOwner, techID, stealFromPlanetID)
+		while canSteal > 0:
+			stealed = False
+			for techID in oldOwner.techs:
+				tech = Rules.techs[techID]
+				if oldOwner.techs[techID] <= piratePlayer.techs.get(techID, 0):
+					# skip techs that are already stealed
+					continue
+				if (tech.isShipEquip or tech.isShipHull) and not tech.unpackStruct and canSteal > 0:
+					self.givePirateTech(tran, piratePlayer, oldOwner, techID, stealFromPlanetID)
+					canSteal -= 1
+					stealed = True
+				if tech.isProject and canSteal > 0:
+					self.givePirateTech(tran, piratePlayer, oldOwner, techID, stealFromPlanetID)
+					canSteal -= 1
+					stealed = True
+			if not stealed:
 				break
 		# update techs
 		self.cmd(piratePlayer).update(tran, piratePlayer)
@@ -200,4 +204,3 @@ class IPiratePlayer(IPlayer):
 				obj.diplomacyRels[party.oid] = diplSelf
 				party.diplomacyRels[obj.oid] = diplEDEN
 				
-

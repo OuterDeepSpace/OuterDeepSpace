@@ -176,7 +176,10 @@ class Mailbox:
 		message['dbID'] = dbID
 		message['id'] = msgID
 		self.messageIDs.append(msgID)
-		self.database.create(message, dbID)
+		try:
+			self.database.create(message, dbID)
+		except ige.ServerException:
+			log.warning("Message not added to the database")
 
 	def get(self, lastID = -1):
 		result = []

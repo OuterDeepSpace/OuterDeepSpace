@@ -299,10 +299,11 @@ def getPirateFameMod(tran, player, system):
     mod = 1.0
     for planetID in system.planets:
         planet = tran.db[planetID]        
-        if planet.plStratRes in (SR_TL3A, SR_TL3B, SR_TL3C):
+        if planet.owner == player.oid:
+            # minimum reached, don't check rest
+            return 0.0
+        elif planet.plStratRes in (SR_TL3A, SR_TL3B, SR_TL3C):
             mod = min(mod, Rules.pirateTL3StratResColonyCostMod)
-        elif planet.owner == player.oid:
-            mod = 0.0
     return mod
     
 def validateStructPIROUTPOST(tran, source, target, tech):
@@ -319,8 +320,8 @@ def finishStructPIROUTPOST(tran, source, target, tech):
     famePenalty = 0
     if source.type == T_FLEET:
         mod = getPirateFameMod(tran, player, tran.db[target.compOf])
-        log.debug(source.owner, "DEPLOYING MODULE -- BEFORE", player.pirateFame)
+        log.debug(source.owner, "DEPLOYING MODULE -- BEFORE", player.pirateFame, mod)
         famePenalty = int(mod * Rules.pirateColonyCostMod * len(player.planets))
-        log.debug(source.owner, "DEPLOYING MODULE -- AFTER", player.pirateFame, famePenalty)
+        log.debug(source.owner, "DEPLOYING MODULE -- AFTER", player.pirateFame - famePenalty, famePenalty)
     finishStructOUTPOST(tran, source, target, tech)
     player.pirateFame -= famePenalty

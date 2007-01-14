@@ -128,17 +128,17 @@ class IPlayer(IObject):
 				log.warning("There is a problem when processing planet - removing", obj.oid, objID)
 				obj.planets.remove(objID)
 		# check if systems in buoys are systems
-		for objID in obj.buoys:
+		for objID in obj.buoys.keys():
 			try:
 				if not tran.db.has_key(objID):
 					log.debug("System for buoy does not exists - removing", obj.oid, objID)
-					obj.buoys.remove(objID)
+					del obj.buoys[objID]
 				if tran.db[objID].type not in (T_SYSTEM, T_WORMHOLE):
 					log.debug("System for buoy is not a system - removing", obj.oid, objID)
-					obj.buoys.remove(objID)
+					del obj.buoys[objID]
 			except:
 				log.warning("There is a problem when processing system for buoy - removing", obj.oid, objID)
-				obj.buoys.remove(objID)
+				del obj.buoys[objID]
 		# check if fleets are fleets
 		for objID in obj.fleets[:]:
 			try:

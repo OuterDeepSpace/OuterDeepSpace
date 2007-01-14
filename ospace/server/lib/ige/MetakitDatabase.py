@@ -248,7 +248,7 @@ class MetakitDatabase:
 			object.oid = id
 		#@log.debug("OID =", id)
 		if self.has_key(id):
-			raise ige.ServerException("'%s' created twice" % key)
+			raise ige.ServerException("'%s' created twice" % id)
 		self.cache[id] = object
 		self.addNewCacheItem(id)
 		self.put(id, pickle.dumps(object, pickle.HIGHEST_PROTOCOL))
