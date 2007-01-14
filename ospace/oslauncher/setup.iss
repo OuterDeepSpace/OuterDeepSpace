@@ -1,8 +1,8 @@
 [Setup]
 AppName=Outer Space Launcher
-AppVerName=Outer Space Launcher 0.2.0
+AppVerName=Outer Space Launcher 0.2.1
 AppPublisher=Ludek Smid
-AppVersion=0.2.0
+AppVersion=0.2.1
 AppPublisherURL=http://www.ospace.net
 AppSupportURL=http://www.ospace.net
 AppUpdatesURL=http://www.ospace.net
@@ -11,7 +11,7 @@ DefaultGroupName=Outer Space
 AllowNoIcons=yes
 ExtraDiskSpaceRequired=5242880
 DisableStartupPrompt=yes
-OutputBaseFilename=OuterSpaceLauncher-0.2.0
+OutputBaseFilename=OuterSpaceLauncher-0.2.1
 OutputDir=.
 InfoBeforeFile=license.rtf
 SolidCompression=no
