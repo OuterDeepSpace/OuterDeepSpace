@@ -790,7 +790,12 @@ class IPlanet(IObject):
 		if scanPwr >= Rules.level4InfoScanPwr:
 			# TODO provide less information
 			result.slots = obj.slots
+			result.shield = obj.shield
+			result.prevShield = -1
+			result.maxShield = -1
 		if scanPwr >= Rules.partnerScanPwr:
+			result.maxShield = obj.maxShield
+			result.prevShield = obj.prevShield
 			result.refuelMax = obj.refuelMax
 			result.refuelInc = obj.refuelInc
 			result.scannerPwr = obj.scannerPwr

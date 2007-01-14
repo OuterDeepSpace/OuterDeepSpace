@@ -51,7 +51,7 @@ class MiniMap:
             obj = client.get(objID, noUpdate = 1)
             if not (hasattr(obj, "type") and hasattr(obj, "x") and hasattr(obj, "y")):
                 continue
-            if obj.type == T_SYSTEM:
+            if obj.type in (T_SYSTEM,T_WORMHOLE):
                 ownerID = OID_NONE
                 if hasattr(obj, 'planets'):
                     for planetID in obj.planets:

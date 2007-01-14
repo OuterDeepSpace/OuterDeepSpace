@@ -410,29 +410,38 @@ class StarSystemDlg:
 			self.win.vPCMorale.text = _('?')
 		if hasattr(planet, 'shield'):
 			self.win.vPCShield.text = _('%d') % planet.shield
-			delta = planet.shield - planet.prevShield
-			if (planet.shield > planet.prevShield):
-                            info = _('Sheild (%d/%d) charged by %+d last turn.') % (
-                                planet.shield,
-                                planet.maxShield,
-                                delta
-                            )
-                        elif (planet.shield < planet.prevShield):
-                            info = _('Sheild (%d/%d) was damaged by %+d last turn.') % (
-                                planet.shield,
-                                planet.maxShield,
-                                delta
-                            )
-                        elif (planet.shield < planet.maxShield):
-                            info = _('Sheild (%d/%d) is unable to charge.') % (
-                                planet.shield,
-                                planet.maxShield,
-                            )
-                        else:
-                            info = _('Sheild (%d/%d) is fully charged.') % (
-                                planet.shield,
-                                planet.maxShield,
-                            )
+			shieldTip = True
+			if hasattr(planet,'prevShield'):
+			    if planet.prevShield < 0: #server reset your data becuase you went to war
+				shieldTip = False
+			if hasattr(planet,'prevShield') and hasattr(planet,'maxShield') and shieldTip:
+				delta = planet.shield - planet.prevShield
+				if (planet.shield > planet.prevShield):
+				    info = _('Sheild (%d/%d) charged by %+d last turn.') % (
+					planet.shield,
+					planet.maxShield,
+					delta
+				    )
+				elif (planet.shield < planet.prevShield):
+				    info = _('Sheild (%d/%d) was damaged by %+d last turn.') % (
+					planet.shield,
+					planet.maxShield,
+					delta
+				    )
+				elif (planet.shield < planet.maxShield):
+				    info = _('Sheild (%d/%d) is unable to charge.') % (
+					planet.shield,
+					planet.maxShield,
+				    )
+				else:
+				    info = _('Sheild (%d/%d) is fully charged.') % (
+					planet.shield,
+					planet.maxShield,
+				    )
+			else:
+                        	info = _('Sheild (%d/unknown)') % (
+				    planet.shield,
+				)
 			self.win.vPCShield.tooltip = info
 			self.win.vPCShield.statustip = info
 		if hasattr(planet, 'revoltLen') and planet.revoltLen > 0:

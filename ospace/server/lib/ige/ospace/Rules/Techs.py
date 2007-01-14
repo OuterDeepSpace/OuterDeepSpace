@@ -396,7 +396,7 @@ else:
 			symName, improvement = techSymName.split('-')
 			techIDs.append((getattr(Tech, symName), int(improvement)))
 		tech.researchRequires = techIDs
-		techIDs = {1: [], 2:[], 3:[], 4:[], 5:[]}
+		techIDs = {1: [], 2:[], 3:[], 4:[], 5:[], 6:[]}
 		for techSymName in tech.researchEnables:
 			#@log.debug('Converting EN', techSymName)
 			improvement, symName = techSymName.split('-')

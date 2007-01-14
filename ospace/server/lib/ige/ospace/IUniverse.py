@@ -349,7 +349,7 @@ class IUniverse(IObject):
 						"topic": "EVENT",
 					}
 					self.cmd(galaxy).sendMsg(tran, galaxy, message)
-                                if activePlayerCount <= 1:
+                                if activePlayerCount == 1: #not <= 1 since we don't want to keep restarting the testing galaxies
 					if galaxy.imperator == OID_NONE:
 						if piratePlayer: #if the pirate is still alive, then he must be the victor.
 							self.restartGalaxy2(tran,obj,OID_NONE,galaxyID,"Message from OSCI Administrator: The galaxy was automatically ended with the Pirate as victor!")
