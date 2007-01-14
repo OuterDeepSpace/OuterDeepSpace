@@ -442,6 +442,8 @@ class IGalaxy(IObject):
 						planet.plSlots = 2
 						if planet.plMaxSlots < 2:
 							planet.plMaxSlots = 2
+						if planet.plDiameter < 2000:
+							planet.plDiameter = 2000
 					planet.slots.append(Utils.newStructure(tran, Rules.Tech.EDENBASE, planet.owner))
 					planet.slots.append(Utils.newStructure(tran, Rules.Tech.EDENSTATION, planet.owner))
 					planet.storPop = 3000
