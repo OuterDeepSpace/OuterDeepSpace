@@ -42,8 +42,8 @@ class GameMngr(IGEGameMngr):
 	# Reguired methods
 	#
 
-	def __init__(self, gameID, clientMngr, msgMngr, database):
-		IGEGameMngr.__init__(self, gameID, clientMngr, msgMngr, database)
+	def __init__(self, gameID, config, clientMngr, msgMngr, database):
+		IGEGameMngr.__init__(self, gameID, config, clientMngr, msgMngr, database)
 		# register command object
 		self.registerObject(IUniverse.IUniverse)
 		self.registerObject(IPlayer.IPlayer)
@@ -204,7 +204,7 @@ class GameMngr(IGEGameMngr):
 	def takeOverPirate(self, sid, playerID, vipPassword):
 		# limit this now only to the qark
 		session = self.clientMngr.getSession(sid)
-		if vipPassword != "burumbaba":
+		if vipPassword != self.config.vip.password:
 			raise SecurityException('You cannot issue this command.')
 		#
 		log.debug('Creating pirate in session', sid)

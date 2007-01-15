@@ -41,7 +41,7 @@ attrs = {
 	'isShipHull' : 0,
 	'isStarting' : 0,
 	"subtype": "techSubtype",
-	"level": 0, #not implemented
+	"level": 0, 
 	"maxImprovement": 5, #Rules.techMaxImprovement,
 	"isMilitary": 0,
 	# construction costs & conditions

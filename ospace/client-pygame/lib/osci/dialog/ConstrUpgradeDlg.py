@@ -24,11 +24,13 @@ from osci import gdata, res, client, sequip
 from ige.ospace.Const import *
 from ige.ospace import *
 from ige import GameException
+from ConfirmDlg import ConfirmDlg
 
 class ConstrUpgradeDlg:
 
 	def __init__(self, app):
 		self.app = app
+		self.confirmDlg = ConfirmDlg(app)
 		self.createUI()
 
 	def display(self, designID, caller):
@@ -100,7 +102,7 @@ class ConstrUpgradeDlg:
 		try:
 			self.win.setStatus(_("Executing UPGRADE SHIP DESIGN command..."))
 			player = client.getPlayer()
-			player.shipDesigns = \
+			player.shipDesigns, player.stratRes, tasksUpgraded = \
 				client.cmdProxy.upgradeShipDesign(player.oid, self.designID, designID)
 			self.win.setStatus(_('Command has been executed.'))
 		except GameException, e:
@@ -109,6 +111,8 @@ class ConstrUpgradeDlg:
 		client.updateIDs(player.planets)
 		self.caller.update()
 		self.hide()
+		if not tasksUpgraded:
+			self.confirmDlg.display(_("Constructions queues on planets have not been updated, because new design uses different (amount of) strategic resources than old design. You have to fix them manually."), _("OK"), None)
 
 	def createUI(self):
 		w, h = gdata.scrnSize

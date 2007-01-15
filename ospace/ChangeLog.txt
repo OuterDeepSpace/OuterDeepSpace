@@ -1,5 +1,20 @@
 Change Log:
 
+[2007-01-15]
+- Enabled option server.mode in config file. [Qark]
+- delete design now handles strat. res. correctly. [Qark]
+- upgrade design now handles strat. res. correctly (but not optimaly). [Qark]
+- Fixed small bugs in MsgMngr, IPlayer, MetakitDatabase modules. [Qark]
+- Fixed fame problem with deploying colony as a pirate. [Qark]
+- Fixed problem with stealing techs as a pirate. [Qark]
+- Split mailbox name into tuple. [Qark]
+- Fixed font name in tech tree vizualizatoion tool. [Qark]
+- Fixed computation of best flak weapon. [Qark]
+
+[2007-01-12]
+- Added config file "var/config.ini" to server. [Qark]
+- Enabled option vip.password in config file. [Qark]
+
 VERSION 0.5.59
 
 [2006-07-10]

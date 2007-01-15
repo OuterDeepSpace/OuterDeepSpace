@@ -30,7 +30,12 @@ class ConfirmDlg:
 	def display(self, message, okText, cancelText, confirmAction = None, cancelAction = None):
 		self.win.vText.text = [message]
 		self.win.vConfirm.text = okText
-		self.win.vCancel.text = cancelText
+		if cancelText:
+			self.win.vCancel.text = cancelText
+			self.win.vCancel.enabled = True
+		else:
+			self.win.vCancel.text = ""
+			self.win.vCancel.enabled = False
 		self.confirmAction = confirmAction
 		self.cancelAction = cancelAction
 		self.win.show()
@@ -61,7 +66,7 @@ class ConfirmDlg:
 			layoutManager = ui.SimpleGridLM(),
 		)
 		self.win.subscribeAction('*', self)
-		ui.Text(self.win, layout = (5, 1, 15, 2), id = 'vText', background = self.win.app.theme.themeBackground, editable = 0)
+		ui.Text(self.win, layout = (5, 0, 16, 4), id = 'vText', background = self.win.app.theme.themeBackground, editable = 0)
 		ui.Label(self.win, layout = (0, 0, 5, 4), icons = ((res.loginLogoImg, ui.ALIGN_W),))
 		ui.Title(self.win, layout = (0, 4, 13, 1), id = 'vStatusBar', align = ui.ALIGN_W)
 		ui.TitleButton(self.win, layout = (13, 4, 4, 1), id = 'vCancel', action = 'onCancel')

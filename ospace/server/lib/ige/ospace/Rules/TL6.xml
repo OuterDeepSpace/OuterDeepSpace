@@ -97,7 +97,6 @@
 		<preresearch>Our old colony modules are getting outdated.</preresearch>
 	</technology>
 	<technology id="6025" symbol="OUTPOST6" name="Advanced Outpost">
-		<starting/>
 		<discovery
 			researchMod="1.0"
 			level="6"

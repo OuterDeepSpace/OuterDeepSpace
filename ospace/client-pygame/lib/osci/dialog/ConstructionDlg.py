@@ -352,7 +352,7 @@ class ConstructionDlg:
 			self.win.setStatus(_("Executing SCRAP SHIP DESIGN command..."))
 			player = client.getPlayer()
 			oldFleets = player.fleets
-			player.shipDesigns, player.fleets = \
+			player.shipDesigns, player.fleets, player.stratRes = \
 				client.cmdProxy.scrapShipDesign(player.oid, self.selectedDesignID)
 			self.selectedDesignID = None
 			self.win.setStatus(_('Command has been executed.'))

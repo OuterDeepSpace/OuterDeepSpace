@@ -851,16 +851,18 @@ class IPlanet(IObject):
 	update.public = 0
 
 	def deleteDesign(self, tran, obj, designID, keepWIP = 0):
+		# TODO: handle stategic resources
 		for task in obj.prodQueue[:]:
 			if task.isShip and task.techID == designID:
 				if task.currProd > 0 and keepWIP:
-					task.quantity = 1
+					self.cmd(obj).changeConstruction(tran, obj, obj.procQueue.index(task), 1)
 				else:
-					obj.prodQueue.remove(task)
+					self.cmd(obj).abortConstruction(tran, obj, obj.prodQueue.index(task))
 
 	deleteDesign.public = 0
 
 	def changeShipDesign(self, tran, obj, oldDesignID, newDesignID):
+		# TODO: handle strategic resources
 		for task in obj.prodQueue[:]:
 			if task.isShip and task.techID == oldDesignID:
 				task.techID = newDesignID

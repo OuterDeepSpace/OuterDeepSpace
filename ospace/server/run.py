@@ -54,7 +54,7 @@ log.setErrorLog('var/logs/errors.log')
 # options
 # parse arguments
 log.message('Parsing arguments...')
-options = ('reset', 'upgrade', 'devel', 'restore')
+options = ('reset', 'upgrade', 'devel', 'restore', "config=")
 
 opts, args = getopt.getopt(sys.argv[1:], '', options)
 
@@ -62,6 +62,7 @@ optReset = 0
 optUpgrade = 0
 optDevel = 0
 optRestore = 0
+optConfig = "var/config.ini"
 
 for opt, arg in opts:
 	if opt == '--reset':
@@ -72,6 +73,8 @@ for opt, arg in opts:
 		optDevel = 1
 	elif opt == '--restore':
 		optRestore = 1
+	elif opt == "--config":
+		optConfig = arg
 
 # record my pid
 
@@ -129,6 +132,11 @@ from ige.MsgMngr import MsgMngr
 from ige.IssueMngr import IssueMngr
 from ige.ospace.GameMngr import GameMngr
 
+# read configuration
+from ige.Config import Config
+log.message("Reading configuration from", optConfig)
+config = Config(optConfig)
+
 # set runtime mode
 ige.setRuntimeMode(not optDevel)
 
@@ -158,7 +166,7 @@ log.debug("Initializing message manager")
 msgMngr = MsgMngr(msgDB)
 
 log.debug("Initializing game manager")
-game = GameMngr(gameName, clientMngr, msgMngr, gameDB)
+game = GameMngr(gameName, config, clientMngr, msgMngr, gameDB)
 
 if optReset:
 	# reset game

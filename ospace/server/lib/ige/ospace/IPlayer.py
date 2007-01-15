@@ -390,7 +390,7 @@ class IPlayer(IObject):
 				spec.upgradeTo = 0
 		# delete design
 		del obj.shipDesigns[designID]
-		return obj.shipDesigns, obj.fleets
+		return obj.shipDesigns, obj.fleets, obj.stratRes
 
 	scrapShipDesign.public = 1
 	scrapShipDesign.accLevel = AL_OWNER
@@ -422,11 +422,26 @@ class IPlayer(IObject):
 		for desID in obj.shipDesigns:
 			if obj.shipDesigns[desID].upgradeTo == oldDesignID:
 				obj.shipDesigns[desID].upgradeTo = newDesignID
+		# compute strat res difference
+		stratRes = {}
+		for sr in oldSpec.buildSRes:
+			stratRes[sr] = stratRes.get(sr, 0) - 1
+		for sr in newSpec.buildSRes:
+			stratRes[sr] = stratRes.get(sr, 0) + 1
+			if stratRes[sr] == 0:
+				del stratRes[sr]
+		log.debug("upgradeShipDesign", obj.oid, stratRes)
 		# modify tasks
-		for planetID in obj.planets:
-			planet = tran.db[planetID]
-			self.cmd(planet).changeShipDesign(tran, planet, oldDesignID, newDesignID)
-		return obj.shipDesigns
+		tasksUpgraded = False
+		if not stratRes:
+			log.debug("upgradeShipDesign - upgrading tasks")
+			for planetID in obj.planets:
+				planet = tran.db[planetID]
+				self.cmd(planet).changeShipDesign(tran, planet, oldDesignID, newDesignID)
+			tasksUpgraded = True
+		else:
+			log.debug("upgradeShipDesing - NOT upgrading tasks")
+		return obj.shipDesigns, obj.stratRes, tasksUpgraded
 
 	upgradeShipDesign.public = 1
 	upgradeShipDesign.accLevel = AL_OWNER

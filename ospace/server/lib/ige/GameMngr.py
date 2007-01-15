@@ -33,7 +33,7 @@ from IObject import IDataHolder
 
 class GameMngr:
 
-	def __init__(self, gameID, clientMngr, msgMngr, database):
+	def __init__(self, gameID, config, clientMngr, msgMngr, database):
 		log.debug("Runtime mode", ige.igeRuntimeMode)
 		self.status = GS_INIT
 		self.gameID = gameID
@@ -41,6 +41,7 @@ class GameMngr:
 		self.msgMngr = msgMngr
 		self.cmdPool = {}
 		self.db = database
+		self.config = config
 		# register command objects
 		# None here
 
