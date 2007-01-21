@@ -2,6 +2,8 @@ Change Log:
 
 [2007-01-21]
 - Fixed typo in AIEDENPlayer. [Qark]
+- Fixed order items in client's menu. [Qark]
+
 VERSION 0.5.60
 
 [2007-01-21]

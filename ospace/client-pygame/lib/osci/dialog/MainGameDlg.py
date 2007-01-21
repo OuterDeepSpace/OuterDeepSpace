@@ -308,9 +308,10 @@ class MainGameDlg:
 				ui.Item(_("Statistics"), action = "onStats"),
 				ui.Item(_("Galaxy restart"), action = "galaxyRestart", enabled = False, data = True),
 				ui.Item(_("Options"), action = "onOptions"),
-				ui.Item(_("Quit"), action = "onQuit"),
 				ui.Item(_("--------"), enabled = False),
 				ui.Item(_("Resign"), action = "onResign"),
+				ui.Item(_("--------"), enabled = False),
+				ui.Item(_("Quit"), action = "onQuit"),
 			]
 		)
 		self.systemMenu.subscribeAction("*", self)
