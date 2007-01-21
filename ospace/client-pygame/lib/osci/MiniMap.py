@@ -30,7 +30,9 @@ rectColor = (29, 118, 229)
 class MiniMap:
     def __init__(self, width, height):
         self._map = []
+        self.drawnMap = []
         self._repaintMap = True
+        self._repaintRect = False
         self._mapSurf = None
         self._scaleX = 0.0
         self._scaleY = 0.0
@@ -84,19 +86,32 @@ class MiniMap:
             # redraw map
             self._mapSurf.fill((0x00, 0x00, 0x00))
             maxY = self._mapSurf.get_rect().height
+            #reset drawn map
+            self.drawnMap = []
             for systemID, x, y, color in self._map:
                 sx = int((x - self._minX) * self._scaleX) + self._shiftX
                 sy = maxY - int((y - self._minY) * self._scaleY) - self._shiftY
+                #save drawn map for rectangle moves when recompute of positions isn't needed
+                self.drawnMap.append((systemID,sx,sy,color))
                 pygame.draw.circle(self._mapSurf, color, (sx, sy), 2)
             pygame.draw.rect(self._mapSurf, rectColor, self._rectRect, 1)
             pygame.draw.rect(self._mapSurf, borderColor, (0, 0, self._width, self._height), 1)
             # clean up flag
             self._repaintMap = False
+            self._repaintRect = False
+        elif self._repaintRect:
+            self._mapSurf.fill((0x00, 0x00, 0x00))
+            maxY = self._mapSurf.get_rect().height
+            for systemID, sx, sy, color in self.drawnMap:
+                pygame.draw.circle(self._mapSurf, color, (sx, sy), 2)
+            pygame.draw.rect(self._mapSurf, rectColor, self._rectRect, 1)
+            pygame.draw.rect(self._mapSurf, borderColor, (0, 0, self._width, self._height), 1)
+            self._repaintRect = False
         # blit cached map
         rect = Rect(startX, startY, self._width, self._height)
         surface.blit(self._mapSurf, rect)
         return rect
-    
+
     def moveRect(self, centerX, centerY, width, height):
         maxX, maxY = self._mapSurf.get_rect().size
         sx = int((centerX - self._minX) * self._scaleX) + self._shiftX
@@ -104,7 +119,7 @@ class MiniMap:
         w = int(width * self._scaleX)
         h = int(height * self._scaleY)
         self._rectRect = (sx - w / 2, sy - h / 2, w, h)
-        self._repaintMap = True
+        self._repaintRect = True
 
     def processMB1Up(self, pos):
         return (((pos[0] - self._shiftX) / self._scaleX) + self._minX, ((pos[1] - self._shiftY) / self._scaleY) + self._minY)
