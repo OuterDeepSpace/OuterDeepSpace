@@ -60,7 +60,7 @@ class IAIEDENPlayer(IPlayer):
 		#add TL99 techs
 		obj.techLevel = 99
 		obj.techs[Rules.Tech.EDENCANNON] = Rules.techMaxImprovement
-		obj.techs[Rules.Tech.EDENMISSLE] = Rules.techMaxImprovement
+		obj.techs[Rules.Tech.EDENMISSILE] = Rules.techMaxImprovement
 		obj.techs[Rules.Tech.EDENTORP] = Rules.techMaxImprovement
 		obj.techs[Rules.Tech.EDENBOMB] = Rules.techMaxImprovement
 		obj.techs[Rules.Tech.EDENSTATION] = Rules.techMaxImprovement
