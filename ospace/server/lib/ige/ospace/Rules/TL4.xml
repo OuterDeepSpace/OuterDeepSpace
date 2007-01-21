@@ -920,8 +920,9 @@
 		<discovery
 			researchMod="(0.50 + 0.50) * 1.5"
 			level="4"
-			researchRequires="TERRAFORM3-3"
+			researchRequires="TERRAFORM3-1"
 			researchRaces="B"
+			maxImprovement="1"
 		/>
 		<shipequip
 			subtype="seq_struct"
@@ -937,7 +938,6 @@
 			deployHandlerValidator="validateDeployTERRAFORM3"
 			deployHandlerFunction="finishProjectTERRAFORM3"
 			minHull="1"
-			maxImprovement="1"
 		/>
 		<preresearch>To build a terraform event on a colony usually takes so long the colony self terraforms first. Let's fix that.</preresearch>
 		<description>The terraforming pod causes a planet to upgrade to </description>
