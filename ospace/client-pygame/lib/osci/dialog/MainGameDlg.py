@@ -183,7 +183,7 @@ class MainGameDlg:
 
 	def update(self):
 		self.galaxyRestart(None, None, False)
-  		player = client.getPlayer()
+		player = client.getPlayer()
 		turn = client.getTurn()
 		self.win.vTurn.text = res.formatTime(turn)
 		self.win.vStarMap.precompute()
@@ -216,7 +216,7 @@ class MainGameDlg:
 		if client.db != None:
 			player = client.getPlayer()
 			if player.imperator > 2:
-				self.systemMenu.items[3].enabled = True
+				self.systemMenu.items[2].enabled = True
 				lastGalaxyRestartShown = gdata.config.game.lastGalaxyRestartShown
 				if lastGalaxyRestartShown != None:
 					localTime = time.time()
@@ -228,7 +228,7 @@ class MainGameDlg:
 					gdata.config.game.lastGalaxyRestartShown = str(time.time())
 					self.galaxyRestartDlg.display(restartAction = self.onRestartConfirmed)
 			else:
-				self.systemMenu.items[3].enabled = False
+				self.systemMenu.items[2].enabled = False
 				if shownFromMenu == True:
 					self.win.setStatus(_("Only imperator elected three times and more can restart galaxy."))
 
@@ -309,7 +309,7 @@ class MainGameDlg:
 				ui.Item(_("Galaxy restart"), action = "galaxyRestart", enabled = False, data = True),
 				ui.Item(_("Options"), action = "onOptions"),
 				ui.Item(_("Quit"), action = "onQuit"),
-				ui.Item(_("________")),
+				ui.Item(_("--------"), enabled = False),
 				ui.Item(_("Resign"), action = "onResign"),
 			]
 		)

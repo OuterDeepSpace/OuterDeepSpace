@@ -395,10 +395,10 @@ class IPlayer(IObject):
 	scrapShipDesign.public = 1
 	scrapShipDesign.accLevel = AL_OWNER
 
-        def getShipDesign(self,tran,obj,designID):
-            if designID not in obj.shipDesigns:
-                raise GameException("No such design.")
-            return obj.shipDesigns[designID]
+	def getShipDesign(self,tran,obj,designID):
+		if designID not in obj.shipDesigns:
+			raise GameException("No such design.")
+		return obj.shipDesigns[designID]
 
 	def upgradeShipDesign(self, tran, obj, oldDesignID, newDesignID):
 		# check designs ID

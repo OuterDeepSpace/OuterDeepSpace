@@ -1,5 +1,11 @@
 Change Log:
 
+VERSION 0.5.60
+
+[2007-01-21]
+- Re-enable "Option" item in the client's menu. [Qark]
+- Added --restore= option for server. [Qark]
+
 [2007-01-15]
 - Enabled option server.mode in config file. [Qark]
 - delete design now handles strat. res. correctly. [Qark]

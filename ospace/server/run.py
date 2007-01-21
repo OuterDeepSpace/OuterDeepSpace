@@ -54,7 +54,7 @@ log.setErrorLog('var/logs/errors.log')
 # options
 # parse arguments
 log.message('Parsing arguments...')
-options = ('reset', 'upgrade', 'devel', 'restore', "config=")
+options = ('reset', 'upgrade', 'devel', 'restore=', "config=")
 
 opts, args = getopt.getopt(sys.argv[1:], '', options)
 
@@ -72,7 +72,7 @@ for opt, arg in opts:
 	elif opt == '--devel':
 		optDevel = 1
 	elif opt == '--restore':
-		optRestore = 1
+		optRestore = arg
 	elif opt == "--config":
 		optConfig = arg
 
@@ -151,9 +151,9 @@ clientDB = MetakitDatabaseString("var/db_data", "accounts", cache = 100)
 msgDB = MetakitDatabaseString("var/db_data", "messages", cache = 1000)
 
 if optRestore:
-	gameDB.restore("var/backup-game_Alpha.osbackup")
-	clientDB.restore("var/backup-accounts.osbackup")
-	msgDB.restore("var/backup-messages.osbackup")
+	gameDB.restore("var/%s-game_Alpha.osbackup" % optRestore)
+	clientDB.restore("var/%s-accounts.osbackup" % optRestore)
+	msgDB.restore("var/%s-messages.osbackup" % optRestore)
 
 # initialize game
 log.message('Initializing game \'%s\'...' % gameName)
