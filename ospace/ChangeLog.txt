@@ -1,8 +1,18 @@
 Change Log:
 
 [2007-01-21]
+- Updated minimap update method so that computation time is reduced when only moving rectangle. [Random Chaos] (SF#1641061)
+- Added # of ships of design per fleet to fleet list column in FleetsAnalysisDlg.py [Random Chaos] (request by Cytheria)
+- Added access to FleetCommandDlg.py in FleetsAnalysisDlg.py by LMB-click [Random Chaos]
+- Fixed deploy handler issue selecting invalid designs in FleetCommandDlg.py 
+  **** This still needs to be fixed in \server\lib\ige\ospace\ShipUtils.py (see SVN comment)
+
+VERSION 0.5.60 Revision 81
+
+[2007-01-21]
 - Fixed typo in AIEDENPlayer. [Qark]
 - Fixed order items in client's menu. [Qark]
+- Fixed typo in TL4 Terraforming Pod [Random Chaos]
 
 VERSION 0.5.60
 
@@ -21,9 +31,72 @@ VERSION 0.5.60
 - Fixed font name in tech tree vizualizatoion tool. [Qark]
 - Fixed computation of best flak weapon. [Qark]
 
+[2007-01-14]
+- Added wormholes to MiniMap
+- Fixed EDEN diameter bug
+
 [2007-01-12]
 - Added config file "var/config.ini" to server. [Qark]
 - Enabled option vip.password in config file. [Qark]
+
+[2007-01-07]
+  Technologies:
+- Added Tech Level 6, additional techs in Tech Level 4 and 5 [Random Chaos] (SF#1557495)
+- Fixed Techtree to handle TL6
+- Added tech properties:
+      Ship techs: maxHull, combatAttPerc, combatDefPerc, missileDefPerc, signatureCloak (signature 0-100%), signatureDecloak (signature 100%+), damageAbsorb, addMP 
+      System fleet command: systemAtt, systemDef
+      Planetary shields: planetShield 
+      Project deployment: deployHandlerID, deployHandlerFunction, deployHandlerValidator
+  [Random Chaos] (SF#1555361, SF#1555641, SF#1557081)
+- Updated osclient.py to reference new techs [Random Chaos]
+
+  Wormholes:
+- Added identification of wormhole destination (starmap and system map) [Random Chaos] (SF#1555641)
+- Fixed bugs with wormhole movement (improper fleet removal from origin system) [Random Chaos]
+
+  Client:
+- Updated Split Fleet dialog to allow better sorting options [Random Chaos] (SF#1568322)
+- Updated minimap to be 1:1 aspect ratio to not squish galaxies [Random Chaos]
+- Updated main menu bar: Dropdown for Planets/Fleets to access Analysis dialogs [Random Chaos]
+- Fixed of width of Menu dropdown on main menu bar
+- Updated order of Menu dropdown on main menu bar to make Resign seperated from other commands (to prevent accidental clicks) [Random Chaos]
+
+  Pirate and EDEN:
+- Added new EDEN player structure and techs; changed galaxy initiation to use new structure [Random Chaos]
+- Added new Pirate player structures [Random Chaos]
+- Added additional AI routines for Pirate AI, including automatic tech grants [Random Chaos]
+- Added forced non-agression between EDEN and Pirate [Random Chaos] (SF#1449545)
+- Fixed CP cost of Pirate Colony Module [Random Chaos] (SF#1604467)
+
+  Server:
+- Added automatic restart of galaxies with 1 active player [Random Chaos] (SF#1555110)
+- Added support for galaxy descriptions during galaxy generation XML parsing [Random Chaos] (SF#1557548)
+
+[2006-09-19]
+- Minimum production change (all worlds with 1+ cp raw and 25+ moral will output 1 cp minimum) [Random Chaos] (SF#1555638)
+- Modified how ship equipment properties sum: 
+      +ATT, +DEF will not sum if equipment
+      Slots will properly utilize negative slot properties
+      Weight will properly utilize negative weight properties
+      Auto repair will select best repair tech (based on Fix or Perc for that ship class); fixed auto repair processing
+  [Random Chaos] (SF#1555369)
+- Modified wormholes so fleets don't automatically enter [Random Chaos] (SF#1555640)
+- Modified fleet signature to allow 0 ship signature, but 1 fleet signature minimum (previously 1 ship signature, no fleet limits) [Random Chaos] (SF#1556048)
+- Modified Military Power calculation to not weight anti-large weapons and anti-planet weapons so heavily [Random Chaos]
+
+[2006-09-14]
+- Added new EDEN technologies for players [Malxe]
+
+[2006-08-20]
+- Added Minimap [Anderuso]
+- Fixed position of Analysis menu in Empire Overview Dialog [Anderuso]
+- Fixed exception shown in Empire Overview Dialog after galaxy restart [Anderuso]
+- Fixed bug#1542964 - Galaxy Restarting [Anderuso]
+- Added enable/disable support to ActiveLabel [Anderuso]
+- Added new state to themes [Anderuso]
+- Added new menu item for Galaxy restart [Anderuso]
+- Fixed confirmation message for Galaxy restart [Anderuso]
 
 VERSION 0.5.59
 
