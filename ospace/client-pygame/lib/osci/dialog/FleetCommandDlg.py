@@ -156,8 +156,14 @@ class FleetCommandDlg:
 				self.deplShips.append(designID)
 				log.debug('Adding design with structure',designID)
 			elif tech.deployHandlers:
-                                self.deplShips.append(designID)
-				log.debug('Adding design with project',designID)
+				hasHandler = False
+				for handler in tech.deployHandlers:
+					if handler != '': #why are blank handlers getting added in ship construction? catch here for now
+						hasHandler = True
+						break
+				if hasHandler:
+					self.deplShips.append(designID)
+					log.debug('Adding design with project',designID)
 		# correct buildingIndex
 		if self.deplShipIndex >= len(self.deplShips):
 			self.deplShipIndex = 0

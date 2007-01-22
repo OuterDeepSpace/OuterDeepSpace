@@ -53,16 +53,22 @@ class FleetsAnalysisDlg:
 		player = client.getPlayer()
 
 		self.fleetsByDesign = {}
+		self.fleetCountsByDesign = {}
 		items = []
 		for designID in player.shipDesigns:
 			spec = player.shipDesigns[designID]
 			fleets = {}
+			fleetCounts = {}
 			for fleetID in player.fleets:
 				fleet = client.get(fleetID)
+				count = 0
 				for tmpDesignID, hp, shieldHP, exp in fleet.ships:
 					if tmpDesignID == designID:
+						count += 1
 						fleets[fleet] = 1
+				fleetCounts[fleetID] = count
 			self.fleetsByDesign[designID] = fleets.keys()
+			self.fleetCountsByDesign[designID] = fleetCounts
 			item = ui.Item(spec.name, tDesignID = designID, tShipsCount = len(fleets.keys()))
 			items.append(item)
 		self.win.vDesigns.items = items
@@ -74,24 +80,29 @@ class FleetsAnalysisDlg:
 	def onSelectDesign(self, widget, action, data):
 		player = client.getPlayer()
 		fleets = self.fleetsByDesign[data.tDesignID]
+		fleetCounts = self.fleetCountsByDesign[data.tDesignID]
 		spec = player.shipDesigns[data.tDesignID]
 		self.win.vFleetsTitle.text = _("Fleets contains design %s") % spec.name
 		items = []
 		if fleets:
 			for fleet in fleets:
-				items.append(ui.Item(fleet.name, tShipsCount = len(fleet.ships), fleet = fleet))
+				items.append(ui.Item(fleet.name, tShipsCount = len(fleet.ships), fleet = fleet, tClassCount = fleetCounts[fleet.oid], tFleetID = fleet.oid))
 		self.win.vFleets.items = items
 		self.win.vFleets.itemsChanged()
 
 	def onSelectFleet(self, widget, action, data):
-#		gdata.mainGameDlg.onSelectMapObj(None, None, data.planetID)
-		pass
+		item = self.win.vFleets.selection[0]
+		fleet = item.fleet #client.get(item.tFleetID, noUpdate = 1)
+#		if hasattr(fleet, "owner") and fleet.owner == client.getPlayerID():
+			# show dialog
+		gdata.mainGameDlg.onSelectMapObj(None, None, item.tFleetID)
 
 	def onShowLocation(self, widget, action, data):
 		# center on map
 		if hasattr(data.fleet, "x"):
 			gdata.mainGameDlg.win.vStarMap.highlightPos = (data.fleet.x, data.fleet.y)
 			gdata.mainGameDlg.win.vStarMap.setPos(data.fleet.x, data.fleet.y)
+			self.hide()
 			return
 		self.win.setStatus(_("Cannot show location"))
 
@@ -122,7 +133,7 @@ class FleetsAnalysisDlg:
 		ui.Listbox(self.win, layout = (0, 1, halfCols, rows - 2), id = "vDesigns",
 			columns = (
 				(_("Design name"), "text", halfCols - 5, ui.ALIGN_W),
-				(_("Total #"), "tShipsCount", 4, ui.ALIGN_E)
+				(_("# fleets"), "tShipsCount", 4, ui.ALIGN_E)
 			),
 			columnLabels = 1, action = "onSelectDesign", sortable = True)
 
@@ -130,8 +141,9 @@ class FleetsAnalysisDlg:
 			align = ui.ALIGN_W, id = "vFleetsTitle", font = "normal-bold")
 		ui.Listbox(self.win, layout = (halfCols, 1, halfCols, rows - 2), id = "vFleets",
 			columns = (
-				(_("Fleet name"), "text", halfCols - 5, ui.ALIGN_W),
-				(_("# of ships"), "tShipsCount", 4, ui.ALIGN_E)
+				(_("Fleet name"), "text", halfCols - 9, ui.ALIGN_W),
+				(_("Ships"), "tClassCount",4, ui.ALIGN_E),
+				(_("Fleet size"), "tShipsCount", 4, ui.ALIGN_E)
 			),
 			columnLabels = 1, action = "onSelectFleet", rmbAction = "onShowLocation", sortable = True)
 
