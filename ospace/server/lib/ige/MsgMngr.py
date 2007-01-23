@@ -123,22 +123,28 @@ class MsgMngr:
 
 	# delete unused mailboxes
 	def trashUnusedMailboxes(self, mailboxes):
+		# TODO: comment out debug messages
 		trash = self.getMailboxes()
-		#@log.debug("Mailboxes:", trash)
-		#@log.debug("Used:", mailboxes)
+		log.debug("Mailboxes:", trash)
+		log.debug("Used:", mailboxes)
 		for mailbox in mailboxes:
 			if mailbox in trash:
+				log.debug("Will not trash", mailbox)
 				trash.remove(mailbox)
-		for mailbox in trash:
-			log.message("Removing mailbox", mailbox)
-			box = self.getMailbox(mailbox)
+		for gameID, oid in trash:
+			log.message("Removing mailbox", gameID, oid)
+			box = self.getMailbox(gameID, oid)
 			box.deleteAll()
-			del self.database[mailbox]
-			self.mailboxRoot.removeMailbox(mailbox)
+			del self.database[box.name]
+			self.mailboxRoot.removeMailbox(box.name)
 
 	def getMailboxes(self):
 		log.debug("ALL mailboxes", self.mailboxRoot.getAll())
-		return self.mailboxRoot.getAll()
+		result = []
+		for mailbox in self.mailboxRoot.getAll():
+			gameID, oid = mailbox.split("-")
+			result.append((gameID, int(oid)))
+		return result
 
 class MailboxRoot:
 

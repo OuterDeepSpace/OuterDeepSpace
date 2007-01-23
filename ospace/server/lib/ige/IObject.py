@@ -227,6 +227,6 @@ class IObject:
 	canManageMsgs.public = 0
 
 	def getMailboxName(self, tran, obj):
-		return "%s-%d" % (tran.gameMngr.gameID, obj.oid)
+		return (tran.gameMngr.gameID, obj.oid)
 
 	getMailboxName.public = 0

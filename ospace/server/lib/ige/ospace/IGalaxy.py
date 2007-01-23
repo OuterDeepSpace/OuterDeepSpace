@@ -38,7 +38,6 @@ class IGalaxy(IObject):
 	def init(self, obj):
 		IObject.init(self, obj)
 		#
-		obj.description = ''
 		obj.x = 0.0
 		obj.y = 0.0
 		obj.radius = 0.0
@@ -50,6 +49,7 @@ class IGalaxy(IObject):
 		obj.timeStopped = 0
 		obj.creationTime = 0.0
 		obj.imperator = OID_NONE
+		obj.description = ""
 		# electromagnetic radiation
 		obj.emrLevel = 1.0
 		obj.emrTrend = 1.0

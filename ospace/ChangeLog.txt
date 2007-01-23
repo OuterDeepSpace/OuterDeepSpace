@@ -1,5 +1,9 @@
 Change Log:
 
+[2007-01-22]
+- Fixed galaxy auto restart. [Qark]
+- Fixed auto removal of unused mailboxes. [Qark]
+
 [2007-01-21]
 - Updated minimap update method so that computation time is reduced when only moving rectangle. [Random Chaos] (SF#1641061)
 - Added # of ships of design per fleet to fleet list column in FleetsAnalysisDlg.py [Random Chaos] (request by Cytheria)
@@ -7,7 +11,7 @@ Change Log:
 - Fixed deploy handler issue selecting invalid designs in FleetCommandDlg.py 
   **** This still needs to be fixed in \server\lib\ige\ospace\ShipUtils.py (see SVN comment)
 
-VERSION 0.5.60 Revision 81
+VERSION 0.5.60 R81
 
 [2007-01-21]
 - Fixed typo in AIEDENPlayer. [Qark]
