@@ -153,7 +153,18 @@ msgDB = MetakitDatabaseString("var/db_data", "messages", cache = 1000)
 if optRestore:
 	gameDB.restore("var/%s-game_Alpha.osbackup" % optRestore)
 	clientDB.restore("var/%s-accounts.osbackup" % optRestore)
-	msgDB.restore("var/%s-messages.osbackup" % optRestore)
+	# TODO: remove afer fix of the message database
+	# the following code imports to the message database only valid entries
+        # and forces mailbox scan
+	incl = [1]
+	incl.extend(gameDB[1].galaxies)
+	incl.extend(gameDB[1].players)
+	def include(k, l = incl):
+		for i in l:
+			if k.startswith("Alpha-%d-" % i) or (k == "Alpha-%d" % i):
+				return True
+		return False
+	msgDB.restore("var/%s-messages.osbackup" % optRestore, include = include)
 
 # initialize game
 log.message('Initializing game \'%s\'...' % gameName)

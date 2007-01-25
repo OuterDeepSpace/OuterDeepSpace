@@ -25,14 +25,12 @@ class MsgMngrException(Exception):
 
 class MsgMngr:
 
+	MAILBOXROOT_ID = "#MAILBOXROOT#"
+	
 	def __init__(self, database):
 		# init object space root
 		self.database = database
-		self.mailboxRoot = self.database.get("#MAILBOXROOT#", None)
 		self.deleted = 0
-		if not self.mailboxRoot:
-			self.mailboxRoot = MailboxRoot()
-			self.database.create(self.mailboxRoot, id = "#MAILBOXROOT#")
 
 	def shutdown(self):
 		log.message('Shutdown')
@@ -68,6 +66,14 @@ class MsgMngr:
 				except MsgMngrException:
 					log.warning("Cannot upgrade mailbox")
 
+	def getMailboxRoot(self):
+		mailboxRoot = self.database.get(self.MAILBOXROOT_ID, None)
+		if not mailboxRoot:
+			mailboxRoot = MailboxRoot()
+			mailboxRoot.scan(self.database)
+			self.database.create(mailboxRoot, id = self.MAILBOXROOT_ID)
+		return mailboxRoot
+
 	def getMailbox(self, gameID, oid, recreate = True):
 		name = "%s-%s" % (gameID, oid)
 		try:
@@ -87,7 +93,7 @@ class MsgMngr:
 		mailbox = Mailbox(name)
 		self.database.create(mailbox, id = name)
 		mailbox.setDatabase(self.database)
-		self.mailboxRoot.addMailbox(name)
+		self.getMailboxRoot().addMailbox(name)
 		return mailbox
 
 	# send message
@@ -125,23 +131,22 @@ class MsgMngr:
 	def trashUnusedMailboxes(self, mailboxes):
 		# TODO: comment out debug messages
 		trash = self.getMailboxes()
-		log.debug("Mailboxes:", trash)
-		log.debug("Used:", mailboxes)
+		#@log.debug("Mailboxes:", trash)
+		#@log.debug("Used:", mailboxes)
 		for mailbox in mailboxes:
 			if mailbox in trash:
-				log.debug("Will not trash", mailbox)
 				trash.remove(mailbox)
 		for gameID, oid in trash:
 			log.message("Removing mailbox", gameID, oid)
 			box = self.getMailbox(gameID, oid)
 			box.deleteAll()
 			del self.database[box.name]
-			self.mailboxRoot.removeMailbox(box.name)
+			self.getMailboxRoot().removeMailbox(box.name)
 
 	def getMailboxes(self):
-		log.debug("ALL mailboxes", self.mailboxRoot.getAll())
+		mailboxes = self.getMailboxRoot().getAll()
 		result = []
-		for mailbox in self.mailboxRoot.getAll():
+		for mailbox in mailboxes:
 			gameID, oid = mailbox.split("-")
 			result.append((gameID, int(oid)))
 		return result
@@ -151,6 +156,17 @@ class MailboxRoot:
 	def __init__(self):
 		self.mailboxNames = []
 
+	def scan(self, db):
+		log.debug("*** SCANNING MAILBOXES ***")
+		self.mailboxNames = []
+		for key in db.keys():
+			if key.count("-") == 1:
+				# mailbox
+				self.mailboxNames.append(key)
+			else:
+				#skip ordinal mails and mailboxroot
+				continue
+	
 	def addMailbox(self, name):
 		if name not in self.mailboxNames:
 			self.mailboxNames.append(name)
@@ -238,12 +254,4 @@ class Mailbox:
 		return self.__dict__
 
 	def upgrade(self):
-		if hasattr(self, "messages"):
-			self.messageIDs = []
-			for msgID in self.messages:
-				message = self.messages[msgID]
-				log.debug("Upgrading msg", message["id"])
-				self.add(message, msgID = message["id"])
-			del self.messages
-		else:
-			log.debug("Up-to-date")
+		log.debug("Up-to-date")

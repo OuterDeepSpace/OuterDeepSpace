@@ -326,19 +326,25 @@ class MetakitDatabaseString(MetakitDatabase):
 
 	dbSchema = "data[_B[oid:B,data:B]]"
 
-	def restore(self, filename):
+	def restore(self, filename, include = None):
 		log.message("Restoring database from file", filename)
 		fh = file(filename, "r")
 		line = fh.readline().strip()
 		if line != "IGE OUTER SPACE BACKUP VERSION 1":
 			raise ige.ServerException("Incorrect header: %s" % line)
+		imported = 0
+		skipped = 0
 		while True:
 			key = fh.readline().strip()
 			if key == "END OF BACKUP":
 				break
 			data = fh.readline().strip()
 			key = binascii.a2b_hex(key)
+			if include and not include(key):
+				skipped += 1
+				continue
+			imported += 1
 			data = binascii.a2b_hex(data)
 			#@log.debug("Storing key", key)
 			self.put(key, data)
-		log.message("Database restored")
+		log.message("Database restored (%d imported, %d skipped)" % (imported, skipped))
