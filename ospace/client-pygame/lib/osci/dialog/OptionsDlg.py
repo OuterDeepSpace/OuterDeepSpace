@@ -438,7 +438,7 @@ class OptionsDlg:
 		ui.Title(self.win, layout = (7, 7, 15, 1), text = _('Default settings'),
 			align = ui.ALIGN_NONE, font = 'normal-bold')
 		ui.Check(self.win, layout = (7, 8, 8, 1), text = _('Report finalization'), id = 'vReportFin',
-			checked = 1)
+			checked = 0)
 		ui.Check(self.win, layout = (7, 9, 8, 1), text = _('Show redirects'), id = 'vRedirects',
 			checked = 1)
 		ui.Check(self.win, layout = (15,8,8,1), text = _('Show coordinates'), id = 'vCoords',

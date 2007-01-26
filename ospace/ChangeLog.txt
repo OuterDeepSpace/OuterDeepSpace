@@ -1,5 +1,8 @@
 Change Log:
 
+[2007-01-26]
+- "Report Finalization" client option is now disabled by default. [Qark]
+
 [2007-01-25]
 - Fixed problem with removing unused mailboxes. [Qark]
 - Restore of msg database now drops unreferenced messages. [Qark]
