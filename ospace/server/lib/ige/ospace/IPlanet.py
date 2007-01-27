@@ -376,8 +376,8 @@ class IPlanet(IObject):
 			try:
 				opStatus = min(1.0, float(struct[STRUCT_IDX_HP]) / maxHP)
 			except:
-                		opStatus = 0.0
-                		log.warning('Invalid max HP of structure',STRUCT_IDX_TECHID)
+				opStatus = 0.0
+				log.warning('Invalid max HP of structure', STRUCT_IDX_TECHID)
 			if tech.operBio > 0:
 				opStatus = min(opStatus, float(obj.storBio) / tech.operBio)
 			if tech.operEn > 0:
@@ -453,11 +453,11 @@ class IPlanet(IObject):
 		# do shield self generation
 		obj.prevShield = obj.shield #for planet display of shield growth
 		if obj.maxShield < obj.shield:
-                    obj.shield = obj.maxShield
-                if obj.maxShield > obj.shield and not isCombat:
-                    regenTemp = max(1, Rules.plShieldRegen* obj.maxShield) #always regen at at least 1
-                    obj.shield = min(obj.shield + regenTemp, obj.maxShield) #don't let it regen over shieldMax
-                # pass scanner/... to the system
+			obj.shield = obj.maxShield
+			if obj.maxShield > obj.shield and not isCombat:
+				regenTemp = max(1, Rules.plShieldRegen* obj.maxShield) #always regen at at least 1
+				obj.shield = min(obj.shield + regenTemp, obj.maxShield) #don't let it regen over shieldMax
+			# pass scanner/... to the system
 		#@log.debug(obj.oid, "IPlanet scanner", obj.scannerPwr)
 		system.scannerPwrs[obj.owner] = max(obj.scannerPwr, system.scannerPwrs.get(obj.owner, 0))
 		# destroy destroyed buildings
@@ -503,7 +503,7 @@ class IPlanet(IObject):
 			moraleBonus = Rules.moraleProdBonus[int(obj.morale / Rules.moraleProdStep)]
 			prod  = obj.effProdProd = max(0, int(obj.prodProd * (owner.prodEff + moraleBonus)))
 			if (obj.morale > 15 and prod == 0 and obj.prodProd > 0 and owner.prodEff > 0): #added for super-low moral bonus issues
-                            prod  = obj.effProdProd = 1
+				prod  = obj.effProdProd = 1
 		else:
 			prod = obj.prodProd
 		index = 0
@@ -564,8 +564,9 @@ class IPlanet(IObject):
 						self.cmd(fleet).addAction(tran, fleet, 0, FLACTION_REDIRECT, OID_NONE, None)
 					# add ships to the fleet
 					self.cmd(fleet).addNewShip(tran, fleet, item.techID)
-					if item.reportFin:
-						Utils.sendMessage(tran, obj, MSG_COMPLETED_SHIP, obj.oid, item.techID)
+					# TODO: reenable
+					#if item.reportFin:
+					#	Utils.sendMessage(tran, obj, MSG_COMPLETED_SHIP, obj.oid, item.techID)
 				elif tech.isStructure:
 					# if there is struct to demolish, find it and delete it
 					if item.demolishStruct != OID_NONE:
@@ -587,15 +588,17 @@ class IPlanet(IObject):
 							tech.finishConstrHandler(tran, obj, target, tech)
 						except Exception:
 							log.warning("Cannot execute finish constr handler")
-						if item.reportFin:
-							Utils.sendMessage(tran, obj, MSG_COMPLETED_STRUCTURE, target.oid, item.techID)
+						# TODO: reenable
+						#if item.reportFin:
+						#	Utils.sendMessage(tran, obj, MSG_COMPLETED_STRUCTURE, target.oid, item.techID)
 					else:
 						# no free slot!
 						Utils.sendMessage(tran, obj, MSG_CANNOTBUILD_NOSLOT, target.oid, None)
 				elif tech.isProject:
 					tech.finishConstrHandler(tran, obj, target, tech)
-					if item.reportFin:
-						Utils.sendMessage(tran, obj, MSG_COMPLETED_PROJECT, target.oid, item.techID)
+					# TODO: reenable
+					#if item.reportFin:
+					#	Utils.sendMessage(tran, obj, MSG_COMPLETED_PROJECT, target.oid, item.techID)
 				else:
 					raise GameException('Unsupported type of technology %d ' % item.techID)
 				# remove item from prod queue
@@ -1008,11 +1011,11 @@ class IPlanet(IObject):
 			# hit
 			dmg = ShipUtils.computeDamage(weapon.weaponClass, 3, weapon.weaponDmgMin, weapon.weaponDmgMax)
 			#@log.debug(obj.oid, 'HIT! att=%d vs def=%d, dmg=%d '% (attack, defense, dmg))
-                        #shield strike
-                        if obj.shield > 0:
-                                absorb = min(dmg,obj.shield)
-                                obj.shield -= absorb
-                                dmg -= absorb
+			#shield strike
+			if obj.shield > 0:
+				absorb = min(dmg,obj.shield)
+				obj.shield -= absorb
+				dmg -= absorb
 			if dmg == 0:
 				return 0+absorb, 0, 3
 			# select slot

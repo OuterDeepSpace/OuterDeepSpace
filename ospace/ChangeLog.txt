@@ -1,5 +1,10 @@
 Change Log:
 
+[2007-01-27]
+- Fixed max. morale problem with Holidays project. [Qark]
+- Fixed problem with TL 99 and RP pop support. [Qark]
+- Old messages are wiped every turn now. [Qark]
+
 [2007-01-26]
 - "Report Finalization" client option is now disabled by default. [Qark]
 

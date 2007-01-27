@@ -113,23 +113,16 @@ class MsgMngr:
 
 	# delete old messages from mailbox
 	def deleteOld(self, gameID, oid, forum, maxAge):
-		# do this only during night TODO this is a hack!
-		hour = time.localtime()[3]
-		if hour == 1:
-			log.debug("Compresing mailbox", gameID, oid, forum)
-			self.deleted += self.getMailbox(gameID, oid).deleteOld(forum, maxAge)
-			if self.deleted >= 200:
-				self.database.checkpoint()
-				self.deleted = 0
-			log.debug("Compression finished", gameID, oid, forum)
-		else:
-			#@log.debug("Skipping compression of", mailbox, forum)
-			pass
+		log.debug("Compresing mailbox", gameID, oid, forum)
+		self.deleted += self.getMailbox(gameID, oid).deleteOld(forum, maxAge)
+		if self.deleted >= 200:
+			self.database.checkpoint()
+			self.deleted = 0
+		#@log.debug("Compression finished", gameID, oid, forum)
 		return 1
 
 	# delete unused mailboxes
 	def trashUnusedMailboxes(self, mailboxes):
-		# TODO: comment out debug messages
 		trash = self.getMailboxes()
 		#@log.debug("Mailboxes:", trash)
 		#@log.debug("Used:", mailboxes)
@@ -237,6 +230,8 @@ class Mailbox:
 				delete.append(msgID)
 			elif message['forum'] == forum:
 				break
+		if not delete:
+			return 0
 		log.debug("MsgMngr - deleting %d messages (500 max) out of %d" % (len(delete), len(self.messageIDs)))
 		t0 = time.time()
 		maxMsg = 500

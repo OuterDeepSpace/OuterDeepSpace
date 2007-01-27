@@ -150,7 +150,7 @@ techBaseImprovement = 1
 techMaxImprovement = 5
 
 techImprCostMod = {1:480, 2:480, 3:720, 4:960, 5:1200, 6: 1440, 7: 1680} #per level
-sciPtsPerCitizen = {1: 0, 2: 0.00075, 3: 0.00150, 4: 0.00175, 5: 0.00200, 6: 0.002125, 7: 0.00225} #per level
+sciPtsPerCitizen = {1: 0, 2: 0.00075, 3: 0.00150, 4: 0.00175, 5: 0.00200, 6: 0.002125, 7: 0.00225, 99: 0} #per level
 
 techImprEff = {1:0.750, 2:0.875, 3:1.000, 4:1.125, 5:1.250} #per sublevel
 

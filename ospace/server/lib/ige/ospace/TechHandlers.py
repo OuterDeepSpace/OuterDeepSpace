@@ -174,7 +174,7 @@ def finishProjectHOLIDAYS1(tran, source, target, tech):
     # no battle
     system = tran.db[source.compOf]
     if system.combatCounter == 0:
-        source.morale += int(tech.moraleTrgt * techEff)
+        source.morale = min(source.morale + int(tech.moraleTrgt * techEff), Rules.maxMorale)
 
 ## Produce resources
 def finishProjectPRODRSRC(tran, source, target, tech):
