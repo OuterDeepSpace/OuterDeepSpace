@@ -454,10 +454,10 @@ class IPlanet(IObject):
 		obj.prevShield = obj.shield #for planet display of shield growth
 		if obj.maxShield < obj.shield:
 			obj.shield = obj.maxShield
-			if obj.maxShield > obj.shield and not isCombat:
-				regenTemp = max(1, Rules.plShieldRegen* obj.maxShield) #always regen at at least 1
-				obj.shield = min(obj.shield + regenTemp, obj.maxShield) #don't let it regen over shieldMax
-			# pass scanner/... to the system
+		if obj.maxShield > obj.shield and not isCombat:
+			regenTemp = max(1, Rules.plShieldRegen* obj.maxShield) #always regen at at least 1
+			obj.shield = min(obj.shield + regenTemp, obj.maxShield) #don't let it regen over shieldMax
+		# pass scanner/... to the system
 		#@log.debug(obj.oid, "IPlanet scanner", obj.scannerPwr)
 		system.scannerPwrs[obj.owner] = max(obj.scannerPwr, system.scannerPwrs.get(obj.owner, 0))
 		# destroy destroyed buildings
