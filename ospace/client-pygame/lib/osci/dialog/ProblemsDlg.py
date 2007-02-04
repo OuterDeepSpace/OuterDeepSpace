@@ -171,7 +171,7 @@ class ProblemsDlg:
 								else:
 									techEff = Rules.techImprEff[Rules.techBaseImprovement]
 
-								HPturn = int(0.02 * tech.maxHP * techEff)
+								HPturn = min(1,int(0.02 * tech.maxHP * techEff))
 								turnsToDestroy = math.ceil(struct[STRUCT_IDX_HP] / HPturn)
 
 								if turnsToDestroy < 48:

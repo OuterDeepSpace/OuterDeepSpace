@@ -166,6 +166,19 @@ sevColors = {
 	DISABLED: (0x80, 0x80, 0x80),
 }
 
+# StarMapWidget overlays
+OVERLAY_OWNER = "owner"
+OVERLAY_DIPLO = "diplomacy"
+OVERLAY_BIO = "bio"
+OVERLAY_FAME = "fame"
+OVERLAY_MIN = "min"
+OVERLAY_SLOT = "slot"
+OVERLAY_STARGATE = "stargate"
+OVERLAY_DOCK = "dock"
+OVERLAY_MORALE = "morale"
+
+OVERLAY_TYPES = [OVERLAY_OWNER, OVERLAY_DIPLO, OVERLAY_BIO, OVERLAY_FAME, OVERLAY_MIN, OVERLAY_SLOT, OVERLAY_STARGATE, OVERLAY_DOCK, OVERLAY_MORALE]
+
 # colors
 playerHighlightColor = (0xff, 0xa5, 0x4d)
 

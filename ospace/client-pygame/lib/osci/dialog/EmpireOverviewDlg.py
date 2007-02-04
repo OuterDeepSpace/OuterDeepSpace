@@ -168,7 +168,7 @@ class EmpireOverviewDlg:
 		if hasattr(player.stats, "prodSci"):
 			text.append(u"    %s: %s" % (_("Raw production"), getattr(player.stats, "prodSci", "?")))
 		text.append(u'    %s: %s' % (_("Real production"), realSci))
-		if player.techLevel < 6:
+		if player.techLevel < 7:
 			popSupp = int(player.stats.storPop * Rules.sciPtsPerCitizen[player.techLevel])
 		else:
 			popSupp = 0

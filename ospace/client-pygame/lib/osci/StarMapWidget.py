@@ -26,6 +26,7 @@ from ige.ospace import Rules, Utils
 import pygame, pygame.draw, pygame.key
 from pygame.locals import *
 from dialog.ShowBuoyDlg import ShowBuoyDlg
+from dialog.MapOverlayDlg import MapOverlayDlg
 import gdata, client, res, math, string
 from ige import log
 from osci.dialog.SearchDlg import SearchDlg
@@ -33,6 +34,7 @@ from osci.MiniMap import MiniMap
 
 buoyColors = [(0xff, 0xff, 0x00), (0x00, 0xff, 0xff), (0xff, 0x00, 0xff)]
 MAX_BOUY_DISPLAY_LEN = 30
+
 
 class StarMapWidget(Widget):
 
@@ -49,6 +51,8 @@ class StarMapWidget(Widget):
 		Widget.__init__(self, parent)
 		self.searchDlg = SearchDlg(self.app)
 		self.searchDlg.mapWidget = self
+		self.showOverlayDlg = MapOverlayDlg(self.app)
+		self.showOverlayDlg.mapWidget = self
 		# data
 		self.action = None
 		# map
@@ -83,12 +87,15 @@ class StarMapWidget(Widget):
 		self.showPlanets = 1
 		self.showFleets = 1
 		self.showGrid = 1
+		self.showOverlaySelector = 1
 		self.showRedirects = 1
 		self.showPirateAreas = True
 		self.highlightPos = None
 		self.alwaysShowRangeFor = None
 		self.showBuoyDlg = ShowBuoyDlg(self.app)
 		self._miniMapRect = Rect(0, 20, 175, 175)
+		self._overlayRect = Rect(0, 0, 175, 24)
+		self._detectOverlayZone = Rect(0,0,0,0)
 		self.miniMap = MiniMap(self._miniMapRect.width, self._miniMapRect.height)
 		# flags
 		self.processKWArguments(kwargs)
@@ -96,6 +103,9 @@ class StarMapWidget(Widget):
 		# popup menu
 		self.popup = ui.Menu(self.app, title = _("Select object"))
 		self.popup.subscribeAction("*", self)
+		# overlay system
+		self.overlayMode = gdata.OVERLAY_OWNER
+		self._overlayZone = False
 
 	def precompute(self):
 		# clear active areas for buoy texts
@@ -165,6 +175,13 @@ class StarMapWidget(Widget):
 				upgradeShip = 0
 				repairShip = 0
 				speedBoost = 0
+				moraleCount = 0
+				morale = 200
+				minerals = -1
+				bio = -1
+				slots = 0
+				numPlanets = 0
+				stratRes = SR_NONE
 				#owner2 = 0
 				ownerID = OID_NONE
 				explored = False
@@ -173,9 +190,23 @@ class StarMapWidget(Widget):
 					for planetID in obj.planets:
 						planet = client.get(planetID, noUpdate = 1)
 						owner = getattr(planet, 'owner', OID_NONE)
+						if hasattr(planet, "plType") and planet.plType not in ("A", "G"):
+							numPlanets += 1
 						if int(owner) != 0:
 								ownerID = owner
+						if hasattr(planet, "morale"):
+							morale = min(morale,planet.morale)
+							#morale += planet.morale
+							#moraleCount += 1
+						if hasattr(planet, "plMin"):
+							minerals = max(minerals,planet.plMin)
+						if hasattr(planet, "plBio"):
+							bio = max(bio,planet.plBio)
+						if hasattr(planet, "plSlots"):
+							slots += planet.plSlots
 						if hasattr(planet, "plStratRes") and planet.plStratRes != SR_NONE:
+							stratRes = planet.plStratRes
+							stratRes = planet.plStratRes
 							icons.append(res.icons["sr_%d" % planet.plStratRes])
 						if hasattr(planet, "refuelMax"):
 							refuelMax = max(refuelMax, planet.refuelMax)
@@ -190,7 +221,10 @@ class StarMapWidget(Widget):
 							explored = True
 				if not explored and name != None:
 					name = "[%s]" % (name)
-						
+				#if moraleCount > 0:
+				#	morale = morale/moraleCount
+				if morale==200:
+					morale = -1
 				pirProb = self.precomputePirates(obj, pirates, icons)
 				# refuelling
 				if refuelMax >= 87:
@@ -216,8 +250,9 @@ class StarMapWidget(Widget):
 				#   color = gdata.playerHighlightColor
 				#else:
 				#   color = res.getFFColorCode(rel)
-				color = res.getPlayerColor(ownerID)
-				self._map[self.MAP_SYSTEMS].append((obj.oid, obj.x, obj.y, name, img, color, icons))
+				colors = res.getStarmapWidgetSystemColor(owner,bio,minerals,slots,numPlanets,speedBoost, refuelInc, upgradeShip, pirProb*100, stratRes, morale)
+				namecolor = res.getPlayerColor(ownerID)
+				self._map[self.MAP_SYSTEMS].append((obj.oid, obj.x, obj.y, name, img, colors, namecolor, False, icons))
 				# pop up info
 				info = []
 				info.append(_('System: %s [ID: %d]') % (name or res.getUnknownName(), obj.oid))
@@ -245,7 +280,7 @@ class StarMapWidget(Widget):
 				self.precomputeCombat(obj, icons)
 				self.precomputeBuoys(obj, player, icons)
 				color = res.getPlayerColor(OID_NONE)
-				self._map[self.MAP_SYSTEMS].append((obj.oid, obj.x, obj.y, name, img, color, icons))
+				self._map[self.MAP_SYSTEMS].append((obj.oid, obj.x, obj.y, name, img, color, namecolor, True, icons))
 				# pop up info
 				info = []
 				info.append(_('Worm hole: %s [ID: %d]') % (name or res.getUnknownName(), obj.oid))
@@ -265,12 +300,42 @@ class StarMapWidget(Widget):
 				self._popupInfo[obj.oid] = info
 			elif obj.type == T_PLANET:
 				owner = getattr(obj, 'owner', OID_NONE)
+				# set up color reference data
+				biodata = -1
+				mindata = -1
+				slotdata = 0
+				stargatedata = 0
+				dockrefueldata = 0
+				dockupgradedata = 0
+				stratresdata = SR_NONE
+				moraledata = -1
+				pirProb = self.precomputePirates(obj, pirates, False)
+				famedata = pirProb*100
+				if hasattr(obj, 'plBio'):
+					biodata = getattr(obj, 'plBio', OID_NONE)
+				if hasattr(obj, 'plMin'):
+					mindata = getattr(obj, 'plMin', OID_NONE)
+				if hasattr(obj, 'plSlots'):
+					slotdata = getattr(obj, 'plSlots', OID_NONE)
+				if hasattr(obj, 'refuelInc'):
+					dockrefueldata = getattr(obj, 'refuelInc', OID_NONE)
+				if hasattr(obj, 'upgradeShip'):
+					dockupgradedata = getattr(obj, 'upgradeShip', OID_NONE)
+				if hasattr(obj, 'fleetSpeedBoost'):
+					stargatedata = getattr(obj, 'fleetSpeedBoost', OID_NONE)
+				if hasattr(obj, 'plStratRes'):
+					stratresdata = getattr(obj, 'plStratRes', OID_NONE)
+				if hasattr(obj, 'morale'):
+					moraledata = getattr(obj, 'morale', OID_NONE)
+				# build system
 				name = getattr(obj, 'name', None) or res.getUnknownName()
+				singlet = True
 				if hasattr(obj, "plType") and obj.plType in ("A", "G"):
-					color = gdata.sevColors[gdata.DISABLED]
+					colors = gdata.sevColors[gdata.DISABLED]
 				else:
-					color = res.getPlayerColor(owner)
-				self._map[self.MAP_PLANETS].append((obj.oid, obj.x, obj.y, obj.orbit, color))
+					singlet = False
+					colors = res.getStarmapWidgetPlanetColor(owner,biodata,mindata,slotdata,stargatedata, dockrefueldata, dockupgradedata, famedata, stratresdata, moraledata)
+				self._map[self.MAP_PLANETS].append((obj.oid, obj.x, obj.y, obj.orbit, colors, singlet))
 				scannerPwr = getattr(obj, 'scannerPwr', 0)
 				if scannerPwr:
 					self._map[self.MAP_SCANNER1].append((obj.x, obj.y, scannerPwr / 10.0))
@@ -464,16 +529,16 @@ class StarMapWidget(Widget):
 		# self dirty flag
 		self.repaintMap = 1
 
-	def precomputePirates(self, system, pirates, icons):
+	def precomputePirates(self, system, pirates, icons = False):
 		dist = 10000
 		for pirX, pirY in pirates:
 			dist = min(dist, math.hypot(system.x - pirX, system.y - pirY))
 		pirProb = Rules.pirateGainFamePropability(dist)
-		if pirProb >= 1.0:
-			icons.append(res.icons["pir_99"])
-		elif pirProb > 0.0:
-			icons.append(res.icons["pir_00"])
-		
+		if icons != False:
+		    if pirProb >= 1.0:
+			    icons.append(res.icons["pir_99"])
+		    elif pirProb > 0.0:
+			    icons.append(res.icons["pir_00"])
 		return pirProb
 
 	def precomputeCombat(self, system, icons):
@@ -541,7 +606,7 @@ class StarMapWidget(Widget):
 		currY = self.currY
 		scale = self.scale
 		if scale >= 30:
-			for objID, x, y, name, img, color, icons in self._map[self.MAP_SYSTEMS]:
+			for objID, x, y, name, img, color, namecolor, singlet, icons in self._map[self.MAP_SYSTEMS]:
 				sx = int((x - currX) * scale) + centerX
 				sy = maxY - (int((y - currY) * scale) + centerY)
 				w, h = img.get_size()
@@ -552,7 +617,9 @@ class StarMapWidget(Widget):
 				w = 22
 				h = 22
 				if name:
-					img = renderText('small', name, 1, color)
+					if self.overlayMode != gdata.OVERLAY_OWNER:
+						namecolor = res.fadeColor(namecolor)
+					img = renderText('small', name, 1, namecolor)
 					self._mapSurf.blit(img, (sx - img.get_width() / 2, sy + h / 2))
 					buoy = self.getBuoy(objID)
 					if buoy != None:
@@ -565,7 +632,11 @@ class StarMapWidget(Widget):
 								break
 							if len(line) > MAX_BOUY_DISPLAY_LEN:
 								line = u"%s..." % line[:MAX_BOUY_DISPLAY_LEN]
-							img = renderText('small', line, 1, buoyColors[buoy[1] - 1])
+							if self.overlayMode == gdata.OVERLAY_OWNER:
+								bouycolor = buoyColors[buoy[1] - 1]
+							else:
+								bouycolor = res.fadeColor(buoyColors[buoy[1] - 1])
+							img = renderText('small', line, 1, bouycolor)
 							maxW = max(img.get_width(), maxW)
 							self._mapSurf.blit(img, (sx - img.get_width() / 2, nSy + hh))
 							hh += img.get_height()
@@ -581,13 +652,17 @@ class StarMapWidget(Widget):
 				actRect.move_ip(self.rect.left, self.rect.top)
 				self._actAreas[objID] = actRect
 		else:
-			for objID, x, y, name, img, color, icons in self._map[self.MAP_SYSTEMS]:
+			for objID, x, y, name, img, color, namecolor, singlet, icons in self._map[self.MAP_SYSTEMS]:
+				if not singlet:
+					color = color[self.overlayMode]
 				sx = int((x - currX) * scale) + centerX
 				sy = maxY - (int((y - currY) * scale) + centerY)
 				pygame.draw.circle(self._mapSurf, color, (sx, sy), 5, 1)
 				pygame.draw.circle(self._mapSurf, color, (sx, sy), 4, 0)
 				if name and scale > 15:
-					img = renderText('small', name, 1, color)
+					if self.overlayMode != gdata.OVERLAY_OWNER:
+						namecolor = res.fadeColor(namecolor)
+					img = renderText('small', name, 1, namecolor)
 					self._mapSurf.blit(img, (sx - img.get_width() / 2, sy + 6 / 2))
 					buoy = self.getBuoy(objID)
 					if buoy != None:
@@ -619,7 +694,9 @@ class StarMapWidget(Widget):
 		currY = self.currY
 		scale = self.scale
 		if scale >= 30:
-			for objID, x, y, orbit, color in self._map[self.MAP_PLANETS]:
+			for objID, x, y, orbit, color, singlet in self._map[self.MAP_PLANETS]:
+				if not singlet:
+					color = color[self.overlayMode]
 				sx = int((x - currX) * scale) + centerX
 				sy = maxY - (int((y - currY) * scale) + centerY)
 				orbit -= 1
@@ -628,7 +705,9 @@ class StarMapWidget(Widget):
 				actRect.move_ip(self.rect.left, self.rect.top)
 				self._actAreas[objID] = actRect
 		elif scale > 20:
-			for objID, x, y, orbit, color in self._map[self.MAP_PLANETS]:
+			for objID, x, y, orbit, color, singlet in self._map[self.MAP_PLANETS]:
+				if not singlet:
+					color = color[self.overlayMode]
 				sx = int((x - currX) * scale) + centerX
 				sy = maxY - (int((y - currY) * scale) + centerY)
 				orbit -= 1
@@ -653,6 +732,8 @@ class StarMapWidget(Widget):
 			pygame.draw.line(self._mapSurf, color, (sx1, sy1), (sx2, sy2), 1)
 		# draw fleet symbol
 		for objID, x, y, oldX, oldY, orbit, eta, color, size, military in self._map[self.MAP_FLEETS]:
+			if self.overlayMode != gdata.OVERLAY_OWNER:
+				color = res.fadeColor(color)
 			sx = int((x - currX) * scale) + centerX
 			sy = maxY - (int((y - currY) * scale) + centerY)
 			if orbit >= 0 and scale >= 30:
@@ -697,6 +778,9 @@ class StarMapWidget(Widget):
 			#
 			self._miniMapRect.left = self.rect.width - self._miniMapRect.width
 			self._miniMapRect.top = self.rect.top
+			#self._overlayRect.left = self.rect.width - self._overlayRect.width
+			self._overlayRect.top = 0 #self.rect.top
+			#log.debug("Overlay Rect aligned to top:",self.rect.top)
 			self.repaintMap = 1
 		if self.repaintMap:
 			self._actAreas = {}
@@ -733,6 +817,9 @@ class StarMapWidget(Widget):
 			# fleets
 			if self.showFleets:
 				self.drawFleets()
+			# overlay selector
+			if self.showOverlaySelector:
+				self.drawOverlaySelector(surface)
 			# clean up flag
 			self.repaintMap = 0
 		# blit cached map
@@ -860,6 +947,62 @@ class StarMapWidget(Widget):
 			else:
 				return None
 
+	def drawOverlaySelector(self,surface):
+
+		#guess we have to make this a popup! :(
+		#log.debug('Overlay Size:',self._overlayRect.width,self._overlayRect.height)
+		if not self._overlayZone:
+			self._overlayZone = pygame.Surface((self._overlayRect.width,self._overlayRect.height),SWSURFACE | SRCALPHA, surface)
+		
+		self._detectOverlayZone.top = self._overlayRect.top + self.rect.top
+		self._detectOverlayZone.left = self._overlayRect.left
+		self._detectOverlayZone.width = self._overlayRect.width
+		self._detectOverlayZone.height = self._overlayRect.height
+
+		self._overlayZone.fill((0x00,0x00,0x00))
+
+		pygame.draw.rect(self._overlayZone,(0x00, 0x00, 0x90),Rect(0,0,self._overlayRect.width,self._overlayRect.height),1)
+	        
+
+
+		
+		#pygame.draw.rect(self.overlayZone,(0x00, 0x00, 0x00),self._overlayRect,0) #this picks up mouse button position
+		#pygame.draw.rect(self._mapSurf,(0x00, 0x00, 0x00),self._overlayRect,0)
+		#pygame.draw.rect(self.overlayZone,(0x00, 0x00, 0x90),self._overlayRect,1)
+
+		
+
+		if self.overlayMode == gdata.OVERLAY_OWNER:
+			mode = "Overlay Mode: Normal"
+		if self.overlayMode == gdata.OVERLAY_DIPLO:
+			mode = "Overlay Mode: Diplomatic"
+		if self.overlayMode == gdata.OVERLAY_BIO:
+			mode = "Overlay Mode: Environment"
+		if self.overlayMode == gdata.OVERLAY_FAME:
+			mode = "Overlay Mode: Pirate Fame"
+		if self.overlayMode == gdata.OVERLAY_MIN:
+			mode = "Overlay Mode: Minerals"
+		if self.overlayMode == gdata.OVERLAY_SLOT:
+			mode = "Overlay Mode: Slots"
+		if self.overlayMode == gdata.OVERLAY_STARGATE:
+			mode = "Overlay Mode: Fleet Acceleration"
+		if self.overlayMode == gdata.OVERLAY_DOCK:
+			mode = "Overlay Mode: Refuel and Repair"
+		if self.overlayMode == gdata.OVERLAY_MORALE:
+			mode = "Overlay Mode: Morale"
+		
+		textSrfc = renderText('small', mode, 1, (0x70, 0x70, 0x80))
+		self._overlayZone.blit(textSrfc, (
+			6,
+			4 )
+		)
+		
+		self._mapSurf.blit(self._overlayZone, self._overlayRect)
+#	        surface.blit(self._overlayZone, self._overlayRect)
+		
+		
+
+
 	def drawGrid(self):
 		rect = self._mapSurf.get_rect()
 		centerX, centerY = rect.center
@@ -903,6 +1046,8 @@ class StarMapWidget(Widget):
 		pos = evt.pos
 		if self._miniMapRect.collidepoint(pos):
 			return ui.NoEvent
+		if self._detectOverlayZone.collidepoint(pos):
+			return ui.NoEvent
 		self.pressedObjIDs = []
 		for objID in self._actAreas.keys():
 			rect = self._actAreas[objID]
@@ -931,6 +1076,9 @@ class StarMapWidget(Widget):
 			self.currX, self.currY = self.miniMap.processMB1Up((pos[0] - self._miniMapRect.left, self._miniMapRect.height - pos[1] + self._miniMapRect.top))
 			self.processMiniMapRect()
 			self.repaintMap = 1
+			return ui.NoEvent
+		if self._detectOverlayZone.collidepoint(pos):
+			self.showOverlayDlg.display()
 			return ui.NoEvent
 		objIDs = []
 		for objID in self._actAreas.keys():
@@ -1041,6 +1189,10 @@ class StarMapWidget(Widget):
 	def processMMotion(self, evt):
 		pos = evt.pos
 		if self._miniMapRect.collidepoint(pos):
+			#log.debug('Minimap Rect Position');
+			return ui.NoEvent
+		if self._detectOverlayZone.collidepoint(pos):
+			#log.debug('Overlay Rect Position');
 			return ui.NoEvent
 		self.activeObjID = OID_NONE
 		self.activeObjIDs = []
@@ -1068,6 +1220,9 @@ class StarMapWidget(Widget):
 		# Ctrl+F
 		elif evt.unicode == u'\x06' and pygame.key.get_mods() & KMOD_CTRL:
 			self.searchDlg.display()
+		# Ctrl+M
+		elif evt.unicode == u'\x0D' and pygame.key.get_mods() & KMOD_CTRL:
+			self.showOverlayDlg.display()
 		elif evt.unicode == u' ':
 			x, y = pygame.mouse.get_pos()
 			centerX, centerY = self._mapSurf.get_rect().center
