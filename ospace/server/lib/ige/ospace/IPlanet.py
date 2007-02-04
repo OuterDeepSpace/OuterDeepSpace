@@ -564,9 +564,8 @@ class IPlanet(IObject):
 						self.cmd(fleet).addAction(tran, fleet, 0, FLACTION_REDIRECT, OID_NONE, None)
 					# add ships to the fleet
 					self.cmd(fleet).addNewShip(tran, fleet, item.techID)
-					# TODO: reenable
-					#if item.reportFin:
-					#	Utils.sendMessage(tran, obj, MSG_COMPLETED_SHIP, obj.oid, item.techID)
+					if item.reportFin and item.quantity == 1:
+						Utils.sendMessage(tran, obj, MSG_COMPLETED_SHIP, obj.oid, item.techID)
 				elif tech.isStructure:
 					# if there is struct to demolish, find it and delete it
 					if item.demolishStruct != OID_NONE:
@@ -588,17 +587,15 @@ class IPlanet(IObject):
 							tech.finishConstrHandler(tran, obj, target, tech)
 						except Exception:
 							log.warning("Cannot execute finish constr handler")
-						# TODO: reenable
-						#if item.reportFin:
-						#	Utils.sendMessage(tran, obj, MSG_COMPLETED_STRUCTURE, target.oid, item.techID)
+						if item.reportFin and item.quantity == 1:
+							Utils.sendMessage(tran, obj, MSG_COMPLETED_STRUCTURE, target.oid, item.techID)
 					else:
 						# no free slot!
 						Utils.sendMessage(tran, obj, MSG_CANNOTBUILD_NOSLOT, target.oid, None)
 				elif tech.isProject:
 					tech.finishConstrHandler(tran, obj, target, tech)
-					# TODO: reenable
-					#if item.reportFin:
-					#	Utils.sendMessage(tran, obj, MSG_COMPLETED_PROJECT, target.oid, item.techID)
+					if item.reportFin and item.quantity == 1:
+						Utils.sendMessage(tran, obj, MSG_COMPLETED_PROJECT, target.oid, item.techID)
 				else:
 					raise GameException('Unsupported type of technology %d ' % item.techID)
 				# remove item from prod queue

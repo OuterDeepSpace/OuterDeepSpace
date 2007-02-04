@@ -1,5 +1,9 @@
 Change Log:
 
+[2007-01-29]
+- When producing several tasks of the same type, only the last one
+  is reported now. [Qark]
+
 [2007-01-27]
 - Fixed max. morale problem with Holidays project. [Qark]
 - Fixed problem with TL 99 and RP pop support. [Qark]
