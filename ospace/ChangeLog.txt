@@ -1,5 +1,9 @@
 Change Log:
 
+[2007-02-08]
+- Fixed bug in fix for display of ProblemsDlg.py on low HP structures. [Qark]
+- Fixed server side deteoration of low HP structures. [Qark]
+
 [2007-01-29]
 - When producing several tasks of the same type, only the last one
   is reported now. [Qark]

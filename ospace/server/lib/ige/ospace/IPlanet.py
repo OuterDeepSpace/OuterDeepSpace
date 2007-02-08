@@ -443,7 +443,7 @@ class IPlanet(IObject):
 				if opStatus <= 0.0:
 					struct[STRUCT_IDX_STATUS] |= STRUCT_STATUS_DETER
 				# damage it a bit
-				struct[STRUCT_IDX_HP] -= int(maxHP * Rules.decayRatio)
+				struct[STRUCT_IDX_HP] -= max(1, int(maxHP * Rules.decayRatio))
 				if obj.storPop > 0:
 					# do not fall below 1% of HP for populated planets
 					struct[STRUCT_IDX_HP] = max(struct[STRUCT_IDX_HP], maxHP / 100)

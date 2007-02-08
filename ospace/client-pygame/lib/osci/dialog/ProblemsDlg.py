@@ -171,7 +171,7 @@ class ProblemsDlg:
 								else:
 									techEff = Rules.techImprEff[Rules.techBaseImprovement]
 
-								HPturn = min(1,int(0.02 * tech.maxHP * techEff))
+								HPturn = max(1, int(0.02 * tech.maxHP * techEff))
 								turnsToDestroy = math.ceil(struct[STRUCT_IDX_HP] / HPturn)
 
 								if turnsToDestroy < 48:
@@ -185,7 +185,7 @@ class ProblemsDlg:
 									fgColorDestr = None
 
 								if not status & STRUCT_STATUS_ON:
-									# structure if off
+									# structure is off
 									if dispDestr:
 										items.append(ui.Item(planet.name, tOID = planetID, tType = T_PLANET, foreground = fgColorDestr,
 											vDescription = _('Structure (%s) is off and will be destroyed in %s turns.') % (tech.name, res.formatTime(turnsToDestroy))))
