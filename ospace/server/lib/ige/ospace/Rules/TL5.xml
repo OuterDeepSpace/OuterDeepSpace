@@ -1217,13 +1217,14 @@
 			operWorkers="150"
 			operEn="15"
 			scannerPwr="20"
-			maxHP="5"
+			maxHP="400"
 			combatAtt="18"
-			structWeapons="60,80,100,0,0"
+			structWeapons="6,8,10,0,0"
+			systemDef="4"
 			isMilitary="1"
 		/>
 		<preresearch>Mines present us with a problem: how do we adaquately deploy a mine field that completely covers a star system, protecting it from attack.</preresearch>
-		<description>Military powers have long desired to effectively mine a star system. The robotic mine field is just that: intelligent mines that track and destroy enemy vessels. While short lived, these ships can open the battle with massive firepower.</description>
+		<description>Military powers have long desired to effectively mine a star system. The robotic mine field is just that: intelligent mines that track enemy vessles. The enemy must manuever to avoid these mines, or fall prey to their firepower.</description>
 	</technology>
 	<technology id="5800" symbol="PLCOND5" name="Planetary Condensation">
 		<discovery
