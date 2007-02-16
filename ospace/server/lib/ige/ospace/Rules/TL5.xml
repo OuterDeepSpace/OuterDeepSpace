@@ -1213,7 +1213,7 @@
 		/>
 		<structure
 			subtype="str50"
-			buildProd="240"
+			buildProd="3200"
 			operWorkers="150"
 			operEn="15"
 			scannerPwr="20"
