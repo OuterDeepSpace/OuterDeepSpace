@@ -1214,7 +1214,7 @@
 		<structure
 			subtype="str50"
 			buildProd="3200"
-			operWorkers="150"
+			operWorkers="1500"
 			operEn="15"
 			scannerPwr="20"
 			maxHP="400"
