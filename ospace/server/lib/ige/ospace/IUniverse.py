@@ -71,6 +71,7 @@ class IUniverse(IObject):
 		result.serverTime = time.time()
 		result.lastClientVersion = ClientVersion.version
 		result.lastClientRevision = ClientVersion.revision
+		result.rulesetName = Rules.rulesetName
 		return result
 
 	getIntroInfo.public = 1

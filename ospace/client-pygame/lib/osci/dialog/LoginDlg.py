@@ -26,6 +26,7 @@ from ConfirmDlg import ConfirmDlg
 from OptionsDlg import OptionsDlg
 import binascii
 from ige import log
+from ige.ospace import Rules
 
 class LoginDlg:
 
@@ -90,13 +91,10 @@ class LoginDlg:
 				gdata.config.game.lastpasswordcrypted = None
 			gdata.config.game.lastgameid = gameID
 			gdata.config.game.accountcreated = 1
-			# Auto-login
-			#if self.win.vAutoLogin.checked:
-			#	gdata.config.game.autologin = 'yes'
-			#else:
-			#	gdata.config.game.autologin = 'no'
 			# write configuration
 			gdata.config.save('var/osci.ini')
+			# init ruleset
+			Rules.initRules(client.rulesetName)
 			# check version
 			if client.lastClientVersion != version or client.lastClientRevision != revision:
 				# wow, a different version!

@@ -122,6 +122,16 @@ atexit.register(cleanup)
 #~print >> fh, os.getpid()
 #~fh.close()
 
+# read configuration
+from ige.Config import Config
+log.message("Reading configuration from", optConfig)
+config = Config(optConfig)
+
+# set ruleset
+from  ige.ospace import Rules
+
+Rules.initRules("res/rules/standard")
+
 # startup game
 log.debug('Importing IGE modules...')
 
@@ -131,11 +141,6 @@ from ige.ClientMngr import ClientMngr
 from ige.MsgMngr import MsgMngr
 from ige.IssueMngr import IssueMngr
 from ige.ospace.GameMngr import GameMngr
-
-# read configuration
-from ige.Config import Config
-log.message("Reading configuration from", optConfig)
-config = Config(optConfig)
 
 # set runtime mode
 ige.setRuntimeMode(not optDevel)

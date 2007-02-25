@@ -241,7 +241,6 @@
 			level="6"
 			researchRequires="INERTFTL5-5"
 			researchRaces="H"
-		        maxImprovement="1"
 		/>
 		<shipequip
 			subtype="seq_mod"
@@ -649,7 +648,6 @@
 			researchRequires="FTLSLUG5-5"
 			researchDisables="FTLSLUG6"
 			researchRaces="C"
-		        maxImprovement="1"
 		/>
 		<shipequip
 			subtype="seq_mod"

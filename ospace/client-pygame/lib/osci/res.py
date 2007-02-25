@@ -20,6 +20,7 @@
 
 import gdata, client
 import glob, math
+import os.path
 import pygame, pygame.image
 from ige.ospace.Const import *
 from ige.ospace import Rules
@@ -47,8 +48,9 @@ def loadResources():
 	import dialog
 	dlg = dialog.ProgressDlg(gdata.app)
 	curr = 0
-	max = len(glob.glob('res/galaxy/*.png')) + len(glob.glob('res/techs/*.png')) + \
-		len(glob.glob('res/system/*.png')) + len(glob.glob('res/icons/*.png'))
+	max = len(glob.glob('res/galaxy/*.png')) + \
+		len(glob.glob('res/system/*.png')) + \
+		len(glob.glob('res/icons/*.png'))
 	dlg.display(_('Loading resources'), 0, max)
 	# load star imgs
 	global smallStarImgs
@@ -59,28 +61,10 @@ def loadResources():
 			dlg.setProgress(_('Loading resources...'), curr)
 		name = filename[16:-4]
 		smallStarImgs[name] = pygame.image.load(filename).convert_alpha()
-	# load tech imgs
+	# init tech imgs
+        # will load them later on demand when ruleset is known
 	global techImgs
 	techImgs = {}
-	white = pygame.Surface((37,37))
-	white.fill((255, 255, 255))
-	white.set_alpha(64)
-	red = pygame.Surface((37,37))
-	red.fill((255, 0, 0))
-	red.set_alpha(64)
-	for filename in glob.glob('res/techs/????.png'):
-		curr += 1
-		if curr % 10 == 0:
-			dlg.setProgress(_('Loading resources...'), curr)
-		name = filename[10:14]
-		imgID = int(name)
-		techImgs[imgID] = pygame.image.load(filename).convert_alpha()
-		copyImg = techImgs[imgID].convert_alpha()
-		copyImg.blit(white, (0,0))
-		techImgs[imgID + whiteShift] = copyImg
-		copyImg = techImgs[imgID].convert_alpha()
-		copyImg.blit(red, (0,0))
-		techImgs[imgID + redShift] = copyImg
 	# load big star imgs
 	global bigStarImgs
 	bigStarImgs = {}
@@ -126,8 +110,43 @@ def loadResources():
 	structOffImg = pygame.image.load('res/struct_off.png').convert_alpha()
 	dlg.hide()
 
+def loadTechImg(techID):
+	global techImgs
+	# remove possible "shifts"
+	techID = techID % 10000
+	# load image
+	filename = os.path.join(Rules.rulesetName, "icons", "%04d.png" % techID)
+	log.debug("Loading icon for tech %d from %s" % (techID, filename))
+	if not os.path.exists(filename):
+		return False
+	img = pygame.image.load(filename).convert_alpha()
+	techImgs[techID] = img
+	# red variant
+	red = pygame.Surface((37,37))
+	red.fill((255, 0, 0))
+	red.set_alpha(64)
+	tmpImg = img.convert_alpha()
+	tmpImg.blit(red, (0, 0))
+	techImgs[techID + redShift] = tmpImg
+	# white variant
+	white = pygame.Surface((37,37))
+	white.fill((255, 255, 255))
+	white.set_alpha(64)
+	tmpImg = img.convert_alpha()
+	tmpImg.blit(white, (0, 0))
+	techImgs[techID + whiteShift] = tmpImg
+	return True
+
 def getTechImg(techID):
-	return techImgs.get(techID, techImgs[0])
+	if techID in techImgs:
+		return techImgs[techID]
+	elif loadTechImg(techID):
+		return techImgs[techID]
+	elif 0 in techImgs:
+		return techImgs[0]
+	else:
+		loadTechImg(0)
+		return techImgs[0]
 
 def getShipImg(combatClass, isMilitary):
 	return shipImgs.get(int(combatClass) * 10 + int(isMilitary), shipImgs[99])

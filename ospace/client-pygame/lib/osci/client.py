@@ -33,6 +33,7 @@ lastUpdate = -1
 server = None
 lastClientVersion = None
 lastClientRevision = None
+rulesetName = None
 ignoreMsgs = {}
 nonexistingObj = {}
 
@@ -59,11 +60,12 @@ def login(gameid, login, password):
 			cmdProxy.keepAliveTime = int(gdata.config.client.keepAlive)
 		callbackObj.onConnInitialized()
 	if cmdProxy.login(gameid, login, password):
-		global lastClientVersion, lastClientRevision
+		global lastClientVersion, lastClientRevision, rulesetName
 		try:
 			result = cmdProxy.getIntroInfo(OID_UNIVERSE)
 			lastClientVersion = result.lastClientVersion
 			lastClientRevision = result.lastClientRevision
+			rulesetName = result.rulesetName
 		except ige.NoAccountException:
 			callbackObj.createGameAccount()
 			return 2

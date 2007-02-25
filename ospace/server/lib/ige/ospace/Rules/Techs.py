@@ -220,11 +220,12 @@ class Technology:
 		result += ')'
 		return result
 
-# holder for all technologies
-techs = {}
-
 # parse TechTree.xml and create all tech objects
 class TechTreeContentHandler(ContentHandler):
+	def setGlobals(self, techs, tech):
+		self.techs = techs
+		self.Tech = tech
+	
 	def startDocument(self):
 		#@log.message('Parsing tech tree...')
 		self.state = 1
@@ -241,8 +242,8 @@ class TechTreeContentHandler(ContentHandler):
 		elif self.state == 2 and name == 'technology':
 			log.debug('Tech %s [%s]' % (attrs['name'], attrs['id']))
 			self.state = 3
-			self.tech = Technology(int(attrs['id']), attrs['symbol'], techs)
-			setattr(Tech, attrs['symbol'], int(attrs['id']))
+			self.tech = Technology(int(attrs['id']), attrs['symbol'], self.techs)
+			setattr(self.Tech, attrs['symbol'], int(attrs['id']))
 			self.tech.set('name', attrs['name'])
 		elif self.state == 3 and name == 'structure':
 			self.tech.set('isStructure', 1)
@@ -309,11 +310,8 @@ class TechTreeContentHandler(ContentHandler):
 
 	def characters(self, text):
 		self.text += text
-
-Tech = IDataHolder()
-
+	
 ## check, if anything has been changed
-
 def chsumDir(chsum, dirname, names):
 	names.sort()
 	for filename in names:
@@ -324,43 +322,48 @@ def chsumDir(chsum, dirname, names):
 			chsum.update(fh.read())
 			fh.close()
 
-# compute checksum
-file = sys.modules[__name__].__file__
-forceLoad = 0
-if os.path.exists(file):
-	# regular module
-	directory = os.path.dirname(file)
-	chsum = sha.new()
-	os.path.walk(directory, chsumDir, chsum)
-else:
-	# packed, cannot access xml specifications
-	directory = os.path.join('res', 'techspec')
-	forceLoad = 1
+def initTechnologies(path):
+	"""Init technologies from XML files in the path"""
+	# holder for all technologies
+	techs = {}
+	# holder for tech IDs
+	Tech = IDataHolder()
 
-# read old checksum
-try:
-	fh = open(os.path.join(directory, 'checksum'), 'rb')
-	oldChsum = fh.read()
-	fh.close()
-except IOError:
-	oldChsum = ''
+	# compute checksum
+	file = sys.modules[__name__].__file__
+	forceLoad = 0
+	if os.path.exists(file):
+		# regular module
+		chsum = sha.new()
+		os.path.walk(path, chsumDir, chsum)
+	else:
+		# packed, cannot access xml specifications
+		path = os.path.join('res', 'techspec')
+		forceLoad = 1
 
-# compare
-if forceLoad or chsum.hexdigest() == oldChsum:
-	# load old definitions
-	log.message('Loading stored specifications from', directory)
-	techs = pickle.load(open(os.path.join(directory, 'techs.spf'), 'rb'))
-	Tech = pickle.load(open(os.path.join(directory, 'Tech.spf'), 'rb'))
+	# read old checksum
+	try:
+		fh = open(os.path.join(path, 'checksum'), 'rb')
+		oldChsum = fh.read()
+		fh.close()
+	except IOError:
+		oldChsum = ''
 
-	log.message("There is %d technologies" % len(techs))
+	# compare
+	if forceLoad or chsum.hexdigest() == oldChsum:
+		# load old definitions
+		log.message('Loading stored specifications from', path)
+		techs = pickle.load(open(os.path.join(path, 'techs.spf'), 'rb'))
+		Tech = pickle.load(open(os.path.join(path, 'Tech.spf'), 'rb'))
 
-	# clean up 'type' in lists
-	for key in attrs.keys():
-		if type(attrs[key]) == types.ListType and len(attrs[key]) == 1:
-			log.debug("Cleaning up", key)
-			attrs[key] = []
+		log.message("There is %d technologies" % len(techs))
 
-else:
+		# clean up 'type' in lists
+		for key in attrs.keys():
+			if type(attrs[key]) == types.ListType and len(attrs[key]) == 1:
+				log.debug("Cleaning up", key)
+				attrs[key] = []
+		return techs, Tech
 	# create new ones
 	## load technologies definitions
 
@@ -373,10 +376,12 @@ else:
 		for filename in names:
 			if os.path.splitext(filename)[1] == '.xml':
 				log.message('Parsing XML file', filename)
-				xml.sax.parse(os.path.join(dirname, filename), TechTreeContentHandler())
+				contentHandler = TechTreeContentHandler()
+				contentHandler.setGlobals(techs, Tech)
+				xml.sax.parse(os.path.join(dirname, filename), contentHandler)
 
 	# collect xml files
-	os.path.walk(directory, processDir, None)
+	os.path.walk(path, processDir, None)
 
 	# clean up 'type' in lists
 	for key in attrs.keys():
@@ -472,14 +477,15 @@ else:
 
 	# save new specification
 	log.message('Saving specification...')
-	pickle.dump(techs, open(os.path.join(directory, 'techs.spf'), 'wb'), 1)
-	pickle.dump(Tech, open(os.path.join(directory, 'Tech.spf'), 'wb'), 1)
-	fh = open(os.path.join(directory, 'checksum'), 'wb')
+	pickle.dump(techs, open(os.path.join(path, 'techs.spf'), 'wb'), 1)
+	pickle.dump(Tech, open(os.path.join(path, 'Tech.spf'), 'wb'), 1)
+	fh = open(os.path.join(path, 'checksum'), 'wb')
 	fh.write(chsum.hexdigest())
 	fh.close()
 
 	log.message("There is %d technologies" % len(techs))
 
+	return techs, Tech
 #~ # save DOT file
 #~ dotName = os.path.join(os.path.dirname(__file__), "techtree.dot")
 #~ fh = open(dotName, "w+")
