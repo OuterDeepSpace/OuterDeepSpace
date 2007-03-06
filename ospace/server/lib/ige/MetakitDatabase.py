@@ -142,6 +142,12 @@ class MetakitDatabase:
 		self.cacheLinks[next][IDX_PREV] = prev
 		del self.cacheLinks[key]
 
+	def getItemLength(self, key):
+		idx = self.view.find(oid = key)
+		if idx == -1:
+			raise ige.NoSuchOBjectException(key)
+		return len(self.view[idx].data)
+
 	def __getitem__(self, key):
 		self.statCount += 1
 		if key in self.cache:
