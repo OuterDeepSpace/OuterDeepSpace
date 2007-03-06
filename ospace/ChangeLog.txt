@@ -1,5 +1,9 @@
 Change Log:
 
+[2007-03-05]
+- Deleting message selects following one. [juise-] (SF#1523043)
+- Created new deploy script. [Qark]
+
 [2007-02-25]
 - Support for multiple rulesets (WIP, breaks both client and server). [Qark]
 

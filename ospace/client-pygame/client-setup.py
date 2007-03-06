@@ -34,7 +34,8 @@ class Error(Exception):
 
 def copytree(src, dst, symlinks=False):
     names = [elem for elem in os.listdir(src) if elem not in ("CVS", ".svn",)]
-    os.mkdir(dst)
+    if not os.path.exists(dst):
+        os.mkdir(dst)
     errors = []
     for name in names:
         srcname = os.path.join(src, name)

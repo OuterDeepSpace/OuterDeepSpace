@@ -297,8 +297,35 @@ class MessagesDlg:
 
 	def onDelete(self, widget, action, data):
 		selItem = self.win.vMessages.selection[0]
+		i = 0
+		# magic 14 is the amount of message topics shown at a time
+		sliderMaxPos = len(self.win.vMessages.items) - 14
+		sliderPos = int(self.win.vMessages.bar.slider.position)
+		for candidate in self.win.vMessages.items:
+			if candidate == selItem:
+				break
+			i += 1
 		del client.get(selItem.tObjID)._messages[selItem.tMsgID]
 		self.update()
+		if i >= len(self.win.vMessages.items):
+			i -= 1
+		if sliderPos >= sliderMaxPos and sliderMaxPos > 0:
+			# deleting when scrolled the list down all the way
+			sliderPos = sliderMaxPos - 1
+		if i - abs(sliderPos) > 14 - 1 or i < sliderPos:
+			# center vMessages on selected message
+			sliderPos = i - 7
+			if sliderPos < 0:
+				sliderPos = 0
+			if sliderPos >= sliderMaxPos:
+				sliderPos = sliderMaxPos - 1
+		if i < 0:
+			# no more messages to be shown
+			return
+		self.win.vMessages.selectItem(self.win.vMessages.items[i])
+		self.onMessageSelected(None, None, None)
+		self.win.vMessages.bar.slider.position = sliderPos
+		self.win.vMessages.itemsChanged()
 
 	def onDeleteAll(self, widget, action, data):
 		self.confirmDlg.display(_("Delete all messages in this mailbox?"),
