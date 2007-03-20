@@ -1,5 +1,8 @@
 Change Log:
 
+[2007-03-20]
+- Supervisor support. [Qark]
+
 [2007-03-05]
 - Deleting message selects following one. [juise-] (SF#1523043)
 - Created new deploy script. [Qark]

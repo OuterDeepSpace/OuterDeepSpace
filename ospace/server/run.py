@@ -19,11 +19,13 @@
 #
 
 import sys
+import os
 
 # setup system path
-sys.path.insert(0,"lib")
+installDir =  os.path.abspath(os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(installDir, "lib"))
 
-import os, atexit
+import atexit
 import getopt
 
 #configure gc
@@ -31,30 +33,9 @@ import getopt
 #gc.set_debug(gc.DEBUG_STATS | gc.DEBUG_COLLECTABLE | gc.DEBUG_UNCOLLECTABLE |
 #	gc.DEBUG_INSTANCES | gc.DEBUG_OBJECTS)
 
-# legacy logger
-from ige import log
-log.setMessageLog('var/logs/messages.log')
-log.setErrorLog('var/logs/errors.log')
-
-#~ # standard logger
-#~ import logging, logging.handlers
-#~ log = logging.getLogger()
-#~ log.setLevel(logging.DEBUG)
-#~ # file handler
-#~ h = logging.handlers.RotatingFileHandler('var/log/server.log', 'a', 16 * 1024 * 1024, 5)
-#~ h.setLevel(logging.INFO)
-#~ h.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(name)s %(message)s'))
-#~ log.addHandler(h)
-#~ # stdout handler (TODO: disable in productin server)
-#~ h = logging.StreamHandler(sys.stdout)
-#~ h.setLevel(logging.DEBUG)
-#~ h.setFormatter(logging.Formatter('%(created)d %(levelname)-5s %(name)-8s %(message)s'))
-#~ log.addHandler(h)
-
 # options
 # parse arguments
-log.message('Parsing arguments...')
-options = ('reset', 'upgrade', 'devel', 'restore=', "config=")
+options = ('reset', 'upgrade', 'devel', 'restore=', "config=", "workingdir=")
 
 opts, args = getopt.getopt(sys.argv[1:], '', options)
 
@@ -63,6 +44,7 @@ optUpgrade = 0
 optDevel = 0
 optRestore = 0
 optConfig = "var/config.ini"
+optWorkingDir = None
 
 for opt, arg in opts:
 	if opt == '--reset':
@@ -74,11 +56,28 @@ for opt, arg in opts:
 	elif opt == '--restore':
 		optRestore = arg
 	elif opt == "--config":
-		optConfig = arg
+		optConfig = os.path.abspath(arg)
+	elif opt == "--workingdir":
+		optWorkingDir = arg
+
+# change workding directory (if required)
+if optWorkingDir:
+	os.chdir(optWorkingDir)
+
+# legacy logger
+from ige import log
+log.setMessageLog('var/logs/messages.log')
+log.setErrorLog('var/logs/errors.log')
+
+log.message("Working directory", os.getcwd())
+
+# read configuration
+from ige.Config import Config
+log.message("Configuration file", optConfig)
+config = Config(optConfig)
+
 
 # record my pid
-
-# pid
 pidFd = os.open("var/server.pid", os.O_CREAT | os.O_EXCL | os.O_WRONLY)
 os.write(pidFd, str(os.getpid()))
 # TODO: check if server.pid points to the running process
@@ -118,19 +117,10 @@ def cleanup():
 
 atexit.register(cleanup)
 
-#~fh = open(pidFilename, 'w')
-#~print >> fh, os.getpid()
-#~fh.close()
-
-# read configuration
-from ige.Config import Config
-log.message("Reading configuration from", optConfig)
-config = Config(optConfig)
-
 # set ruleset
 from  ige.ospace import Rules
 
-Rules.initRules("res/rules/standard")
+Rules.initRules(os.path.join(installDir, "res/rules/standard"))
 
 # startup game
 log.debug('Importing IGE modules...')

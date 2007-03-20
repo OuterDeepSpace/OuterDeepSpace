@@ -18,11 +18,13 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
+import os
 from ige.ospace.Const import *
 from ige.IDataHolder import makeIDataHolder
 from ige import log
 
 rulesetName = None
+rulesetPath = None
 
 def initRules(path):
 	log.message("Using ruleset", path)
@@ -38,6 +40,7 @@ def initRules(path):
 	import Techs
 	global techs, Tech
 	techs, Tech = Techs.initTechnologies(path)
-	global rulesetName
-	rulesetName = path
+	global rulesetName, rulesetPath
+	rulesetName = os.path.basename(path)
+	rulesetPath = path
 

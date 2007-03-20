@@ -10,6 +10,8 @@ parser.add_option("-f", "--force", dest = "force", action = "store_true",
     default = False, help = "Bypass SVN checks")
 parser.add_option("-v", "--version", dest = "version", action = "store",
     default = "0.0.0a", help = "Set version (format N.N.NS)")
+parser.add_option("", "--nosrc", dest = "source", action = "store_false",
+    default = True, help = "Disable build of source distribution")
 options, args = parser.parse_args()
 
 ## break version info into tuple
@@ -51,7 +53,8 @@ if not options.force:
     
 # make client
 os.chdir('client-pygame')
-os.system('python setup.py sdist')
+if options.source:
+    os.system('python setup.py sdist')
 os.system('python client-setup.py --name=ospace1 --longname="Outer Space" --version=%s --module=main.py ../server/website/client' % options.version)
 os.chdir('..')
 
