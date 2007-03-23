@@ -191,6 +191,7 @@ else:
 	server.init(clientMngr)
 	server.register(game)
 
+	server.xmlrpcPublish("gamemngr", game)
 	server.xmlrpcPublish('clientmngr', clientMngr)
 	server.xmlrpcPublish('issuemngr', issueMngr)
 
@@ -202,4 +203,4 @@ else:
 		log.message("Using psyco with full acceleration")
 	except ImportError:
 		log.message("NOT using psyco")
-	server.start()
+	server.start(config.server.port)

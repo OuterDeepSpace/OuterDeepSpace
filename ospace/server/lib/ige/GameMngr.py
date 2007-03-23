@@ -391,3 +391,7 @@ class GameMngr:
 	# TODO
 	#def getAccRights(self, obj, cid):
 	#	return obj.accRights.get(cid, AL_NONE)
+
+	# ping/pong protocol for supervisor
+        def rpc_ping(self, data):
+		return data

@@ -172,10 +172,10 @@ class emptyLogger:
 		pass
 		#log.debug("MEDUSA", data)
 
-def start():
+def start(port):
 	global running
 
-	# install signal handler for SIGTERM
+	# install signal handler for SIGTERM and SIGINT
 	import signal
 
 	def signalHandler(signum, frame):
@@ -185,10 +185,11 @@ def start():
 		running = 0
 
 	signal.signal(signal.SIGTERM, signalHandler)
+	signal.signal(signal.SIGINT, signalHandler)
 
 	# create server
 	logger = emptyLogger()
-	server = http_server.http_server('', 9080, logger_object = logger)
+	server = http_server.http_server('', int(port), logger_object = logger)
 
 	fsys = filesys.os_filesystem ('website')
 	default = default_handler.default_handler (fsys)
