@@ -26,6 +26,7 @@ from medusa import igerpc_handler, http_server, asyncore, logger, status_handler
 from medusa import filesys, default_handler, counter, producers, xmlrpc_handler
 
 callMap = {}
+schedulers = {}
 objMap = {}
 
 running = 0
@@ -152,6 +153,7 @@ def init(clientMngr):
 
 def register(game):
 	global callMap
+	global schedulers
 
 	callMap[game.gameID + '.execute'] = game.execute
 	callMap[game.gameID + '.createNewPlayer'] = game.createNewPlayer
@@ -162,6 +164,8 @@ def register(game):
 	callMap[game.gameID + '.turnFinished'] = game.turnFinished
 	callMap[game.gameID + '.processTurn'] = game.processTurn
 	callMap[game.gameID + '.backup'] = game.backup
+
+	schedulers[game.gameID] = game.scheduler
 
 def xmlrpcPublish(name, obj):
 	objMap[name] = obj
@@ -216,6 +220,8 @@ def start(port):
 	# main loop
 	try:
 		while running:
+			for scheduler in schedulers.itervalues():
+				scheduler.tick()
 			poll(timeout = 1.0)
 	except KeyboardInterrupt:
 		log.message("KeyboardInterrupt")

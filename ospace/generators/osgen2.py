@@ -28,30 +28,47 @@ sectorsOffset = [0, 0]
 
 galaxyID = 'Center90'
 sectorsSpec = [
-	[ 5,  5,  5],
-	[ 5, 50,  5],
-	[ 5,  5,  5],
+	[ (0,0), (9,1),  (0,0)],
+	[ (9,1), (9,0), (9,1)],
+	[ (0,0), (9,1),  (0,0)],
 ]
 
-galaxyID = 'Circle4P'
-galaxyCenter = (20.0, 20.0)
-galaxyRadius = 20.0
-galaxyStartR = (14.0, 16.0)
-galaxyPlayers = 4
-galaxyDensity = {5: 2, 10: 2, 20: 3, 30: 4, 40: 5, 50: 6}
-galaxyResources = {
-	# format resourceID : (minDist, maxDist, number of resources)
-	1 : (12, 15, 2), # TL 1 + 2
-	2 : (12, 15, 2), # TL 1 + 2
-	3 : (8, 11, 1), # TL 3 + 4
-	4 : (8, 11, 1), # TL 3 + 4
-	5 : (8, 11, 1), # TL 3 + 4
-	6 : (5, 6, 1), # TL 5
-	7 : (5, 6, 1), # TL 5
-	8 : (5, 6, 1), # TL 5
-}
 
-if 1: # THIS IS THE RECOMENDED MEDIUM GALAXY
+if 0: # small galaxy
+	galaxyID = 'Circle4P'
+	galaxyCenter = (20.0, 20.0)
+	galaxyRadius = 20.0
+	galaxyStartR = (14.0, 16.0)
+	galaxyPlayers = 16
+	galaxyPlayerGroup = 2
+	galaxyGroupDist = 1.0
+	galaxyMinR = 5
+	galaxyDensity = {5: 3, 10: 3, 15: 3}
+	galaxyResources = {
+		# format resourceID : (minDist, maxDist, number of resources)
+		1 : (12, 15, 0), # TL 1 + 2
+		2 : (12, 15, 0), # TL 1 + 2
+		3 : (8, 11, 0), # TL 3 + 4
+		4 : (8, 11, 0), # TL 3 + 4
+		5 : (8, 11, 0), # TL 3 + 4
+		6 : (5, 6, 0), # TL 5
+		7 : (5, 6, 0), # TL 5
+		8 : (5, 6, 0), # TL 5
+	}
+	galaxyDiseases = {
+		# format diseaseID : (minDist, maxDist, number of diseases)
+		1 : (12, 15, 0), # TL 1 + 2
+		2 : (12, 15, 0), # TL 1 + 2
+		3 : (8, 11, 0), # TL 3 + 4
+		4 : (8, 11, 0), # TL 3 + 4
+		5 : (8, 11, 0), # TL 3 + 4
+		6 : (5, 6, 0), # TL 5
+		7 : (5, 6, 0), # TL 5
+		8 : (5, 6, 0), # TL 5
+	}
+
+
+if 0: # THIS IS THE RECOMENDED MEDIUM GALAXY
 	galaxyID = 'Circle42P'
 	galaxyCenter = (50.0, 50.0)
 	galaxyRadius = 50.0
@@ -163,7 +180,7 @@ def generateGalaxy(galaxy):
 	secX = 0
 	for sectors in sectorsSpec:
 		secY = 0
-		for sector in sectors:
+		for sector, starting in sectors:
 			minX = secX * sectorSize[0] + sectorsOffset[0]
 			maxX = minX + sectorSize[0]
 			minY = secY * sectorSize[1] + sectorsOffset[1]
@@ -175,8 +192,35 @@ def generateGalaxy(galaxy):
 				system.y = random.uniform(minY, maxY)
 				system.compOf = galaxy
 				generateSystem(system)
+			for i in xrange(0, starting):
+				x = random.uniform(minX, maxX)
+				y = random.uniform(minY, maxY)
+				galaxy.systems.append(generateStartingSystem(galaxy, x, y))
 			secY += 1
 		secX += 1
+
+def generateStartingSystem(galaxy, x, y):
+	while 1:
+		system = System()
+		system.x = x
+		system.y = y
+		system.compOf = galaxy
+		generateSystem(system)
+		# check system properties
+		e = 0
+		h = 0
+		d = 0
+		ok = 1
+		for planet in system.planets:
+			if planet.type == 'E': e += 1; planet.starting = 1
+			elif planet.type in ('D', 'R', 'C'):
+				if planet.slots > 5: d += 1
+				else: ok = 0; break
+			elif planet.type == 'H': h += 1
+			elif planet.type == 'M': ok = 0; break
+		if ok and e == 1 and h == 1 and d == 1:
+			break
+	return system
 
 def generateGalaxy2(galaxy):
 	galaxy.centerX = galaxyCenter[0]
@@ -246,30 +290,7 @@ def generateGalaxy2(galaxy):
 				angle = aoff + j * math.pi * 2 / galaxyPlayerGroup
 				x = math.cos(angle) * galaxyGroupDist + gx
 				y = math.sin(angle) * galaxyGroupDist + gy
-				while 1:
-					system = System()
-					system.x = x
-					system.y = y
-					system.compOf = galaxy
-					generateSystem(system)
-					# check system properties
-					e = 0
-					h = 0
-					d = 0
-					ok = 1
-					for planet in system.planets:
-						if planet.type == 'E': e += 1; planet.starting = 1
-						elif planet.type in ('D', 'R', 'C'):
-							if planet.slots > 5: d += 1
-							else: ok = 0; break
-						elif planet.type == 'H': h += 1
-						elif planet.type == 'M': ok = 0; break
-					# fast rule
-					#if ok and e == 1:
-					#	break
-					# slow (better) rule
-					if ok and e == 1 and h == 1 and d == 1:
-						break
+				system = generateStartingSystem(galaxy, x, y)
 				galaxy.systems.append(system)
 	# strategic resources
 	keys = galaxyResources.keys()
@@ -759,6 +780,11 @@ def main():
 		elif evt.type == KEYUP and evt.key == K_g:
 			galaxy = Galaxy()
 			generateGalaxy2(galaxy)
+			drawGalaxy(galaxy, showStarting, showSRes, showDiseases)
+			stars, starTypes, planet, planetTypes = getInfo(galaxy)
+		elif evt.type == KEYUP and evt.key == K_a:
+			galaxy = Galaxy()
+			generateGalaxy(galaxy)
 			drawGalaxy(galaxy, showStarting, showSRes, showDiseases)
 			stars, starTypes, planet, planetTypes = getInfo(galaxy)
 		elif evt.type == KEYUP and evt.key == K_h:

@@ -27,6 +27,7 @@ from OptionsDlg import OptionsDlg
 import binascii
 from ige import log
 from ige.ospace import Rules
+import os
 
 class LoginDlg:
 
@@ -94,7 +95,7 @@ class LoginDlg:
 			# write configuration
 			gdata.config.save('var/osci.ini')
 			# init ruleset
-			Rules.initRules(client.rulesetName)
+			Rules.initRules(os.path.join("res", "rules", client.rulesetName))
 			# check version
 			if client.lastClientVersion != version or client.lastClientRevision != revision:
 				# wow, a different version!

@@ -191,20 +191,15 @@ class ClientMngr:
 		else:
 			raise SecurityException('No such session id.')
 
-	def cleanupSessions(self, sid):
-		session = self.sessions.get(sid, None)
-		if session:
-			log.debug('cleaning up sessions')
-			now = time.time()
-			deleted = 0
-			for id in self.sessions.keys():
-				if self.sessions[id].timeout < now:
-					del self.sessions[id]
-					deleted += 1
-			log.debug('cleanup finished (%d active, %d deleted)' % (len(self.sessions), deleted))
-			return None, None
-		else:
-			raise SecurityException('No such session id.')
+	def cleanupSessions(self):
+		log.debug('cleaning up sessions')
+		now = time.time()
+		deleted = 0
+		for id in self.sessions.keys():
+			if self.sessions[id].timeout < now:
+				del self.sessions[id]
+				deleted += 1
+		log.debug('cleanup finished (%d active, %d deleted)' % (len(self.sessions), deleted))
 
 	def exportAccounts(self, sid):
 		# check admin

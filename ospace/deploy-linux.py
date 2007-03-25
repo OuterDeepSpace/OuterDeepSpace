@@ -55,6 +55,7 @@ if not options.force:
 os.chdir('client-pygame')
 if options.source:
     os.system('python setup.py sdist')
+
 os.system('python client-setup.py --name=ospace1 --longname="Outer Space" --version=%s --module=main.py ../server/website/client' % options.version)
 os.chdir('..')
 

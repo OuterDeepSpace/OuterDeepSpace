@@ -30,6 +30,8 @@ from Const import *
 import os, os.path, time
 import log
 from IObject import IDataHolder
+from Scheduler import Scheduler
+from ClientMngr import Session
 
 class GameMngr:
 
@@ -42,6 +44,7 @@ class GameMngr:
 		self.cmdPool = {}
 		self.db = database
 		self.config = config
+		self.scheduler = Scheduler(self)
 		# register command objects
 		# None here
 
@@ -148,14 +151,18 @@ class GameMngr:
 		session = self.clientMngr.getSession(sid)
 		if session.login != ADMIN_LOGIN:
 			raise SecurityException('You cannot issue this command.')
+		self.processTurnInternal()
+		return True, None
+
+	def processTurnInternal(self):
 		log.message("--- TURN PROCESSING STARTED ---")
 		# commit player's changes
 		#if ige.igeRuntimeMode:
 		#	self.db.checkpoint()
 		# get turn phases
-		turn, turnspec, data = self.getTurnData(sid)[0]
+		turn, turnspec, data = self.getTurnData()
 		log.debug('Processing turn %d' % turn)
-		tran = Transaction(self, session.cid, session)
+		tran = Transaction(self, OID_ADMIN, Session(0))
 		counter = 0
 		# phases
 		for objIDs, phases in turnspec:
@@ -183,16 +190,15 @@ class GameMngr:
 					log.debug('STATS -- time: %.3f sec, db accesses: %d' % (time.time() - t0, tran.db.statCount - cnt0))
 		log.message('Processed commands:', counter)
 		# turn processing has finished
-		self.turnFinished(sid)
+		self.turnFinished()
 		log.message("--- TURN PROCESSING FINISHED ---")
-		return 1, None
 
-	def getTurnData(self, sid):
+	def getTurnData(self):
 		# disable command execution during turn processing
 		self.status = GS_TURNINPROG
-		return 1, None
+		return True
 
-	def turnFinished(self, sid):
+	def turnFinished(self):
 		# notify logged player's about finished turn
 		for sessionID in self.clientMngr.sessions.keys():
 			session = self.clientMngr.getSession(sessionID)
@@ -205,17 +211,22 @@ class GameMngr:
 			self.clientMngr.checkpoint()
 		# enable normal operations
 		self.status = GS_RUNNING
-		return 1, None
+		return True
 
 	def backup(self, sid, basename):
 		session = self.clientMngr.getSession(sid)
 		if session.login != ADMIN_LOGIN:
 			raise SecurityException('You cannot issue this command.')
+		self.backupInternal(basename)
+		return True, None
+
+	def backupInternal(self, basename = None):
+		if basename is None:
+			basename = "var/backup/%s" % time.strftime("%Y-%m-%d-%H-%M")
 		self.db.backup(basename)
 		self.clientMngr.backup(basename)
 		self.msgMngr.backup(basename)
-		return True, None
-
+		
 	def createAdmin(self):
 		""" Return Player object which will act as administrator of the game."""
 		raise NotImplementedError

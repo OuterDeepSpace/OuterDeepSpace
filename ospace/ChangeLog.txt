@@ -1,5 +1,10 @@
 Change Log:
 
+[2007-03-25]
+- Added internal scheduler. [Qark]
+- Game name is configurable now. [Qark]
+- Ruleset name is configurable now. [Qark]
+
 [2007-03-23]
 - More supervisor support. [Qark]
 - Server port can be specified in the config file. [Qark]

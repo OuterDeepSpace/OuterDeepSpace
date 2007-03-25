@@ -120,7 +120,7 @@ atexit.register(cleanup)
 # set ruleset
 from  ige.ospace import Rules
 
-Rules.initRules(os.path.join(installDir, "res/rules/standard"))
+Rules.initRules(os.path.join(installDir, "res/rules/%s" % config.server.rules))
 
 # startup game
 log.debug('Importing IGE modules...')
@@ -135,7 +135,9 @@ from ige.ospace.GameMngr import GameMngr
 # set runtime mode
 ige.setRuntimeMode(not optDevel)
 
-gameName = 'Alpha'
+gameName = config.server.name
+if gameName is None:
+	gameName = "UNDEFINED"
 
 # open database
 from ige.MetakitDatabase import MetakitDatabase, MetakitDatabaseString

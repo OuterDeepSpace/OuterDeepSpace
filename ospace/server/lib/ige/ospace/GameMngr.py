@@ -105,8 +105,8 @@ class GameMngr(IGEGameMngr):
 		player = self.cmdPool[T_NATURE].new(T_NATURE)
 		self.registerPlayer(player.login, player, OID_NATURE)
 
-	def getTurnData(self, sid):
-		IGEGameMngr.getTurnData(self, sid)
+	def getTurnData(self):
+		IGEGameMngr.getTurnData(self)
 		universe = self.db[OID_UNIVERSE]
 		universe.turn += 1
 		objects = [OID_UNIVERSE]
@@ -119,13 +119,13 @@ class GameMngr(IGEGameMngr):
 				((OID_UNIVERSE,), ('FINAL', 'FINAL2')),
 			),
 			None
-		), None
+		)
 
-	def turnFinished(self, sid):
-		IGEGameMngr.turnFinished(self, sid)
+	def turnFinished(self):
+		IGEGameMngr.turnFinished(self)
 		self.generateStats()
 		self.generateGameInfo()
-		return 1, None
+		return True
 
 	def getStartingPositions(self, sid):
 		universe = self.db[OID_UNIVERSE]
