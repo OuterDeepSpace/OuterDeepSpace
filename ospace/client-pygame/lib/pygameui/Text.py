@@ -24,6 +24,7 @@ from WordUtils import *
 from Widget import Widget, registerWidget
 from Fonts import *
 import pygame.key
+import clipboard
 
 # keys mapping
 mapping = {
@@ -140,6 +141,25 @@ class Text(Widget):
 
 		elif evt.key == K_ESCAPE:
 			self.app.setFocus(None)
+
+		elif (evt.key == K_v and evt.mod & KMOD_CTRL) or (evt.key == K_INSERT and evt.mod & KMOD_SHIFT):
+			if self.selStart != None:
+				self.deleteSelection()
+			clipboardTextLines = clipboard.getText().replace('\t', '   ').splitlines()
+			if len(clipboardTextLines) == 1:
+				self.text[self.cursorRow] = u'%s%s%s' % (self.text[self.cursorRow][:self.cursorColumn], clipboardTextLines[0], self.text[self.cursorRow][self.cursorColumn:])
+			elif self.cursorRow == len(self.text) - 1:
+				currentLineEnd = self.text[self.cursorRow][self.cursorColumn:]
+				self.text[self.cursorRow] = u'%s%s' % (self.text[self.cursorRow][:self.cursorColumn], clipboardTextLines[0])
+				for i in xrange(1, len(clipboardTextLines) - 1):
+					self.text.insert(self.cursorRow + i, clipboardTextLines[i])
+				self.text[len(self.text) - 1] = u'%s%s' % (clipboardTextLines[len(clipboardTextLines) - 1], currentLineEnd)
+			else:
+				currentLineEnd = self.text[self.cursorRow][self.cursorColumn:]
+				self.text[self.cursorRow] = u'%s%s' % (self.text[self.cursorRow][:self.cursorColumn], clipboardTextLines[0])
+				for i in xrange(1, len(clipboardTextLines) - 1):
+					self.text.insert(self.cursorRow + i, clipboardTextLines[i])
+				self.text.insert(self.cursorRow + len(clipboardTextLines) - 1, u'%s%s' % (clipboardTextLines[len(clipboardTextLines) - 1], currentLineEnd))
 
 		elif evt.key == K_LEFT:
 			if evt.mod & KMOD_SHIFT:
@@ -443,5 +463,9 @@ class Text(Widget):
 
 	def processMWDown(self, evt):
 		return self.vertScrollbar.processMWDown(evt)
+		
+	def toClipboard(self):
+		if self.text:
+			clipboard.setText(string.join(self.text, '\n'))
 
 registerWidget(Text, 'text')

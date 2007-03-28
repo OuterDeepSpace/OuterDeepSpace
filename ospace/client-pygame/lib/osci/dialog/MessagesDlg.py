@@ -258,6 +258,7 @@ class MessagesDlg:
 		self.win.vMessages.itemsChanged()
 		self.win.vMessage.text = [""]
 		self.win.vReply.enabled = 0
+		self.win.vToClipboard.enabled = 0
 		self.win.vNewTopic.enabled = gdata.mailboxSpec[selItem.tType, selItem.tForum][1] != None
 		self.win.vDelete.enabled = len(self.win.vMessages.selection) > 0
 
@@ -279,9 +280,12 @@ class MessagesDlg:
 		self.win.vMessage.text = text
 		self.win.vMessage.offsetRow = 0
 		self.win.vMessage.vertScrollbar.slider.position = 0
-		self.win.vReply.enabled = gdata.mailboxSpec[selItem.tType, selItem.tForum][1] != None
+		self.win.vReply.enabled = self.win.vToClipboard.enabled = gdata.mailboxSpec[selItem.tType, selItem.tForum][1] != None
 		self.win.vDelete.enabled = 1
 		self.show(updateForum = 0)
+
+	def onToClipboard(self, widget, action, data):
+		self.win.vMessage.toClipboard()
 
 	def onNewTopic(self, widget, action, data):
 		self.newMessageDlg.display(self, self.selectedObjID, self.selectedType, self.selectedForum)
@@ -415,8 +419,8 @@ class MessagesDlg:
 			),
 			columnLabels = 1, action = "onMessageSelected", rmbAction = "onPostMenu")
 		# messages
-		ui.Title(self.win, layout = (10, 15, 5, 1),
-			font = "normal-bold", align = ui.ALIGN_W)
+		ui.Button(self.win, layout = (10, 15, 5, 1), text = _("To clipboard"),
+			action = "onToClipboard", id = "vToClipboard", enabled = 0)
 		ui.Button(self.win, layout = (15, 15, 5, 1), text = _("New subject"),
 			action = "onNewTopic", id = "vNewTopic", enabled = 0)
 		ui.Button(self.win, layout = (20, 15, 5, 1), text = _("Reply"),

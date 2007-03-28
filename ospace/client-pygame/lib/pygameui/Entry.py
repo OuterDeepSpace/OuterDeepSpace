@@ -21,6 +21,7 @@
 from pygame.locals import *
 from Const import *
 from Widget import Widget, registerWidget
+import clipboard
 
 # keys mapping
 mapping = {
@@ -61,7 +62,7 @@ class Entry(Widget):
 		elif evt.key == K_DELETE:
 			if self.cursorPos < len(self.text):
 				self.text = '%s%s' % (self.text[:self.cursorPos], self.text[self.cursorPos + 1:])
-		elif evt.key == K_RETURN:
+		elif evt.key == K_RETURN or evt.key == K_KP_ENTER:
 			self.app.setFocus(None)
 		elif evt.key == K_ESCAPE:
 			self.app.setFocus(None)
@@ -75,6 +76,15 @@ class Entry(Widget):
 			if self.cursorPos < len(self.text): self.cursorPos += 1
 		elif evt.key == K_TAB:
 			pass
+		elif (evt.key == K_v and evt.mod & KMOD_CTRL) or (evt.key == K_INSERT and evt.mod & KMOD_SHIFT):
+			clipboardText = clipboard.getText().replace('\n', '').replace('\r', '').replace('\t', ' ')
+			if self.text:
+				self.text = u'%s%s%s' % (
+					self.text[:self.cursorPos], clipboardText, self.text[self.cursorPos:]
+				)
+			else:
+				self.text = clipboardText
+			self.cursorPos += len(clipboardText)
 		elif hasattr(evt, 'unicode') and evt.unicode:
 			# TODO this is ugly windows only hack
 			char = unicode(chr(ord(evt.unicode)), 'cp1250')
