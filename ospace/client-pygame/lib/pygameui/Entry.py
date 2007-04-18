@@ -21,7 +21,10 @@
 from pygame.locals import *
 from Const import *
 from Widget import Widget, registerWidget
-import clipboard
+from Clipboard import Clipboard
+import os
+
+clipboard = Clipboard()
 
 # keys mapping
 mapping = {
@@ -77,7 +80,9 @@ class Entry(Widget):
 		elif evt.key == K_TAB:
 			pass
 		elif (evt.key == K_v and evt.mod & KMOD_CTRL) or (evt.key == K_INSERT and evt.mod & KMOD_SHIFT):
-			clipboardText = clipboard.getText().replace('\n', '').replace('\r', '').replace('\t', ' ')
+			clipboardLines = clipboard.read()
+			clipboardText = ''.join(clipboardLines).replace('\t', ' ')
+			
 			if self.text:
 				self.text = u'%s%s%s' % (
 					self.text[:self.cursorPos], clipboardText, self.text[self.cursorPos:]
@@ -86,8 +91,11 @@ class Entry(Widget):
 				self.text = clipboardText
 			self.cursorPos += len(clipboardText)
 		elif hasattr(evt, 'unicode') and evt.unicode:
-			# TODO this is ugly windows only hack
-			char = unicode(chr(ord(evt.unicode)), 'cp1250')
+			if os.name == "nt":
+				# TODO this is ugly windows only hack
+				char = unicode(chr(ord(evt.unicode)), 'cp1250')
+			else:
+				char = evt.unicode
 			if self.text:
 				self.text = u'%s%c%s' % (
 					self.text[:self.cursorPos], char, self.text[self.cursorPos:]

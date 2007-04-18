@@ -92,7 +92,11 @@ class Container(widget.Widget):
                 print s.get_width(),s.get_height(),w.rect
                 ok = False
             if ok: 
-                w._container_bkgr = sub.copy()
+                if not (hasattr(w,'_container_bkgr') and w._container_bkgr.get_width() == sub.get_width() and w._container_bkgr.get_height() == sub.get_height()):
+                    w._container_bkgr = sub.copy()
+                w._container_bkgr.fill((0,0,0,0))
+                w._container_bkgr.blit(sub,(0,0))
+                
                 w.paint(sub)
         
         for w in self.windows:

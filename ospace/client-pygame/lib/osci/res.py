@@ -115,7 +115,7 @@ def loadTechImg(techID):
 	# remove possible "shifts"
 	techID = techID % 10000
 	# load image
-	filename = os.path.join(Rules.rulesetName, "icons", "%04d.png" % techID)
+	filename = os.path.join(Rules.rulesetPath, "icons", "%04d.png" % techID)
 	log.debug("Loading icon for tech %d from %s" % (techID, filename))
 	if not os.path.exists(filename):
 		return False

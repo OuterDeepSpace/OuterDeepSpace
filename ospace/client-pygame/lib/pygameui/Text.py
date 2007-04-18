@@ -23,8 +23,10 @@ from Const import *
 from WordUtils import *
 from Widget import Widget, registerWidget
 from Fonts import *
-import pygame.key
-import clipboard
+import pygame.key, os
+from Clipboard import Clipboard
+
+clipboard = Clipboard()
 
 # keys mapping
 mapping = {
@@ -143,23 +145,26 @@ class Text(Widget):
 			self.app.setFocus(None)
 
 		elif (evt.key == K_v and evt.mod & KMOD_CTRL) or (evt.key == K_INSERT and evt.mod & KMOD_SHIFT):
-			if self.selStart != None:
-				self.deleteSelection()
-			clipboardTextLines = clipboard.getText().replace('\t', '   ').splitlines()
-			if len(clipboardTextLines) == 1:
-				self.text[self.cursorRow] = u'%s%s%s' % (self.text[self.cursorRow][:self.cursorColumn], clipboardTextLines[0], self.text[self.cursorRow][self.cursorColumn:])
-			elif self.cursorRow == len(self.text) - 1:
-				currentLineEnd = self.text[self.cursorRow][self.cursorColumn:]
-				self.text[self.cursorRow] = u'%s%s' % (self.text[self.cursorRow][:self.cursorColumn], clipboardTextLines[0])
-				for i in xrange(1, len(clipboardTextLines) - 1):
-					self.text.insert(self.cursorRow + i, clipboardTextLines[i])
-				self.text[len(self.text) - 1] = u'%s%s' % (clipboardTextLines[len(clipboardTextLines) - 1], currentLineEnd)
-			else:
-				currentLineEnd = self.text[self.cursorRow][self.cursorColumn:]
-				self.text[self.cursorRow] = u'%s%s' % (self.text[self.cursorRow][:self.cursorColumn], clipboardTextLines[0])
-				for i in xrange(1, len(clipboardTextLines) - 1):
-					self.text.insert(self.cursorRow + i, clipboardTextLines[i])
-				self.text.insert(self.cursorRow + len(clipboardTextLines) - 1, u'%s%s' % (clipboardTextLines[len(clipboardTextLines) - 1], currentLineEnd))
+			if clipboard.clipboard: # only if available
+				if self.selStart != None:
+					self.deleteSelection()
+				
+				clipboardTextLines = clipboard.read()
+				
+				if len(clipboardTextLines) == 1: # pasting a single line
+					self.text[self.cursorRow] = u'%s%s%s' % (self.text[self.cursorRow][:self.cursorColumn], clipboardTextLines[0], self.text[self.cursorRow][self.cursorColumn:])
+				elif self.cursorRow == len(self.text) - 1: # pasting into the last line
+					currentLineEnd = self.text[self.cursorRow][self.cursorColumn:]
+					self.text[self.cursorRow] = u'%s%s' % (self.text[self.cursorRow][:self.cursorColumn], clipboardTextLines[0])
+					for i in xrange(1, len(clipboardTextLines) - 1):
+						self.text.insert(self.cursorRow + i, clipboardTextLines[i])
+					self.text.append(u'%s%s' % (clipboardTextLines[len(clipboardTextLines) - 1], currentLineEnd))
+				else:
+					currentLineEnd = self.text[self.cursorRow][self.cursorColumn:]
+					self.text[self.cursorRow] = u'%s%s' % (self.text[self.cursorRow][:self.cursorColumn], clipboardTextLines[0])
+					for i in xrange(1, len(clipboardTextLines) - 1):
+						self.text.insert(self.cursorRow + i, clipboardTextLines[i])
+					self.text.insert(self.cursorRow + i + 1, u'%s%s' % (clipboardTextLines[i + 1], currentLineEnd))
 
 		elif evt.key == K_LEFT:
 			if evt.mod & KMOD_SHIFT:
@@ -430,8 +435,11 @@ class Text(Widget):
 			if self.selStart != None:
 				self.deleteSelection()
 
-			# TODO this is ugly windows only hack
-			char = unicode(chr(ord(evt.unicode)), 'cp1250')
+			if os.name == "nt":
+				# TODO this is ugly windows only hack
+				char = unicode(chr(ord(evt.unicode)), 'cp1250')
+			else:
+				char = evt.unicode
 			self.text[self.cursorRow] = u'%s%c%s' % (
 				self.text[self.cursorRow][:self.cursorColumn], char, self.text[self.cursorRow][self.cursorColumn:]
 			)
@@ -466,6 +474,6 @@ class Text(Widget):
 		
 	def toClipboard(self):
 		if self.text:
-			clipboard.setText(string.join(self.text, '\n'))
+			clipboard.write(self.text)
 
 registerWidget(Text, 'text')

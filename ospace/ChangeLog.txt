@@ -1,5 +1,10 @@
 Change Log:
 
+[2007-04-18]
+- Clipboard support for Win32. [Anderuso]
+- Clipboard support for xorg (depends on xsel utility). [trancelius]
+- Client now works out of the box when checked out. [Qark]
+
 [2007-03-25]
 - Added internal scheduler. [Qark]
 - Game name is configurable now. [Qark]

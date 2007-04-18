@@ -30,14 +30,12 @@ class _slider(widget.Widget):
     def paint(self,s):
         
         self.value = self.value
-        
-        
         r = pygame.rect.Rect(0,0,self.style.width,self.style.height)
         if self.orient == _SLIDER_HORIZONTAL:
-            r.x = (self.value-self.min) * (r.w-self.size) / (self.max-self.min);
+            r.x = (self.value-self.min) * (r.w-self.size) / max(1,self.max-self.min);
             r.w = self.size;
         else:
-            r.y = (self.value-self.min) * (r.h-self.size) / (self.max-self.min);
+            r.y = (self.value-self.min) * (r.h-self.size) / max(1,self.max-self.min);
             r.h = self.size;
             
         self.bar = r
@@ -115,7 +113,12 @@ class _slider(widget.Widget):
             self.repaint()
             
         if hasattr(self,'size'):
-            self.__dict__['size'] = max(self.size,min(self.style.width,self.style.height))
+            sz = min(self.size,max(self.style.width,self.style.height))
+            sz = max(sz,min(self.style.width,self.style.height))
+            self.__dict__['size'] = sz
+            
+        if hasattr(self,'max') and hasattr(self,'min'):
+            if self.max < self.min: self.max = self.min
 
 class VSlider(_slider):
     """A verticle slider.

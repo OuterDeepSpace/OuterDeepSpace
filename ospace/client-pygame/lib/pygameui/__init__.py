@@ -38,6 +38,7 @@ from ProgressBar import ProgressBar
 from Text import Text
 from Check import Check
 from ColorBox import ColorBox
+from Clipboard import Clipboard
 
 # Menu
 from Menu import Menu

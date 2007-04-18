@@ -32,8 +32,10 @@ class Input(widget.Widget):
         self.vpos = 0
         self.font = self.style.font
         w,h = self.font.size("e"*size)
-        self.style.height = max(self.style.height,h)
-        self.style.width = max(self.style.width,w)
+        if not self.style.height: self.style.height = h
+        if not self.style.width: self.style.width = w
+        #self.style.height = max(self.style.height,h)
+        #self.style.width = max(self.style.width,w)
         #self.rect.w=w+self.style.padding_left+self.style.padding_right;
         #self.rect.h=h+self.style.padding_top+self.style.padding_bottom;
     
@@ -87,10 +89,13 @@ class Input(widget.Widget):
                 pass
             else:
                 #c = str(e.unicode)
-                c = (e.unicode).encode('latin-1')
-                if c:
-                    self._setvalue(self.value[:self.pos] + c + self.value[self.pos:])
-                    self.pos += 1
+                try:
+                    c = (e.unicode).encode('latin-1')
+                    if c:
+                        self._setvalue(self.value[:self.pos] + c + self.value[self.pos:])
+                        self.pos += 1
+                except: #ignore weird characters
+                    pass
             self.repaint()
         elif e.type == FOCUS:
             self.repaint()

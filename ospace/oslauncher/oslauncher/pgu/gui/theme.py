@@ -275,8 +275,12 @@ class Theme:
 #                 s = w._theme_paint_bkgr.convert()
 
             if w.disabled:
+                if not (hasattr(w,'_theme_bkgr') and w._theme_bkgr.get_width() == s.get_width() and w._theme_bkgr.get_height() == s.get_height()):
+                    w._theme_bkgr = s.copy()
                 orig = s
-                s = orig.copy()
+                s = w._theme_bkgr
+                s.fill((0,0,0,0))
+                s.blit(orig,(0,0))
                 
             if hasattr(w,'background'):
                 w.background.paint(surface.subsurface(s,w._rect_border))

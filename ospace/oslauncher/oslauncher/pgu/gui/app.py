@@ -146,11 +146,12 @@ class App(container.Container):
         self.send(e.type,e)
         container.Container.event(self,e)
         if e.type == MOUSEBUTTONUP:
-            sub = pygame.event.Event(CLICK,{
-                'button':e.button,
-                'pos':e.pos})
-            self.send(sub.type,sub)
-            container.Container.event(self,sub)
+            if e.button not in (4,5): #ignore mouse wheel
+                sub = pygame.event.Event(CLICK,{
+                    'button':e.button,
+                    'pos':e.pos})
+                self.send(sub.type,sub)
+                container.Container.event(self,sub)
             
     
     def loop(self):

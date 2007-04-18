@@ -84,6 +84,11 @@ class SlideBox(container.Container):
         else:
             s.blit(self.bkgr,(0,0))
             sub = pygame.Rect(self.offset[0],self.offset[1],min(s.get_width(),self.max_rect.w-self.offset[0]),min(s.get_height(),self.max_rect.h-self.offset[1]))
+#             print sub
+#             print self.surface.get_width(),self.surface.get_height()
+#             print s.get_width(),s.get_height()
+#             print self.offset
+#             print self.style.width,self.style.height
             s.blit(self.surface.subsurface(sub),(0,0))
             rets.append(s_rect)
         self._offset = self.offset[:]
@@ -100,7 +105,9 @@ class SlideBox(container.Container):
         
     def resize(self, width=None, height=None):
         container.Container.resize(self)
-        self.max_rect = self.widget.rect
+        self.max_rect = pygame.Rect(self.widget.rect)
+        #self.max_rect.w = max(self.max_rect.w,self.style.width)
+        #self.max_rect.h = max(self.max_rect.h,self.style.height)
         return self.style.width,self.style.height
         #self.rect = pygame.Rect(self.rect[0], self.rect[1], self.style.width, self.style.height)
     
@@ -129,20 +136,21 @@ class ScrollArea(table.Table):
     
     <dl>
     <dt>widget<dd>widget to be able to scroll around
-    <dt>width, height<dd>size of scrollable area
+    <dt>width, height<dd>size of scrollable area.  Set either to 0 to default to size of widget.
     <dt>hscrollbar<dd>set to False if you do not wish to have a horizontal scrollbar
+    <dt>vscrollbar<dd>set to False if you do not wish to have a vertical scrollbar
     <dt>step<dd>set to how far clicks on the icons will step 
     </dl>
     """
-    def __init__(self, widget, width, height, hscrollbar=True,step=24, **params):
+    def __init__(self, widget, width=0, height=0, hscrollbar=True, vscrollbar=True,step=24, **params):
         w= widget
         params.setdefault('cls', 'scrollarea')
         table.Table.__init__(self, width=width,height=height,**params)
         
         self.sbox = SlideBox(w, width=width, height=height, cls=self.cls+".content")
         self.widget = w
-        self.vscrollbar = None
-        self.hscrollbar = None
+        self.vscrollbar = vscrollbar
+        self.hscrollbar = hscrollbar
         
         self.step = step
     
@@ -162,9 +170,17 @@ class ScrollArea(table.Table):
         self.tr()
         self.td(box)
         
-        box.style.width,box.style.height = self.style.width,self.style.height
-        
         widget.rect.w, widget.rect.h = widget.resize()
+        my_width,my_height = self.style.width,self.style.height
+        if not my_width:
+            my_width = widget.rect.w
+            self.hscrollbar = False
+        if not my_height:
+            my_height = widget.rect.h
+            self.vscrollbar = False
+        
+        box.style.width,box.style.height = my_width,my_height #self.style.width,self.style.height
+        
         box.rect.w,box.rect.h = box.resize()
         
         #print widget.rect
@@ -174,19 +190,46 @@ class ScrollArea(table.Table):
         #return r
         
         #print box.offset
-        self.vscrollbar = None
-        if widget.rect.h > box.rect.h:
+        
+#         #this old code automatically adds in a scrollbar if needed
+#         #but it doesn't always work
+#         self.vscrollbar = None
+#         if widget.rect.h > box.rect.h:
+#             self.vscrollbar = slider.VScrollBar(box.offset[1],0, 65535, 0,step=self.step) 
+#             self.td(self.vscrollbar)
+#             self.vscrollbar.connect(CHANGE, self._vscrollbar_changed, None)
+#             
+#             vs = self.vscrollbar
+#             vs.rect.w,vs.rect.h = vs.resize()
+#             box.style.width = self.style.width - vs.rect.w
+#             
+#             
+#         self.hscrollbar = None
+#         if widget.rect.w > box.rect.w:
+#             self.hscrollbar = slider.HScrollBar(box.offset[0], 0,65535, 0,step=self.step)
+#             self.hscrollbar.connect(CHANGE, self._hscrollbar_changed, None)
+#             self.tr()
+#             self.td(self.hscrollbar)
+#             
+#             hs = self.hscrollbar
+#             hs.rect.w,hs.rect.h = hs.resize()
+#             box.style.height = self.style.height - hs.rect.h
+
+        import app
+        xt,xr,xb,xl  = app.App.app.theme.getspacing(box)
+        
+
+        if self.vscrollbar:
             self.vscrollbar = slider.VScrollBar(box.offset[1],0, 65535, 0,step=self.step) 
             self.td(self.vscrollbar)
             self.vscrollbar.connect(CHANGE, self._vscrollbar_changed, None)
             
             vs = self.vscrollbar
             vs.rect.w,vs.rect.h = vs.resize()
-            box.style.width = self.style.width - vs.rect.w
-            
-            
-        self.hscrollbar = None
-        if widget.rect.w > box.rect.w:
+            if self.style.width:
+                box.style.width = self.style.width - (vs.rect.w + xl+xr)
+
+        if self.hscrollbar:
             self.hscrollbar = slider.HScrollBar(box.offset[0], 0,65535, 0,step=self.step)
             self.hscrollbar.connect(CHANGE, self._hscrollbar_changed, None)
             self.tr()
@@ -194,14 +237,15 @@ class ScrollArea(table.Table):
             
             hs = self.hscrollbar
             hs.rect.w,hs.rect.h = hs.resize()
-            box.style.height = self.style.height - hs.rect.h
+            if self.style.height:
+                box.style.height = self.style.height - (hs.rect.h + xt + xb)
             
         if self.hscrollbar:
             hs = self.hscrollbar
             hs.min = 0
             hs.max = widget.rect.w - box.style.width
             hs.style.width = box.style.width
-            hs.size = hs.style.width * box.style.width / widget.rect.w
+            hs.size = hs.style.width * box.style.width / max(1,widget.rect.w)
         else:
             box.offset[0] = 0
             
@@ -210,15 +254,13 @@ class ScrollArea(table.Table):
             vs.min = 0
             vs.max = widget.rect.h - box.style.height
             vs.style.height = box.style.height
-            vs.size = vs.style.height * box.style.height / widget.rect.h
+            vs.size = vs.style.height * box.style.height / max(1,widget.rect.h)
         else:
             box.offset[1] = 0
-
+            
         #print self.style.width,box.style.width, hs.style.width
-        
             
         r = table.Table.resize(self,width,height)
-        #print r
         return r
     
     def x_resize(self, width=None, height=None):
@@ -250,12 +292,14 @@ class ScrollArea(table.Table):
 
 
     def set_vertical_scroll(self, percents): 
-        if not self.vscrollbar: return
+        #if not self.vscrollbar: return
+        if not hasattr(self.vscrollbar,'value'): return
         self.vscrollbar.value = percents #min(max(percents*10, 0), 1000)
         self._vscrollbar_changed(None)
 
     def set_horizontal_scroll(self, percents): 
-        if not self.hscrollbar: return
+        #if not self.hscrollbar: return
+        if not hasattr(self.hscrollbar,'value'): return
         self.hscrollbar.value = percents #min(max(percents*10, 0), 1000)
         self._hscrollbar_changed(None)
         
@@ -321,7 +365,7 @@ class List(ScrollArea):
     def __init__(self, width, height, **params):
         params.setdefault('cls', 'list')
         self.table = table.Table(width=width)
-        ScrollArea.__init__(self, self.table, width, height, no_hslider=True, **params)
+        ScrollArea.__init__(self, self.table, width, height,hscrollbar=False ,**params)
         
         self.items = []
         

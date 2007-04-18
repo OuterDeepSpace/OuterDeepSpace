@@ -30,12 +30,11 @@ def initRules(path):
 	log.message("Using ruleset", path)
 	# import rules
 	import sys
-	oldpath = sys.path
 	try:
-		sys.path = [path]
-		exec "from rules import *" in globals()
-	finally:
-		sys.path = oldpath
+		importFromPath(path)
+	except ImportError:
+		path = os.path.join("../server/res/rules", os.path.basename(path))
+		importFromPath(path)
 	# import technologies
 	import Techs
 	global techs, Tech
@@ -44,3 +43,14 @@ def initRules(path):
 	rulesetName = os.path.basename(path)
 	rulesetPath = path
 
+def importFromPath(path):
+	import sys
+	oldpath = sys.path
+	try:
+		sys.path = [path]
+		log.debug("Rules import - using path", sys.path)
+		exec "from rules import *" in globals()
+		log.message("Rules import succeeded")
+	finally:
+		sys.path = oldpath
+	
