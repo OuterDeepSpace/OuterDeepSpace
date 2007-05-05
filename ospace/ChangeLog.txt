@@ -1,5 +1,8 @@
 Change Log:
 
+[2007-05-05]
+- Fixed few typos. [Qark]
+
 [2007-04-18]
 - Clipboard support for Win32. [Anderuso]
 - Clipboard support for xorg (depends on xsel utility). [trancelius]

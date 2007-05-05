@@ -719,7 +719,7 @@
 		/>
 		<preresearch>A theoretical research of the human mind and thinking processes can lead to improvements in research and cooperation, which in turn will lead to access to the more advanced energy and research related technologies. Our dependencies on resources will remain on the same level as they are now. When we improve this technology enough, we can advance to the next technological level.</preresearch>
 	</technology>
-	<technology id="3992" symbol="ROBOTTL4" name="Artificial Inteligence">
+	<technology id="3992" symbol="ROBOTTL4" name="Artificial Intelligence">
 		<discovery
 			researchMod="1.00 + 1.00 + 3.00"
 			finishResearchHandler="finishResTLAdvance"
