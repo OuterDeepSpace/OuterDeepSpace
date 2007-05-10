@@ -334,7 +334,7 @@
 		<preresearch>Our spores colonize many planets.</preresearch>
 		<description>There were extra spores left over from the primary Spore Colony.</description>
 	</technology>
-	<technology id="9020" symbol="EDENSTATION" name="Empire DEfense Network (E.D.E.N.) Flak Platform">
+	<technology id="9020" symbol="EDENSTATION" name="Empire Defense Network (E.D.E.N.) Flak Platform">
 		<discovery
 			researchMod="1.0 + 0.5"
 			level="99"
