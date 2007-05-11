@@ -1,5 +1,11 @@
 Change Log:
 
+[2007-05-11]
+- Fixed issue with Mine Field tech [Random Chaos]
+- Fixed issue with Auto Repair techs [Random Chaos]
+- Fixed hover data for planetary shields [Random Chaos]
+- Added scanner info for docks (iPlanet) [Random Chaos]
+
 [2007-05-05]
 - Fixed few typos. [Qark]
 
