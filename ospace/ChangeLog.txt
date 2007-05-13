@@ -1,5 +1,9 @@
 Change Log:
 
+[2007-05-12]
+- Removed autoRepairMaxHP feature. [Qark]
+- Replaced ige.qgir.cz by ospace.net in sources. [Qark]
+
 [2007-05-11]
 - Fixed issue with Mine Field tech [Random Chaos]
 - Fixed issue with Auto Repair techs [Random Chaos]
