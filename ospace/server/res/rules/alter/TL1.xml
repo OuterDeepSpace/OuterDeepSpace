@@ -354,7 +354,7 @@
                researchRequires="COMSCAN1-3" />
 
     <shipequip buildProd="60" scannerPwr="40" signature="+10" slots="1"
-               subtype="seq_mod" weight="1" />
+               subtype="seq_mod" weight="1" maxInstallations="1"/>
 
     <preresearch>Small scanner suitable for small ships with very good range
     and bad impact on ships signature.</preresearch>
@@ -365,7 +365,7 @@
                researchRequires="COMSCAN1-5" />
 
     <shipequip buildProd="60" scannerPwr="25" signature="-1" slots="1"
-               subtype="seq_mod" />
+               subtype="seq_mod" maxInstallations="1"/>
 
     <preresearch>Small scanner suitable for small ships good for stealth
     reconnaissance of the enemy, but limited in range.</preresearch>
