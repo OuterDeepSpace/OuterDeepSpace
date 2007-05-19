@@ -320,7 +320,7 @@
                researchRequires="FACTORY1-3" />
 
     <shiphull buildProd="120" combatClass="0" maxHP="16" maxWeight="48"
-              operEn="4" signature="2" slots="16" storEn="384" weight="16" />
+              operEn="4" signature="2" slots="16" storEn="384" weight="16" minSignature="1" />
 
     <preresearch>This hull will be used to construct small ships. No more, no
     less.</preresearch>

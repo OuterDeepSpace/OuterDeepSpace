@@ -574,6 +574,7 @@
 			maxWeight="66"
 			signature="3"
 			combatClass="0"
+			minSignature="1"
 			autoRepairPerc="0.02"
 		/>
 		<preresearch>Breakthroughs in biosynthetic manufacturing provide for a small hull constructed of organic materials, offering the ability of self-repairing damage, superior protection and improved equipment capacity.</preresearch>
@@ -594,6 +595,7 @@
 			weight="22"
 			maxWeight="72"
 			signature="5"
+			minSignature="1"
 			combatClass="0"
 		/>
 		<preresearch>Advancements in metallurgy and skeletal design philosophy allow for a small hull capable of holding more equipment while offering better inherent armouring.</preresearch>
