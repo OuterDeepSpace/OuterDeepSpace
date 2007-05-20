@@ -2,6 +2,7 @@ Change Log:
 
 [2007-05-20]
 - Added JSON-encoded stats page (website/{game}/json.txt) [Random Chaos]
+- Added basic metaserver support (login/keepalive/announce/logout). [Qark]
 
 [2007-05-19]
 - Fixed display bug with TechInfo dialog for "Extra" ATT and DEF attributes [Random Chaos]

@@ -64,6 +64,11 @@ class Scheduler(object):
 			"BACKUP", "scheduler:backup", 
 			self.gameMngr.backupInternal
 		)
+		# load metaserver keepalive
+		self.loadTask(
+			"METAKEEPALIVE", "scheduler:metaserver",
+			self.gameMngr.keepAlive
+		)
 
 	def loadTask(self, name, sectionName, action):
 		for suffix in ("", ":0", ":1", ":2", ":3", ":4", ":5", ":6", ":7", ":8", ":9"):

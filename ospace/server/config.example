@@ -1,5 +1,7 @@
 [server]
-; port where listed for commands
+; hostname where to listen for commands (specifies interface to use)
+host=localhost
+; port where listen for commands
 port=9080
 ; operational mode
 ; normal - for productions server
@@ -10,6 +12,26 @@ name=TESTING
 ; ruleset name
 ; see res/rules directory
 rules=standard
+
+; Information for metaserver
+
+; minimal rank for players
+rank=10
+; descriptive info
+info=This is testing server of the Outer Space multiplayer game
+; realm - specifies group of servers that trust each other
+; and respect player rank in this realm
+; Note: use NONE if you have no realm
+realm=NONE
+
+; metaserver is disabled by default
+; uncomment commented lines and fill in correct info
+[metaserver]
+; metaserver url
+;url=http://localhost:9000/xmlrpc
+; login/password
+;login=test
+;password=test
 
 ; when perform sessions cleanup
 [scheduler:cleanup]
@@ -34,3 +56,6 @@ hour=0,2,4,6,8,10,12,14,16,18,20,22
 weekday=5,6
 enabled=yes
 
+; when to send metaserver keepalive meessages
+[scheduler:metaserver]
+enabled=yes

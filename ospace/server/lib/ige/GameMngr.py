@@ -32,6 +32,8 @@ import log
 from IObject import IDataHolder
 from Scheduler import Scheduler
 from ClientMngr import Session
+import xmlrpclib
+import md5
 
 class GameMngr:
 
@@ -47,6 +49,27 @@ class GameMngr:
 		self.scheduler = Scheduler(self)
 		# register command objects
 		# None here
+		# metaserver
+		if config.metaserver.url:
+			log.message("METASERVER - using mestaserver", config.metaserver.url)
+			self.metaserver = xmlrpclib.ServerProxy(config.metaserver.url)
+			# login
+			self.metaserverSID, challenge = self.metaserver.metasrvr.hello()
+			rsp = md5.new(config.metaserver.password + challenge).hexdigest()
+			self.metaserver.metasrvr.login(self.metaserverSID, config.metaserver.login, rsp)
+			log.message("METASERVER - logged in, announcing game")
+			# announce game
+			self.metaserver.metasrvr.announceGame(
+				self.metaserverSID,
+				config.server.name, 
+				config.server.host,
+				int(config.server.port),
+				config.server.realm, 
+				int(config.server.rank), 
+				config.server.info,
+			)
+		else:
+			self.metaserver = None
 
 	def init(self):
 		pass
@@ -73,7 +96,16 @@ class GameMngr:
 		self.stop(checkpoint = 0)
 		self.status = GS_SDOWN
 		self.db.shutdown()
+		# announce shutdown
+		if self.metaserver is not None:
+			log.message("METASERVER - logging out")
+			self.metaserver.metasrvr.logout(self.metaserverSID)
 
+	def keepAlive(self):
+		if self.metaserver is not None:
+			log.debug("METASERVER - keepalive")
+			self.metaserver.metasrvr.keepAlive(self.metaserverSID)
+	
 	def upgrade(self):
 		oldStatus = self.status
 		self.status = GS_MAINT
