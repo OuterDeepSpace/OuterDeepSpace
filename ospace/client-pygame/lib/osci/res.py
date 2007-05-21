@@ -166,6 +166,12 @@ def getUnknownName():
 def getNA():
 	return _('N/A')
 
+def getSystemOverviewProblemColor(owner,problem):
+	if problem:
+		return gdata.sevColors[gdata.CRI]
+	else:
+		return getPlayerColor(owner)
+
 def OLDgetFFColorCode(relationship):
 	if relationship < 0:
 		return (0xff, 0x00, 0xff)
