@@ -1,5 +1,12 @@
 Change Log:
 
+[2007-05-21]
+- Added authorship on buoy detail view [Random Chaos]
+- Fixed missing Buoy icons [Random Chaos]
+- Fixed client-msg-wx integration [PeS]
+- Updated Czech translations [PeS]
+- Added Slots column in Planet Overview [PeS]
+
 [2007-05-20]
 - Added JSON-encoded stats page (website/{game}/json.txt) [Random Chaos]
 - Added System Overview dialog [Random Chaos]
