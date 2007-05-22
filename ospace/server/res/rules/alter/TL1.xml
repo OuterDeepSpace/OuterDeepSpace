@@ -249,7 +249,7 @@
   <technology id="1107" name="Comm/Scan Center" symbol="COMSCAN1">
     <discovery level="1" researchMod="0.50" researchRequires="RESCENTRE1-3" />
 
-    <structure buildProd="240" fleetSpeedBoost="0.96" govPwr="" isMilitary="1"
+    <structure buildProd="240" fleetSpeedBoost="0.96" isMilitary="1"
                maxHP="200" operEn="25" operWorkers="500" scannerPwr="50"
                subtype="str50" />
 

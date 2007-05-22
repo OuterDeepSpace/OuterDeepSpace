@@ -100,11 +100,11 @@
 		<flavor>Imperial security agency was not famous for being extremly subtle or secret. It did practically no surveillance, any suspicion of anti-imperial activities led to immediate arrest and interrgogation. Altough harsh and cruel, it made a perfect sense since truth drugs were extremly effective at those times and it was no problem to rellocate almost any number of people to a very distant and 'uncivilized' worlds. Rebellion forces maimtained na extremly secret counter oganization, that tracked the actions of Empire and provided contact even on even the remotest world.</flavor>
 	</technology>
 	<technology id="3801" symbol="ECOINIT3" name="Ecosystem Initiation">
+			<!--researchRequires="PLANETENG3-3"-->
 		<discovery
 			researchMod="1.00"
 			level="99"
 			maxImprovement="1"
-			researchRequires="PLANETENG3-3"
 			researchRaces="BH"
 		/>
 		<project
