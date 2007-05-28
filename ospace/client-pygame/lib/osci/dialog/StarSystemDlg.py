@@ -29,6 +29,7 @@ from ConfirmDlg import ConfirmDlg
 from BuoyDlg import BuoyDlg
 from ConstructionDlg import ConstructionDlg
 from FleetRedirectionDlg import FleetRedirectionDlg
+from MinefieldDlg import MinefieldDlg
 from ChangeQtyDlg import ChangeQtyDlg
 import ige
 from ige.ospace.Const import *
@@ -627,6 +628,13 @@ class StarSystemDlg:
 			else:
 				self.win.vSBuoy.text = _("Add buoy")
 				self.win.vSDeleteBuoy.enabled = 0
+		if hasattr(system, "minefield"):
+			if len(system.minefield) > 0:
+				self.win.vSViewMinefield.enabled = 1
+			else:
+				self.win.vSViewMinefield.enabled = 0
+		else:
+			self.win.vSViewMinefield.enabled = 0
 
 	def showPlInfo(self):
 		if self.plInfoType == INFO_NONE:
@@ -1052,6 +1060,9 @@ class StarSystemDlg:
 			self.win.setStatus(e.args[0])
 			return
 
+	def onViewMinefield(self, widget, action, data):
+		self.minefieldDlg.display(self.systemID)
+
 	def onChangeMinStorage(self, widget, action, data):
 		try:
 			bio = int(self.win.vPCMinBio.text)
@@ -1140,6 +1151,8 @@ class StarSystemDlg:
 			id = 'vSBuoy', tags = ['sys'], action = 'onBuoy')
 		ui.Button(self.win, layout = (20, 26, 5, 1), text = _('Delete buoy'),
 			id = 'vSDeleteBuoy', tags = ['sys'], action = 'onDeleteBuoy')
+		ui.Button(self.win, layout = (25, 26, 5, 1), text = _('View Minefield'),
+			id = 'vSViewMinefield', tags = ['sys'], action = 'onViewMinefield')
 		## planet
 		ui.Title(self.win, layout = (0, 10, 20, 1), id = 'vPName',
 			align = ui.ALIGN_W,	font = 'normal-bold', tags = ['pl'])
