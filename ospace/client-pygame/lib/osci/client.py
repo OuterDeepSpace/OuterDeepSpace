@@ -412,7 +412,7 @@ def getMessages():
 	return new
 
 def getMessagesLastID(objID):
-	obj = get(objID)
+	obj = get(objID, publicOnly = 1)
 	if not hasattr(obj, "_messages"):
 		log.debug("Creating _messages")
 		obj._messages = {}
