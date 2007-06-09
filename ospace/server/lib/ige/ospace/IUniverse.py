@@ -572,3 +572,12 @@ class IUniverse(IObject):
 
 	createNewGalaxy.public = 1
 	createNewGalaxy.accLevel = AL_ADMIN
+
+	def deleteGalaxy(self, tran, galaxyID):
+		galaxy = tran.db[galaxyID]
+		log.debug("Deleting galaxy", galaxyID)
+		self.cmd(galaxy).delete(tran, galaxy)
+
+	deleteGalaxy.public = 1
+	deleteGalaxy.accLevel = AL_ADMIN
+
