@@ -181,6 +181,7 @@ class StarMapWidget(Widget):
 				#rel = REL_UNDEF
 				refuelMax = 0
 				refuelInc = 0
+				hasRefuel = False
 				upgradeShip = 0
 				repairShip = 0
 				speedBoost = 0
@@ -234,14 +235,17 @@ class StarMapWidget(Widget):
 					morale = -1
 				pirProb = self.precomputePirates(obj, pirates, icons)
 				# refuelling
-				if refuelMax >= 87:
-					icons.append(res.icons["fuel_99"])
-				elif refuelMax >= 62:
-					icons.append(res.icons["fuel_75"])
-				elif refuelMax >= 37:
-					icons.append(res.icons["fuel_50"])
-				elif refuelMax >= 12:
-					icons.append(res.icons["fuel_25"])
+				if refuelMax > 0:
+					if refuelMax >= 87:
+						icons.append(res.icons["fuel_99"])
+					elif refuelMax >= 62:
+						icons.append(res.icons["fuel_75"])
+					elif refuelMax >= 37:
+						icons.append(res.icons["fuel_50"])
+					elif refuelMax >= 12:
+						icons.append(res.icons["fuel_25"])
+				elif hasRefuel:
+					icons.append(res.icons["fuel_-"])
 				# repair and upgrade
 				if upgradeShip > 10 and repairShip > 0.02:
 					icons.append(res.icons["rep_10"])

@@ -93,6 +93,11 @@ def logout():
 		log.message('OSClient', 'Saving database')
 		db.save()
 
+def saveDB():
+    	if db:
+		log.message('OSClient', 'Saving database')
+		db.save()
+
 ## Message handler
 
 def msgHandler(mid, data):
