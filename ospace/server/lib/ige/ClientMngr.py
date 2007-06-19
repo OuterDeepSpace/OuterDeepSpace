@@ -26,6 +26,7 @@ import log
 from ige import SecurityException
 from ige.Const import ADMIN_LOGIN
 import sha
+import xmlrpclib
 
 class Account:
 
@@ -50,6 +51,7 @@ class ClientMngr:
 	def __init__(self, database):
 		self._filename = os.path.join('var', 'accounts')
 		self.sessions = {}
+		self.metaserver = None
 		#
 		self.accounts = database
 		# create nick to account mapping
@@ -62,6 +64,10 @@ class ClientMngr:
 		password = sha.new(str(random.randrange(0, 1e10))).hexdigest()
 		open(os.path.join("var", "token"), "w").write(password)
 		self.accounts[ADMIN_LOGIN].passwd = password
+
+	def setMetaserver(self, server, sid):
+		self.metaserver = server
+		self.metaserverSID = sid
 
 	def shutdown(self):
 		self.accounts.shutdown()
@@ -84,6 +90,14 @@ class ClientMngr:
 		return self.accounts[str(login)]
 
 	def createAccount(self, sid, login, passwd, nick, email):
+		# use metaserver if possible
+		if self.metaserver is not None:
+			try:
+				self.metaserver.account.create(login, passwd, nick, email)
+			except xmlrpclib.Fault, e:
+				raise SecurityException(e.faultString)
+			return 1, None
+		# create local account
 		log.message('Creating account', login, nick, email)
 		login = login.strip()
 		passwd = passwd.strip()
@@ -135,6 +149,19 @@ class ClientMngr:
 		return (sid, challenge), None
 
 	def login(self, sid, login, cpasswd, hostID):
+		# use metaserver if possible
+		if self.metaserver is not None and login != ADMIN_LOGIN:
+			challenge = self.sessions[sid].challenge
+			log.debug("ClientMngr", "Verifying login data on metaserver")
+			valid = self.metaserver.metasrvr.verifyUser(self.metaserverSID, login, challenge, cpasswd, False)
+			log.debug("ClientMngr", "RPC call finished, result =", valid)
+			if not valid:
+				raise SecurityException("Wrong login and/or password")
+			# set local session
+			nick = self.metaserver.metasrvr.getUserNick(self.metaserverSID, login)
+			self.sessions[sid].setAttrs(login, nick)
+			return 1, None
+		# standard login procedure
 		login = login.strip()
 		if not login:
 			raise SecurityException("Specify login, please.")
@@ -149,7 +176,7 @@ class ClientMngr:
 		challenge = self.sessions[sid].challenge
 		if md5.new(account.passwd + challenge).hexdigest() != cpasswd:
 			raise SecurityException('Wrong login and/or password.')
-		self.sessions[sid].setAttrs(account.login, account.nick, account.email)
+		self.sessions[sid].setAttrs(account.login, account.nick)
 		account.lastLogin = time.time()
 		account.addHostID(hostID)
 		return 1, None
@@ -242,10 +269,9 @@ class Session:
 		self.messages = {}
 		self.touch()
 
-	def setAttrs(self, login, nick, email):
+	def setAttrs(self, login, nick):
 		self.login = login
 		self.nick = nick
-		self.email = email
 
 	def touch(self):
 		# 10 minutes timeout of session

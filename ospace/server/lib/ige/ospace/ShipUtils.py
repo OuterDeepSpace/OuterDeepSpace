@@ -119,6 +119,7 @@ def makeShipFullSpec(player, name, hullID, eqIDs, improvements, raiseExs = True)
 	ship.isMilitary = 0
 	ship.baseExp = 0
 	ship.damageAbsorb = 0
+	ship.negsignature = 0
 	combatExtra = 0
 	shieldPerc = 0.0
 	unpactStruct = 0

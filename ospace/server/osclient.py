@@ -30,6 +30,7 @@ from getpass import getpass
 from code import InteractiveConsole
 from ige.ospace import Rules
 import time
+from ige.Config import Config
 
 #not race specific:
 levelTechs = {1: [
@@ -445,6 +446,8 @@ def processMenu(inp, objId, s):
 
 	return objId
 
+config = Config("var/config.ini")
+
 #s = IClient('ospace.net:9080', None, msgHandler, None, 'IClient/osc')
 s = IClient('localhost:9080', None, msgHandler, None, 'IClient/osc')
 
@@ -461,7 +464,7 @@ else:
 	password = getpass("Password: ")
 
 s.connect(login)
-s.login('Alpha', login, password)
+s.login(config.server.name, login, password)
 
 try:
 	objID = 0

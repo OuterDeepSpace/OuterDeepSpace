@@ -793,6 +793,7 @@ def drawText(surface, widget):
 		if row < widget.offsetRow:
 			row += 1
 			continue
+		onlyword = False
 		column = 0
 		charIdx = 0
 		firstY = y

@@ -68,6 +68,8 @@ class GameMngr:
 				int(config.server.rank), 
 				config.server.info,
 			)
+			# notify ClientMngr about metaserver
+			self.clientMngr.setMetaserver(self.metaserver, self.metaserverSID)
 		else:
 			self.metaserver = None
 

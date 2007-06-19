@@ -1,6 +1,12 @@
 Change Log:
 
-[2007-16-16]
+[2007-06-19]
+- Added support for metaserver in ClientMngr.create and ClientMngr.login [Qark]
+- Fixed problems with incorrect backports from 0.5 branch [Qark]
+- osclient.py now uses var/config.ini to get name of universe [Qark]
+- Scheduler now correclty handles boundary conditions for hours/days/months [Qark]
+
+[2007-06-16]
 - Fixed typo causing government power being ignored [Random Chaos]
 - Made bio/en integers after calculating [Random Chaos]
 

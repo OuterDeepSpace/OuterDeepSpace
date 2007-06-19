@@ -156,7 +156,7 @@ class Task:
 					break
 			if not found:
 				#@print "next weekday", event, event.weekday(),
-				event = event.replace(day = event.day + 1, hour = 0, minute = 0)
+				event = event.replace(hour = 0, minute = 0) + datetime.timedelta(days = 1)
 				#@print "->", event, event.weekday()
 				return self.getNextEvent(event)
 		elif self.doDay:
@@ -174,7 +174,7 @@ class Task:
 					break
 			if not found:
 				#@print "next month", event,
-				event = event.replace(month = event.month + 1, day = self.day[0], hour = 0, minute = 0)
+				event = event.replace(day = self.day[0], hour = 0, minute = 0) + datetime.timedelta(months = 1)
 				#@print "->", event
 				return self.getNextEvent(event)
 		#  match an hour
@@ -192,7 +192,7 @@ class Task:
 				break
 		if not found:
 			#@print "next day", event,
-			event = event.replace(day = event.day + 1, hour = self.hour[0], minute = 0)
+			event = event.replace(hour = self.hour[0], minute = 0) + datetime.timedelta(days = 1)
 			#@print "->", event
 			return self.getNextEvent(event)
 		# match a minute
@@ -206,7 +206,7 @@ class Task:
 				break
 		if not found:
 			#@print "next hour", event,
-			event = event.replace(hour = event.hour + 1, minute = self.minute[0])
+			event = event.replace(minute = self.minute[0]) + datetime.timedelta(hours = 1)
 			#@print "->", event
 			return self.getNextEvent(event)
 		return event
