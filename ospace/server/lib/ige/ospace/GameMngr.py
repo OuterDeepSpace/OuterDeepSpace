@@ -491,10 +491,16 @@ class GameMngr(IGEGameMngr):
 			if galaxy.imperator != OID_NONE:
 				if self.db[galaxy.imperator].imperator > 1:
 					imperator = " - Imperator %s" % self.db[galaxy.imperator].name
+					imperatoroid = self.db[galaxy.imperator].oid
+					leaderoid = 0
 				else:
 					imperator = " - Leader %s" % self.db[galaxy.imperator].name
+					imperatoroid = 0
+					leaderoid = self.db[galaxy.imperator].oid
 			else:
 				imperator = ""
+				imperatoroid = 0
+				leaderoid = 0
 			print >>fh, statsHeader % (self.gameID, galaxy.name, imperator)
 			order = self.sortStatsBy(gStats, 'storPop')
 			self.printJSONStatsTable(fhjson, gStats, order, galaxyID, galaxy.name, imperatoroid, leaderoid, jsonComma)

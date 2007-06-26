@@ -1,6 +1,8 @@
 Change Log:
 
 [2007-06-26]
+- Signatures of fleet within 1 parsec are summed together [Qark]
+- Fixed regression in JSON stats [Qark]
 - Updated Options dialog to scan res directory for other languages [PeS]
 - Fixed call for gettext with empty strings [Qark, reported by Yann]
 

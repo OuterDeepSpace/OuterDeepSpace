@@ -152,7 +152,7 @@ if optRestore:
 	clientDB.restore("var/%s-accounts.osbackup" % optRestore)
 	# TODO: remove afer fix of the message database
 	# the following code imports to the message database only valid entries
-        # and forces mailbox scan
+	# and forces mailbox scan
 	incl = [1]
 	incl.extend(gameDB[1].galaxies)
 	incl.extend(gameDB[1].players)
