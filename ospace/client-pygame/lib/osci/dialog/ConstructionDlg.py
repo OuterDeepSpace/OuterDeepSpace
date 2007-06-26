@@ -70,7 +70,7 @@ class ConstructionDlg:
 		items = []
 		for designID in player.shipDesigns:
 			spec = player.shipDesigns[designID]
-			# number of ships with this desing in fleet
+			# number of ships with this design in fleet
 			countInService = 0
 			for fleetID in player.fleets:
 				fleet = client.get(fleetID)
@@ -92,8 +92,8 @@ class ConstructionDlg:
 						countInBuild += task.quantity
 			# ui list item
 			item = ui.Item(spec.name, tDesignID = designID,
-				tClass = "%s/TL%d" % (
-					_(gdata.shipClasses[spec.combatClass][:1].upper()),
+				tClass = "%s/%s%d" % (
+					_(gdata.shipClasses[spec.combatClass][:1].upper()),_("TL"),
 					hullTech.level,
 				),
 				tNumber = countInService,
