@@ -14,35 +14,32 @@ import stat
 
 if havePy2Exe:
     # collect data files
-    data_files = []
-    data_files.append(
-        (
-            ".",
-            ["ChangeLog", "COPYING", "README"]
-        )
-    )
-
+    data_files = [
+        (".", ("ChangeLog", "COPYING", "README"))
+    ]
     # resources
-    for root, dirs, files in os.walk('oslauncher/res'):
-        try:
+    for root, dirs, files in os.walk('res'):
+        try: 
             dirs.remove(".svn")
         except ValueError:
             pass
-        if files:
-            data_files.append((root, [os.path.join(root, file) for file in files]))
-    # no package data
-    package_data = {}
+    if files:
+        data_files.append((root, [os.path.join(root, file) for file in files]))
+
 else:
-    package_data = {
-        "oslauncher": ["res/*.ico", "res/*.png", "res/gray/*"],
-    }
     data_files = [
         ("/usr/share/pixmaps", ("fedora/outerspace-icon.png",)),
         ("/usr/share/applications", ("fedora/fedora-outerspace.desktop",)),
+        ("/usr/share/outerspace", glob.glob("res/*.ico")),
+        ("/usr/share/outerspace", glob.glob("res/*.png")), 
+        ("/usr/share/outerspace/gray", glob.glob("res/gray/*")), 
     ]
 
+# no package data
+package_data = {}
+
 # version
-version = (0, 2, 1)
+version = (0, 2, 2)
 
 open("oslauncher/versiondata.py", "w").write("""
 #

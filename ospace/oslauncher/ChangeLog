@@ -1,5 +1,7 @@
- * Updated PGU library to 0.10.6 (Qark)
+Version 0.2.2 - 2007-08-22
+ * Modification required for correct Fedora build. (Qark)
  * Integrated into Fedora Core. (Qark)
+ * Updated PGU library to 0.10.6 (Qark)
 
 Version 0.2.1 - 2006-05-24
  * Windows version of Outer Space client has update disabled now. (Qark)

@@ -46,15 +46,20 @@ else:
     useCompression = True
 
 # set base directory for resources
+class CannotFindResourcesException(Exception):
+    pass
+
 if hasattr(sys, "frozen"):
-    base = os.path.join(os.path.dirname(sys.executable), "oslauncher")
+    resources = os.path.join(os.path.dirname(sys.executable), "oslauncher", "res")
 else:
-    base = os.path.dirname(oslauncher.__file__)
-    
-resources = os.path.abspath(os.path.join(base, "res"))
-
-del base
-
+    thisFile = os.path.dirname(os.path.abspath(__file__))
+    if os.path.exists(os.path.join(thisFile, "res")):
+        resources = os.path.abspath(os.path.join(thisFile, "res"))
+    elif os.path.exists("/usr/share/outerspace"):
+        resources = "/usr/share/outerspace"
+    else:
+        raise CannotFindResourcesException()
+ 
 # screen size
 screenSize = 639, 479
 screenFlags = SWSURFACE
