@@ -509,6 +509,8 @@ class IFleet(IObject):
 			else:
 				systemID = targetID
 			owner = tran.db[obj.owner]
+			if systemID not in owner.validSystems:
+				raise GameException('You cannot find this system (never scanned).')
 			if not owner.galaxies:
 				raise GameException('The fleet owner is not in a galaxy.')
 			galaxy = tran.db[owner.galaxies[0]]
