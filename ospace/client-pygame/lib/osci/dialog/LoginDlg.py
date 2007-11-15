@@ -95,7 +95,7 @@ class LoginDlg:
 			# init ruleset
 			Rules.initRules(os.path.join("res", "rules", client.rulesetName))
 			# check version
-			if client.lastClientVersion != version or client.lastClientRevision != revision:
+			if (client.lastClientVersion != version or client.lastClientRevision != revision) and version != (0,0,0,'a'):
 				# wow, a different version!
 				self.confirmDlg.display(
 					_("Your client version does not match server version %d.%d.%d%s [Revision %d]. Do you want to continue?") % (

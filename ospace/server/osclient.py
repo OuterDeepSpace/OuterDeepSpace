@@ -265,6 +265,21 @@ def promoteToImperator(objID):
 	print "Galaxy %d has now imperator %d." % (galaxyID, objID)
 	return objID
 
+def giveFame(objID):
+	numFame = raw_input("Amount of Fame: ")
+	try:
+		numberFame = int(numFame)
+	except:
+		print "Not a number"
+		return objID
+	player = s.getInfo(objID)
+	if not hasattr(player,'pirateFame'):
+		print "Object is not a pirate"
+		return objID
+	newFame = player.pirateFame + numberFame
+	s.set(objID, "pirateFame", newFame)
+	print "Player %d now has %d fame" % (objID, newFame)
+
 def giveStratRes(objID):
 	resID = raw_input("strategy resource ('a' for all resources): ")
 	if not (resID == 'a'):
@@ -379,7 +394,7 @@ def showMenu(objID):
 	print "2. Show Players                11. Start Galaxy Time (does not need Obj set)"
 	print "3. Show Galaxies               12. Delete Galaxy (does not need Obj set)"
 	print "4. Advance to level            13. Init Developer race (all techs, 50 each strat res)"
-	print "5. Make imperator              "
+	print "5. Make imperator              14. Give Fame to a Pirate Player"
 	print "6. Give particular tech        "
 	print "7. Give techs                  "
 	print "8. Give Strat Res              "
@@ -434,6 +449,8 @@ def processMenu(inp, objId, s):
 		deleteGalaxy()
 	elif inp == "13":
 		initDevelTesting(objID)
+	elif inp == "14":
+		giveFame(objID)
 	elif string.upper(inp) == "I":
 		showObj(objID)
 	elif string.upper(inp) == "R":
