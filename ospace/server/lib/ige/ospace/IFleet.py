@@ -204,6 +204,9 @@ class IFleet(IObject):
 			return
 		# join to selected fleet
 		fleet = tran.db[fleetID]
+		if not fleet.owner == obj.owner:
+			raise GameException("Fleets do not have the same owner.")
+			return
 		if fleet.allowmerge == 0 and not force:
 			# owner has turned off auto-joins (join other with self)
 			return
@@ -910,7 +913,7 @@ class IFleet(IObject):
 			planet = tran.db[planetID]
 			if planet.owner == player.oid and planet.upgradeShip > 0:
 				upgrPlanets.append(planet)
-			elif self.cmd(player).isPactActive(tran, player, planet.owner, PACT_ALLOW_TANKING):
+			elif self.cmd(player).isPactActive(tran, player, planet.owner, PACT_ALLOW_TANKING) and planet.upgradeShip > 0:
 				upgrPlanets.append(planet)
 			if planet.owner == player.oid and planet.trainShipInc > 0.0:
 				trainShipInc = max(trainShipInc, planet.trainShipInc)
@@ -961,7 +964,7 @@ class IFleet(IObject):
 							if not sr in neededSR:
 								neededSR[sr] = 0
 							neededSR[sr] += 1
-						# old desing
+						# old design
 						for sr in spec.buildSRes:
 							if not sr in neededSR:
 								neededSR[sr] = 0
@@ -1030,6 +1033,8 @@ class IFleet(IObject):
 				))
 			idx += 1
 
+	autoRepairAndRecharge.public = 0
+
 	def moveToWormhole(self, tran, obj, targetID):
                 origin = tran.db[targetID]
                 if not (obj.x==origin.x and obj.y==origin.y):
@@ -1062,6 +1067,7 @@ class IFleet(IObject):
                         arrived = 1 #since the move part was successful, just ignore this problem for the player
                 return arrived
 	
+	moveToWormhole.public = 0
 				
 	def moveToTarget(self, tran, obj, targetID): #added action passthrough for wormhole move...needed
 		# DON'T move fleet with speed == 0
