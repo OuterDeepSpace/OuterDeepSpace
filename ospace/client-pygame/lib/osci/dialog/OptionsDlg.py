@@ -355,7 +355,7 @@ class OptionsDlg:
 		if self.win.vShowPlayerZones.checked:
 			gdata.config.defaults.showplayerzones = 'yes'
 		else:
-			gdata.config.defaults.showplayerzones = 'n
+			gdata.config.defaults.showplayerzones = 'no'
 
 			
 		if self.win.vAutoLogin.checked:
