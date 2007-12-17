@@ -521,6 +521,7 @@ class IFleet(IObject):
 			else:
 				systemID = targetID
 			owner = tran.db[obj.owner]
+			# validate that the player has actually scanned this system
 			if systemID not in owner.validSystems:
 				raise GameException('You cannot find this system (never scanned).')
 			if not owner.galaxies:
