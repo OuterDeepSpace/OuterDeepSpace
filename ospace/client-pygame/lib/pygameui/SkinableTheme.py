@@ -23,13 +23,22 @@ from pygame.locals import *
 from Const import *
 from Fonts import *
 import os, os.path, sys, ConfigParser
-from ige import log
 import time
 
 try:
 	import _winreg
 except ImportError:
 	pass
+
+try:
+	from ige import log
+except ImportError:
+	class Log(object):
+		def dummy(self, *args, **kwargs):
+			print "LOG", args, kwargs
+		warning = dummy
+		debug = dummy
+	log = Log()
 
 skinDir = file = os.path.join(os.path.dirname(sys.modules[__name__].__file__), "DefaultSkin")
 config = None
