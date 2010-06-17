@@ -142,6 +142,7 @@ class EmpireOverviewDlg:
 			text.append(u'    %s' % (
 				_("(hover over system/planet to view actual cost)"),
 				int(Rules.pirateColonyCostMod * len(player.planets)),
+			))
 		text.append("")
 		# Production
 		text.append(_("Production:"))
