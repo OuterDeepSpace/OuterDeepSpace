@@ -24,11 +24,7 @@
 import sys
 import os
 sys.path.insert(0, "lib")
-
-for item in ("libsrvr", "../server/lib"):
-    if os.path.exists(item):
-        sys.path.insert(0, item)
-        break
+sys.path.insert(0, "server/lib")
 
 #configure gc
 #import gc
