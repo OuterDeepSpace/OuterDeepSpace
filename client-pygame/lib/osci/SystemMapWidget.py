@@ -144,6 +144,7 @@ class SystemMapWidget(Widget):
 				i += 1
 				if i > MAX_BOUY_DISPLAY_ROWS: break
 			for textSrfc in textSrfcs:
+				r = self.rect.centerx
 				hh += textSrfc.get_height()
 				surface.blit(textSrfc, (r - maxW - 20, 5 + hh))
 		# star
