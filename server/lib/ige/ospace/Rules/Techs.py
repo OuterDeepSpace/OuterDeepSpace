@@ -42,7 +42,7 @@ attrs = {
 	'isMine' : 0,
 	'isStarting' : 0,
 	"subtype": "techSubtype",
-	"level": 0, 
+	"level": 0,
 	"maxImprovement": 5, #Rules.techMaxImprovement,
 	"isMilitary": 0,
 	# dialog info
@@ -236,7 +236,7 @@ class TechTreeContentHandler(ContentHandler):
 	def setGlobals(self, techs, tech):
 		self.techs = techs
 		self.Tech = tech
-	
+
 	def startDocument(self):
 		#@log.message('Parsing tech tree...')
 		self.state = 1
@@ -325,7 +325,7 @@ class TechTreeContentHandler(ContentHandler):
 
 	def characters(self, text):
 		self.text += text
-	
+
 ## check, if anything has been changed
 def chsumDir(chsum, dirname, names):
 	names.sort()
@@ -353,7 +353,7 @@ def initTechnologies(path):
 		os.path.walk(path, chsumDir, chsum)
 	else:
 		# packed, cannot access xml specifications
-		path = os.path.join('res', 'techspec')
+		path = os.path.join('res', 'rules/standard')
 		forceLoad = 1
 
 	# read old checksum
