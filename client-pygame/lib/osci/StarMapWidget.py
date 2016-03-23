@@ -50,7 +50,7 @@ class StarMapWidget(Widget):
 	MAP_GATENETWORK = 9
 	MAP_GATESYSTEMS = 10
 	MAP_CONTROLAREA = 11
-	
+
 	def __init__(self, parent, **kwargs):
 		Widget.__init__(self, parent)
 		self.searchDlg = SearchDlg(self.app)
@@ -505,7 +505,7 @@ class StarMapWidget(Widget):
 			self.setPosition = 0
 			self.currX = anyX
 			self.currY = anyY
-		
+
 		self.miniMap.precompute()
 		# self dirty flag
 		self.repaintMap = 1
@@ -557,7 +557,7 @@ class StarMapWidget(Widget):
 			self.repaintMap = 1
 
 	def precomputeFleet(self,obj):
-		
+
 		owner = getattr(obj, 'owner', OID_NONE)
 		if hasattr(obj,'customname') and obj.customname:
 			name = obj.customname
@@ -820,7 +820,7 @@ class StarMapWidget(Widget):
 						ty = maxY - (int((ty - currY) * scale) + centerY)
 						#log.debug('Stargate lines:',width,color,_sx,_sy,tx,ty)
 						pygame.draw.line(self._mapSurf, color, (_sx, _sy), (tx, ty), width)
-						
+
 	def drawSystems(self):
 		# coordinates
 		centerX, centerY = self._mapSurf.get_rect().center
@@ -972,7 +972,7 @@ class StarMapWidget(Widget):
 		scale = self.scale
 		# draw orders lines
 		if self.showFleetLines:
-			for x1, y1, x2, y2, color in self._map[self.MAP_FORDERS]:
+			for x1, y1, x2, y2, color, unknown in self._map[self.MAP_FORDERS]:
 				if not self.showCivilianFleets and not military:
 					continue
 				sx1 = int((x1 - currX) * scale) + centerX
@@ -1233,7 +1233,7 @@ class StarMapWidget(Widget):
 		#log.debug('Overlay Size:',self._overlayRect.width,self._overlayRect.height)
 		if not self._overlayZone:
 			self._overlayZone = pygame.Surface((self._overlayRect.width,self._overlayRect.height),SWSURFACE | SRCALPHA, surface)
-		
+
 		self._detectOverlayZone.top = self._overlayRect.top + self.rect.top
 		self._detectOverlayZone.left = self._overlayRect.left
 		self._detectOverlayZone.width = self._overlayRect.width
@@ -1242,15 +1242,15 @@ class StarMapWidget(Widget):
 		self._overlayZone.fill((0x00,0x00,0x00))
 
 		pygame.draw.rect(self._overlayZone,(0x00, 0x00, 0x90),Rect(0,0,self._overlayRect.width,self._overlayRect.height),1)
-	        
 
 
-		
+
+
 		#pygame.draw.rect(self.overlayZone,(0x00, 0x00, 0x00),self._overlayRect,0) #this picks up mouse button position
 		#pygame.draw.rect(self._mapSurf,(0x00, 0x00, 0x00),self._overlayRect,0)
 		#pygame.draw.rect(self.overlayZone,(0x00, 0x00, 0x90),self._overlayRect,1)
 
-		
+
 		mode = _("Overlay Mode: ")
 		if self.overlayMode == gdata.OVERLAY_OWNER:
 			mode = mode + _("Normal")
@@ -1270,17 +1270,17 @@ class StarMapWidget(Widget):
 			mode = mode + _("Refuel and Repair")
 		if self.overlayMode == gdata.OVERLAY_MORALE:
 			mode = mode + _("Morale")
-		
+
 		textSrfc = renderText('small', mode, 1, (0x70, 0x70, 0x80))
 		self._overlayZone.blit(textSrfc, (
 			6,
 			4 )
 		)
-		
+
 		self._mapSurf.blit(self._overlayZone, self._overlayRect)
 #	        surface.blit(self._overlayZone, self._overlayRect)
-		
-		
+
+
 
 
 	def drawGrid(self):
@@ -1361,7 +1361,7 @@ class StarMapWidget(Widget):
 			'scanner': ['scanner',self.showScanners,81,2,17,13, 1,_('Scanners (CTRL-S)')],
 			'grid': ['grid',self.showGrid,100,2,17,13, 1,_('Grid (CTRL-G)')],
 			'gatenet': ['gatenet',self.showGateNetworks,119,2,17,13, 2,_('Gate Network (CTRL-N)')],
-                        
+
 			'ov_diplo': ['ov_diplo',False,2,17,13,13, gdata.OVERLAY_DIPLO,_('Overlay: Diplomacy')],
 			'ov_min': ['ov_min',False,17,17,13,13, gdata.OVERLAY_MIN,_('Overlay: Minerals')],
 			'ov_env': ['ov_env',False,32,17,13,13, gdata.OVERLAY_BIO,_('Overlay: Environment')],
@@ -1786,7 +1786,7 @@ class StarMapWidget(Widget):
 			self.parent.parent.setFocus(self)
 		except:
 			log.debug('Cannot refocus on starmap')
-		
+
 	def setPos(self, x, y):
 		self.currX = x
 		self.currY = y
