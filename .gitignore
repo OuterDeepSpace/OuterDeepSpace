@@ -1,3 +1,7 @@
 *.pyc
 *.py~
 *.txt~
+client-pygame/build
+client-pygame/dist
+*.data
+*.timestamp
