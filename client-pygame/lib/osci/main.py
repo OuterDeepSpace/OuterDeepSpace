@@ -37,12 +37,9 @@ log.debug("os.name =", os.name)
 # splash screen
 background = None
 backgroundOffset = None
-sponsorLogo = None
-sponsorLogoOffset = None
 
 def drawBackground():
     global background, backgroundOffset
-    global sponsorLogo, sponsorLogoOffset
     if not background:
         image = random.choice([
             'res/bck1_1024x768.jpg',
@@ -56,20 +53,12 @@ def drawBackground():
             (screen.get_width() - background.get_width()) / 2,
             (screen.get_height() - background.get_height()) / 2,
         )
-    if not sponsorLogo:
-        sponsorLogo = pygame.image.load("res/sponsor_logo.png").convert_alpha()
-        sponsorLogoOffset = (
-            (screen.get_width() - 5 - sponsorLogo.get_width()),
-            (screen.get_height() - 5 - sponsorLogo.get_height()),
-        )
     font = pygame.font.Font('res/fonts/DejaVuLGCSans.ttf', 12)
     font.set_bold(1)
     color = 0x40, 0x70, 0x40
     #
     screen.blit(background, backgroundOffset)
-    screen.blit(sponsorLogo, sponsorLogoOffset)
-    img = font.render(_("Server sponsored by:"), 1, (0xc0, 0xc0, 0xc0))
-    screen.blit(img, (sponsorLogoOffset[0], sponsorLogoOffset[1] - img.get_height() - 2))
+
     # screen.fill((0x00, 0x00, 0x00))
     # OSCI version
     img = font.render(_('OSCI %s') % osci.versionString, 1, color)
@@ -327,7 +316,7 @@ while running:
 
         # save DB every 4 hours in case of a computer crash
         # using "counter" to limit calls to time.clock() to approximately every 10-15 minutes
-        if counter > 5000: 
+        if counter > 5000:
             counter = 0
             if time.clock() - lastSave > 14400:
                 saveDB = True

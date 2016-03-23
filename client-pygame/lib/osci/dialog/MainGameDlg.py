@@ -126,25 +126,25 @@ class MainGameDlg:
 
 	def onPlanetsMenu(self, widget, action, data):
 		self.systemPlanetMenu.show((16*20, 0))
-		
+
 	def onPlanets(self, widget, action, data):
 		self.planetsOverviewDlg.display()
 
 	def onPlanetAnalysis(self, widget, action, data):
 		self.planetsAnalysisDlg.display()
-		
+
 	def onPlanetAnalysis(self, widget, action, data):
 		self.planetsAnalysisDlg.display()
-		
+
 	def onFleetsMenu(self, widget, action, data):
 		self.systemFleetMenu.show((20*20, 0))
-		
+
 	def onFleets(self, widget, action, data):
 		self.fleetsOverviewDlg.display()
 
 	def onFleetAnalysis(self, widget, action, data):
 		self.fleetsAnalysisDlg.display()
-		
+
 	def onOptions(self, widget, action, data):
 		self.optionsDlg.display()
 
@@ -165,9 +165,6 @@ class MainGameDlg:
 				galaxyID,
 			)
 			webbrowser.open(url, new = 1)
-
-	def onSponsor(self, widget, action, data):
-		webbrowser.open("http://www.k2.cz/", new = 1)
 
 	def onResign(self, widget, action, data):
 		# swap yes and no
@@ -266,7 +263,7 @@ class MainGameDlg:
 
 	def processKeyUp(self, evt):
 		return ui.NoEvent
-		
+
 
 	def processKeyDown(self, evt):
 		# Alt+M - Messages
@@ -323,14 +320,6 @@ class MainGameDlg:
 			id = 'vStatus',
 			align = ui.ALIGN_W,
 			layout = (0, lh - 1, lw - 16, 1),
-		)
-		ui.ActiveLabel(self.win,
-			id = "vSponsor",
-			align = ui.ALIGN_W,
-			icons = [(pygame.image.load("res/sponsor_logo_small.png"), ui.ALIGN_E)],
-			layout = (lw - 12, lh - 1, 8, 1),
-			action = "onSponsor",
-			statustip = _("Server sponsored by K2 Software"),
 		)
 		ui.Label(self.win,
 			id = 'vTurn',
