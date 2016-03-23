@@ -73,7 +73,7 @@ def makeTechtree(ruleset):
         print("Importing ruleset")
 
     Rules.initRules(ruleset)
-    
+
     def getDescription(tech):
         suffix = ""
         if tech.researchReqSRes:
@@ -334,7 +334,7 @@ def makeTechtree(ruleset):
     screen.blit(grid.printSDL(), (0, 0))
     pygame.display.update()
 
-    savename = ("%s_techtree.bmp" % ruleset)
+    savename = ("%s_techtree.png" % ruleset)
 
     pygame.image.save(grid.printSDL(), savename)
     #waitForKey()
