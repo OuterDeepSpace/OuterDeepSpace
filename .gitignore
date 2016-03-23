@@ -5,3 +5,4 @@ client-pygame/build
 client-pygame/dist
 *.data
 *.timestamp
+client-pygame/techviewer/*.ini

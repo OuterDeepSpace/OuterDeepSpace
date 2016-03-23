@@ -2,17 +2,14 @@ import wx
 import sys
 import os
 
-for item in ("libsrvr", "../server/lib"):
-    if os.path.exists(item):
-        sys.path.insert(0, item)
-        break
+sys.path.insert(0, "/home/ragora/Desktop/OSpaceGIT/ospace-code/client-pygame/server/lib/")
 
 import sequip
 
 from FinishConstrHandlers import FinishConstrHandlers
 from DependencyPanel import DependencyPanel
 from config import Config
- 
+
 from ige.ospace import Rules
 from ige.ospace.Rules import Techs
 
@@ -173,7 +170,7 @@ addAttr('addMP', 'Device MP', V_SEQUIP|V_HULL, 0)
 def getChildren(tech):
     return tech.researchEnables[1] + tech.researchEnables[2] + tech.researchEnables[3] + \
         tech.researchEnables[4] + tech.researchEnables[5]
- 
+
 def getParent(tech):
     if tech.researchRequires:
         return Rules.techs[tech.researchRequires[0][0]]
@@ -186,7 +183,7 @@ class App(wx.App):
     def OnInit(self):
         self.frame = TechViewer(None, -1, "OuterSpace Technology viewer")
         self.frame.Show()
-        self.SetTopWindow(self.frame)  
+        self.SetTopWindow(self.frame)
         return True
 
 class TechViewer(wx.Frame):
@@ -194,9 +191,9 @@ class TechViewer(wx.Frame):
 		wx.Frame.__init__(self, parent, id, title, pos = wx.DefaultPosition, size = (800, 600))
 
 		wx.EVT_CLOSE(self, self.OnClose)
-		
+
 		self.selected = None
-		
+
 		global config
 
 		if config.Races.Bionic == None:
@@ -213,7 +210,7 @@ class TechViewer(wx.Frame):
 
 		if config.View.Level == None:
 			config.View.Level = 1
-		
+
 		if config.View.Race == None:
 			config.View.Race = 1
 
@@ -241,18 +238,18 @@ class TechViewer(wx.Frame):
 		self.showBionic = config.Races.Bionic == "1"
 		self.showHuman = config.Races.Human == "1"
 		self.showCyborg = config.Races.Cyborg == "1"
-		
+
 		self.improvement = int(config.View.Improvement)
 
-		self.levels = { 1: config.Levels.Level1 == "1", 
-						2: config.Levels.Level2 == "1", 
-						3: config.Levels.Level3 == "1", 
-						4: config.Levels.Level4 == "1", 
-						5: config.Levels.Level5 == "1", 
-						6: config.Levels.Level6 == "1", 
+		self.levels = { 1: config.Levels.Level1 == "1",
+						2: config.Levels.Level2 == "1",
+						3: config.Levels.Level3 == "1",
+						4: config.Levels.Level4 == "1",
+						5: config.Levels.Level5 == "1",
+						6: config.Levels.Level6 == "1",
 						99: config.Levels.Level99 == "1"
 					  }
-		
+
 		self.viewLevel = config.View.Level == "1"
 		self.viewRace = config.View.Race == "1"
 		self.viewReqLevel = config.View.ReqLevel == "1"
@@ -260,12 +257,12 @@ class TechViewer(wx.Frame):
 		self.currentTech = None
 
 		self.Centre(wx.BOTH)
-		
+
 		splitter = wx.SplitterWindow(self, -1, style = wx.SP_3D)# | wx.SP_NOBORDER | wx.NO_3D)
-		
+
 		def EmptyHandler(evt): pass
 		wx.EVT_ERASE_BACKGROUND(splitter, EmptyHandler)
-		
+
 		tID = wx.NewId()
 		self.tree = wx.TreeCtrl(splitter, tID, style = wx.TR_HAS_BUTTONS)
 		wx.EVT_TREE_SEL_CHANGED(self, tID, self.OnSelChanged)
@@ -294,7 +291,7 @@ class TechViewer(wx.Frame):
 		box.Add(self.prodCon, 0, wx.EXPAND | wx.WEST, 4)
 		box.Fit(self.rightPanel)
 		self.rightPanel.SetSizer(box)
-		
+
 		splitter.SplitVertically(self.tree, self.rightPanel, 360)
 		splitter.SetMinimumPaneSize(20)
 
@@ -308,18 +305,18 @@ class TechViewer(wx.Frame):
 		menu.Check(MENU_SHOW_H, self.showHuman)
 		menu.AppendSeparator()
 		menu.Append(MENU_EXIT, "E&xit")
-		
+
 		menuBar.Append(menu, "&Race")
-		
+
 		menu = wx.Menu()
 		menu.AppendRadioItem(MENU_IMPROVEMENT_1, "Improvement 1")
 		menu.AppendRadioItem(MENU_IMPROVEMENT_2, "Improvement 2")
 		menu.AppendRadioItem(MENU_IMPROVEMENT_3, "Improvement 3")
 		menu.AppendRadioItem(MENU_IMPROVEMENT_4, "Improvement 4")
 		menu.AppendRadioItem(MENU_IMPROVEMENT_5, "Improvement 5")
-		
+
 		menuBar.Append(menu, "&Improvement")
-		
+
 		menu = wx.Menu()
 		menu.AppendCheckItem(MENU_LEVEL_1, "Level 1")
 		menu.AppendCheckItem(MENU_LEVEL_2, "Level 2")
@@ -329,19 +326,19 @@ class TechViewer(wx.Frame):
 		menu.AppendCheckItem(MENU_LEVEL_6, "Level 6")
 		menu.AppendSeparator()
 		menu.AppendCheckItem(MENU_LEVEL_99, "Additional")
-		
+
 		menuBar.Append(menu, "&Level")
 
 		menu = wx.Menu()
 		menu.AppendCheckItem(MENU_VIEW_LEVEL, "Level")
 		menu.AppendCheckItem(MENU_VIEW_RACE, "Race")
 		menu.AppendCheckItem(MENU_VIEW_REQ_LEVEL, "Required parent tech level")
-		
+
 		menuBar.Append(menu, "&View")
-		
+
 		menu = wx.Menu()
 		menu.Append(MENU_CONSTRUCTION_DLG, "Show construction dialog")
-		
+
 		menuBar.Append(menu, "Ship &construction")
 
 		self.SetMenuBar(menuBar)
@@ -635,7 +632,7 @@ class TechViewer(wx.Frame):
 						value = int(round(Rules.techImprEff[self.improvement] * value))
 				self.list.SetStringItem(i, 1, str(convertor(value)))
 				i = i + 1
-		
+
 		text = ""
 		for res in getattr(tech, "researchReqSRes", [0]):
 			text += stratRes[res]
@@ -645,7 +642,7 @@ class TechViewer(wx.Frame):
 		if len(text) > 0:
 			self.list.InsertStringItem(i, "Strategic resource")
 			self.list.SetStringItem(i, 1, text)
-			
+
 		if getattr(tech, "finishConstrHandler", None) != None or getattr(tech, "deployHandlerFunction", None) != None:
 			fceF = None
 			fceD = None
@@ -667,7 +664,7 @@ class TechViewer(wx.Frame):
 			self.prodCon.SetMineral(m)
 			self.prodCon.SetEnergy(e)
 			self.prodCon.SetNothing(d)
-			
+
 		if getattr(tech, "prodBioMod", None) != None:
 			b, m, e, d = tech.prodBioMod
 			self.prodBio.SetEnv(b)
@@ -684,7 +681,7 @@ class TechViewer(wx.Frame):
 
 	def addNode(self, parentNode, tech):
 		raceColours = {
-			"C": wx.RED, 
+			"C": wx.RED,
 			"B": wx.NamedColour("MEDIUM FOREST GREEN"),
 			"H": wx.BLUE,
 			"HC": wx.NamedColour("BROWN"),
@@ -700,7 +697,7 @@ class TechViewer(wx.Frame):
 		colour = wx.BLACK
 		if len(tech.researchRaces) < 3 and self.viewRace:
 			title += " - " + tech.researchRaces
-		
+
 		appendByRace = False
 		if self.showBionic and "B" in tech.researchRaces:
 			appendByRace |= True
@@ -733,7 +730,7 @@ class TechViewer(wx.Frame):
 				itemText = "[%d]--" % reqlvl
 			else:
 				itemText = ""
-			
+
 			if self.viewLevel:
 				itemText = "%s%s (%d)" % (itemText, title, tech.level)
 			else:
