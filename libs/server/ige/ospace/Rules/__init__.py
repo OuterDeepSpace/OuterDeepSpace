@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 #
 #  Copyright 2001 - 2006 Ludek Smid [http://www.ospace.net/]
 #
@@ -20,23 +18,38 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-# tweak PYTHONPATH
-import sys
 import os
+from ige.ospace.Const import *
+from ige.IDataHolder import makeIDataHolder
+from ige import log
 
-if not getattr(sys, "frozen", False):
-    os.chdir("../shared")
-    sys.path.insert(0, '../libs/client')
-    sys.path.insert(0, '../libs/server')
+rulesetName = None
+rulesetPath = None
 
-#configure gc
-#import gc
-#gc.set_debug(gc.DEBUG_STATS | gc.DEBUG_COLLECTABLE | gc.DEBUG_UNCOLLECTABLE |
-#	gc.DEBUG_INSTANCES | gc.DEBUG_OBJECTS)
+def initRules(path):
+	log.message("Using ruleset", path)
+	# import rules
+	import sys
+	try:
+		importFromPath(path)
+	except ImportError:
+		path = os.path.join("res/rules", os.path.basename(path))
+		importFromPath(path)
+	# import technologies
+	import Techs
+	global techs, Tech
+	techs, Tech = Techs.initTechnologies(path)
+	global rulesetName, rulesetPath
+	rulesetName = os.path.basename(path)
+	rulesetPath = path
 
-# start application
-import osci.main
-
-# profiling
-#import profile
-#profile.run('import osci.main', 'profile.txt')
+def importFromPath(path):
+	import sys
+	oldpath = sys.path
+	try:
+		sys.path = [path]
+		log.debug("Rules import - using path", sys.path)
+		exec "from rules import *" in globals()
+		log.message("Rules import succeeded")
+	finally:
+		sys.path = oldpath

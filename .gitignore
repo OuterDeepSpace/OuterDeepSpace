@@ -6,3 +6,4 @@ client-pygame/dist
 *.data
 *.timestamp
 client-pygame/techviewer/*.ini
+shared/var/db_data
