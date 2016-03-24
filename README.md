@@ -1,6 +1,6 @@
 # Outer Deep Space
 
-Outer deep space is a continuation project of [Outer Space](https://sourceforge.net/projects/ospace/) headed by different developers
+Outer Deep Space is a continuation project of [Outer Space](https://sourceforge.net/projects/ospace/) headed by different developers
 than that of the orginal project. This project aims to get the game client and server running on modern computers with bug fixes and trivial
 gameplay improvements along the way.
 
@@ -15,6 +15,7 @@ Robert MacGregor (Ragora)
 The original developers/contributors for Outer Space are the following:
 
 Ludek Smid (Qark) - Head Developer
+Michael Ney (Random_Chaos) - Contributor
 Malxe Yhhsom'aa (Malxe) - Contributor
 
 ## Other Information
