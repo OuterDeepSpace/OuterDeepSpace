@@ -280,6 +280,11 @@ running = 1
 lastSave = time.clock()
 counter = 0
 needsRefresh = False
+
+# No real way to deal with combinations in this case
+key_alt = False
+key_f4 = False
+
 while running:
     try:
         if gdata.config.game.autologin == 'yes':
@@ -293,10 +298,6 @@ while running:
         forceKeepAlive = False
         saveDB = False
 
-        # No real way to deal with combinations in this case
-        key_alt = False
-        key_f4 = False
-
         for evt in evts:
             if evt.type == QUIT:
                 running = 0
@@ -307,8 +308,13 @@ while running:
                     needsRefresh = True
 
             if evt.type == KEYUP and evt.key == K_F4:
+                key_f4 = False
+            elif evt.type == KEYDOWN and evt.key == K_F4:
                 key_f4 = True
+
             if evt.type == KEYUP and (evt.key == K_LALT or evt.key == K_RALT):
+                key_alt = False
+            elif evt.type == KEYDOWN and (evt.key == K_LALT or evt.key == K_RALT):
                 key_alt = True
 
             if evt.type == KEYUP and evt.key == K_F9:
