@@ -130,6 +130,9 @@ class MainGameDlg:
 	def onPlanets(self, widget, action, data):
 		self.planetsOverviewDlg.display()
 
+	def onSystems(self, widget, action, data):
+		self.systemOverviewDlg.display()
+
 	def onPlanetAnalysis(self, widget, action, data):
 		self.planetsAnalysisDlg.display()
 
