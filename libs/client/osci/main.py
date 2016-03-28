@@ -280,6 +280,11 @@ running = 1
 lastSave = time.clock()
 counter = 0
 needsRefresh = False
+
+# No real way to deal with combinations in this case
+key_alt = False
+key_f4 = False
+
 while running:
     try:
         if gdata.config.game.autologin == 'yes':
@@ -301,12 +306,24 @@ while running:
                 if evt.gain == 1 and evt.state == 6:
                     # pygame desktop window focus event
                     needsRefresh = True
-            if evt.type == KEYUP and evt.key == K_F12:
-                running = 0
-                break
+
+            if evt.type == KEYUP and evt.key == K_F4:
+                key_f4 = False
+            elif evt.type == KEYDOWN and evt.key == K_F4:
+                key_f4 = True
+
+            if evt.type == KEYUP and (evt.key == K_LALT or evt.key == K_RALT):
+                key_alt = False
+            elif evt.type == KEYDOWN and (evt.key == K_LALT or evt.key == K_RALT):
+                key_alt = True
+
             if evt.type == KEYUP and evt.key == K_F9:
                 forceKeepAlive = True
             evt = app.processEvent(evt)
+
+        if (key_f4 and key_alt):
+            running = 0
+            break
 
         if app.needsUpdate() or isHWSurface or needsRefresh:
             needsRefresh = False
