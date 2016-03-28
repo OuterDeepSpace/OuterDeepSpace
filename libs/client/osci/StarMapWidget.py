@@ -972,7 +972,7 @@ class StarMapWidget(Widget):
 		scale = self.scale
 		# draw orders lines
 		if self.showFleetLines:
-			for x1, y1, x2, y2, color, unknown in self._map[self.MAP_FORDERS]:
+			for x1, y1, x2, y2, color, military in self._map[self.MAP_FORDERS]:
 				if not self.showCivilianFleets and not military:
 					continue
 				sx1 = int((x1 - currX) * scale) + centerX
