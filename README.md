@@ -8,15 +8,15 @@ gameplay improvements along the way.
 
 The new development team are the following:
 
-Andrea Yhhsom'aa (Atma)
-Malxe Yhhsom'aa (Malxe)
-Robert MacGregor (Ragora)
+  * Andrea Yhhsom'aa (Atma)
+  * Malxe Yhhsom'aa (Malxe)
+  * Robert MacGregor (Ragora)
 
 The original developers/contributors for Outer Space are the following:
 
-Ludek Smid (Qark) - Head Developer
-Michael Ney (Random_Chaos) - Contributor
-Malxe Yhhsom'aa (Malxe) - Contributor
+  * Ludek Smid (Qark) - Head Developer
+  * Michael Ney (Random_Chaos) - Contributor
+  * Malxe Yhhsom'aa (Malxe) - Contributor
 
 ## Other Information
 
