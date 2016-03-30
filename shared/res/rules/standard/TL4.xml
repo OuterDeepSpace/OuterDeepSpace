@@ -252,6 +252,24 @@
         <preresearch>Some research can only be done in space. The Orbital Lab Complex promises to the solution to this.</preresearch>
         <description>Utilizing high the high energies of the local star, the Orbital Lab Complex provides a zero-gravity research environment. The more energy that can be collected from the star, the more efficiently the labs run!</description>
     </technology>
+	<technology id="4011" symbol="ENTCENTER4" name="Eudaimonic Education Facility">
+		<discovery
+			researchMod="1.50"
+			level="4"
+			researchRequires="ENTCENTER1-3"
+		/>
+		<structure
+			subtype="str50"
+			buildProd="1440"
+			operEn="75"
+			operWorkers="1500"
+			maxHP="960"
+			moraleTrgt="+28"
+			revoltThr="-4"
+		/>
+		<preresearch>As a large empire expands and becomes increasingly difficult to manage, its inhabitants become more and more miniscule in their individuality.  In this light, with the task of specifically improving each life nigh impossible, a wise ruler teaches the citizenry to improve themselves.  This facility attempts to achieve that goal.</preresearch>
+		<flavor>"The happy life is thought to be one of excellence; now an excellent life requires exertion, and does not consist in amusement.  If Eudaimonia, or happiness, is activity in accordance with excellence, it is reasonable that it should be in accordance with the highest excellence; and this will be that of the best thing in us." -- Aristotle</flavor>
+	</technology>
     <technology id="4400" symbol="BIONICCANNON4" name="Spine Cannon">
         <discovery
             researchMod="1.00 + 0.5 + 0.5"

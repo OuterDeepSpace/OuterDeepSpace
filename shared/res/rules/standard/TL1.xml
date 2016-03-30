@@ -315,7 +315,7 @@
 			weaponAtt="8"
 			weaponClass="0"
 			weaponROF="1"
-			weaponIgnoreShield="0"
+			weaponIgnoreShield="1"
 		/>
 		<preresearch>Yes, old but still effective projectile weapon. We can use it until our scientists will discover something more effective.</preresearch>
 	</technology>
@@ -335,7 +335,7 @@
 			weaponAtt="4"
 			weaponClass="3"
 			weaponROF="0.2"
-			weaponIgnoreShield="0"
+			weaponIgnoreShield="1"
 		/>
 		<preresearch>Nothing extraordionary - falling big can filled with explosives used to demolish buldings from orbit. What else do you expect?</preresearch>
 	</technology>
@@ -357,6 +357,7 @@
 			weaponAtt="4"
 			weaponClass="3"
 			weaponROF="0.1"
+			weaponIgnoreShield="1"
 		/>
 		<preresearch>Atomic Bomb - dirty but very effective way of wiping out of the enemies out of the planet's surface.</preresearch>
 	</technology>

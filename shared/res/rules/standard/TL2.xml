@@ -330,7 +330,7 @@
 			weaponClass="1"
 			weaponROF="0.5"
 			weaponIsMissile="1"
-			weaponIgnoreShield="0"
+			weaponIgnoreShield="1"
 		/>
 		<preresearch>Missiles are used to wrack medium to large ships. Don't bother to use them against small ships - they will not work.</preresearch>
 	</technology>
@@ -370,7 +370,7 @@
 			weaponAtt="9"
 			weaponClass="0"
 			weaponROF="1"
-			weaponIgnoreShield="0"
+			weaponIgnoreShield="1"
 		/>
 		<preresearch>Electro-magnetic cannon can deliver more damage and is easier to aim at the target. Do you want to try it?</preresearch>
 	</technology>
@@ -390,7 +390,7 @@
 			weaponAtt="11"
 			weaponClass="0"
 			weaponROF="2"
-			weaponIgnoreShield="0"
+			weaponIgnoreShield="1"
 			minHull="1"
 		/>
 		<preresearch>This flak cannon can be mounted on medium to large ships to help deffend them against fighters.</preresearch>

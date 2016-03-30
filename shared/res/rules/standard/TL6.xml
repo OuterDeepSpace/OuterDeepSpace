@@ -125,6 +125,44 @@
 		<preresearch>Our old early-tech outpost is getting outdated.</preresearch>
 		<description>An advanced colonization unit, this structure serves the needs of a high-technology empire.</description>
 	</technology>
+	<technology id="6026" symbol="GOVCENTER6A" name="Monarchal Citadel">
+		<discovery
+			researchMod="1.50"
+			level="6"
+			researchRequires="GOVCENTER3A-3"
+		/>
+		<structure
+			subtype="str25"
+			buildProd="8640"
+			operEn="450"
+			operWorkers="22500"
+			maxHP="5400"
+			moraleTrgt="+12"
+			govPwr="1200000"
+			finishConstrHandler="finishStructGOVCENTER"
+			isMilitary="1"
+		/>
+		<preresearch>The most lavish of capitols available, holding the seat of power to maintain order within grand nations.</preresearch>
+	</technology>	
+	<technology id="6027" symbol="GOVCENTER6B" name="Supreme Council">
+		<discovery
+			researchMod="1.50"
+			level="6"
+			researchRequires="GOVCENTER3B-3"
+		/>
+		<structure
+			subtype="str25"
+			buildProd="8640"
+			operEn="450"
+			operWorkers="22500"
+			maxHP="5400"
+			moraleTrgt="+12"
+			govPwr="1200000"
+			finishConstrHandler="finishStructGOVCENTER"
+			isMilitary="1"
+		/>
+		<preresearch>The most lavish of capitols available, holding the seat of power to maintain order within grand nations.</preresearch>
+	</technology>
 	<technology id="6100" symbol="ECM6" name="Active ECM">
 		<discovery
 			researchMod="1.00 + 0.50 + 1.00"

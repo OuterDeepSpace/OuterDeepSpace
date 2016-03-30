@@ -451,7 +451,7 @@
 			weaponClass="1"
 			weaponROF="0.5"
 			weaponIsMissile="1"
-			weaponIgnoreShield="0"
+			weaponIgnoreShield="1"
 		/>
 		<preresearch>Better version of the space-to-space missile used against medium+ hulls.</preresearch>
 	</technology>
@@ -472,7 +472,7 @@
 			weaponClass="2"
 			weaponROF="0.3"
 			weaponIsMissile="1"
-			weaponIgnoreShield="0"
+			weaponIgnoreShield="1"
 			minHull="1"
 		/>
 		<preresearch>Torpedo is definitive the best weapon used against large hulls and in the case of an emergency it can be used to hit planets too.</preresearch>
