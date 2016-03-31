@@ -56,6 +56,8 @@ class LoginDlg:
 		self.win.vMessage.text = message
 		#if gdata.config.game.autologin != 'yes':	# enable this to disable auto-login after change in options
 		#	self.firstlogin = false
+
+		self.win.vTargetServer.text = gdata.config.game.server
 		self.win.show()
 
 	def hide(self):
