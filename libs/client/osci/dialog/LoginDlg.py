@@ -40,7 +40,18 @@ class LoginDlg:
 
 	def display(self, caller = None, message = None):
 		self.caller = caller
-		self.win.vCreate.visible = gdata.config.game.accountcreated == None
+
+		# Show the account creation if its not specified or if its 0 or False
+		account_creation_visible = False
+
+		try:
+			if (gdata.config.game.accountcreated is None or bool(int(gdata.config.game.accountcreated)) is False):
+				account_creation_visible = True
+		except ValueError:
+			account_creation_visible = False
+			
+		self.win.vCreate.visible = account_creation_visible
+
 		if gdata.config.game.lastlogin != None:
 			self.win.vLogin.text = gdata.config.game.lastlogin
 		if gdata.config.game.lastpassword:
