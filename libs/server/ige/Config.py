@@ -33,12 +33,23 @@ class Config:
 	is returned.
 	"""
 	def __init__(self, file):
+		# We first check ~/.ospace for this file
+		relative_dir = os.path.expanduser("~/.ospace")
+		target_file = os.path.join(relative_dir, file)
+
+		# If the file exists, target that one instead
+		try:
+			with open(target_file, "r") as handle:
+				file = target_file
+		except IOError:
+			pass
+
 		self.__dict__["_config"] = ConfigParser()
 		self._config.read(file)
 
 	def getSection(self, name):
 		return self.__getattr__(name)
-	
+
 	def __getattr__(self, name):
 		if not self._config.has_section(name):
 			self._config.add_section(name)
@@ -52,6 +63,19 @@ class Config:
 			raise AttributeError("Cannot assign value to config section")
 
 	def save(self, file):
+		# Just dump into ~/.ospace
+		relative_dir = os.path.expanduser("~/.ospace")
+
+		if (os.path.isdir(relative_dir) is False):
+			os.mkdir(relative_dir)
+
+			# Since we only ever seem to have single-depth paths for these configs
+			# and we only ever seem to point into var, just create it
+			os.mkdir(os.path.join(relative_dir, "var"))
+
+		# And we'll just write to our home dir regardless.
+		file = os.path.join(relative_dir, file)
+
 		fh = open(file, 'w')
 		self._config.write(fh)
 		fh.close()
