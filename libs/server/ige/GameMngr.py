@@ -33,7 +33,7 @@ from IObject import IDataHolder
 from Scheduler import Scheduler
 from ClientMngr import Session
 import xmlrpclib
-import md5
+import bcrypt
 
 class GameMngr:
 
@@ -55,17 +55,17 @@ class GameMngr:
 			self.metaserver = xmlrpclib.ServerProxy(config.metaserver.url)
 			# login
 			self.metaserverSID, challenge = self.metaserver.metasrvr.hello()
-			rsp = md5.new(config.metaserver.password + challenge).hexdigest()
+			rsp = bcrypt.hashpw(config.metaserver.password + challenge, bcrypt.getsalt())
 			self.metaserver.metasrvr.login(self.metaserverSID, config.metaserver.login, rsp)
 			log.message("METASERVER - logged in, announcing game")
 			# announce game
 			self.metaserver.metasrvr.announceGame(
 				self.metaserverSID,
-				config.server.name, 
+				config.server.name,
 				config.server.host,
 				int(config.server.port),
-				config.server.realm, 
-				int(config.server.rank), 
+				config.server.realm,
+				int(config.server.rank),
 				config.server.info,
 			)
 			# notify ClientMngr about metaserver
@@ -107,7 +107,7 @@ class GameMngr:
 		if self.metaserver is not None:
 			log.debug("METASERVER - keepalive")
 			self.metaserver.metasrvr.keepAlive(self.metaserverSID)
-	
+
 	def upgrade(self):
 		oldStatus = self.status
 		self.status = GS_MAINT
@@ -159,7 +159,7 @@ class GameMngr:
 		log.debug("*****")
 		for t in types:
 			log.debug("Object type %d:" % t)
-			log.debug("  occurences    : %d" % types[t]) 
+			log.debug("  occurences    : %d" % types[t])
 			log.debug("  size interval : %d - %d bytes" % (typesMin[t], typesMax[t]))
 			log.debug("  total size    : %d (avg %d) bytes" % (typesSum[t], typesSum[t] / types[t]))
 		self.status = oldStatus
@@ -260,7 +260,7 @@ class GameMngr:
 		self.db.backup(basename)
 		self.clientMngr.backup(basename)
 		self.msgMngr.backup(basename)
-		
+
 	def createAdmin(self):
 		""" Return Player object which will act as administrator of the game."""
 		raise NotImplementedError

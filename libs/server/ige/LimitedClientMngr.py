@@ -121,7 +121,7 @@ class ClientMngr:
 
 		account = self.accounts[login]
 		challenge = self.sessions[sid].challenge
-		if md5.new(account.passwd + challenge).hexdigest() != cpasswd:
+		if bcrypt.hashpw(account.passwd + challenge, cpasswd) != cpasswd:
 			raise SecurityException('Wrong login and/or password (PLAIN).')
 		self.sessions[sid].setAttrs(account.login, account.nick, account.email)
 		account.lastLogin = time.time()

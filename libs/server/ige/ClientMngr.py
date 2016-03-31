@@ -18,6 +18,7 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
+import bcrypt
 import os
 import md5
 import random
@@ -174,7 +175,8 @@ class ClientMngr:
 
 		account = self.accounts[login]
 		challenge = self.sessions[sid].challenge
-		if md5.new(account.passwd + challenge).hexdigest() != cpasswd:
+
+		if bcrypt.hashpw(account.passwd + challenge, cpasswd) != cpasswd:
 			raise SecurityException('Wrong login and/or password.')
 		self.sessions[sid].setAttrs(account.login, account.nick)
 		account.lastLogin = time.time()
