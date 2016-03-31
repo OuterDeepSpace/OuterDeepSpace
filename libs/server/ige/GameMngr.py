@@ -33,7 +33,6 @@ from IObject import IDataHolder
 from Scheduler import Scheduler
 from ClientMngr import Session
 import xmlrpclib
-import bcrypt
 
 class GameMngr:
 

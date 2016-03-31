@@ -18,7 +18,7 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-import bcrypt
+import hashlib
 import ige
 from ige.IMarshal import IMarshal, IPacket
 from ige import ServerStatusException, log
@@ -71,7 +71,7 @@ class IClient:
 	def login(self, gameID, login, password):
 		self.gameID = gameID.encode("ascii")
 		# hash password with challenge
-		passwd = bcrypt.hashpw(password + self.challenge, bcrypt.gensalt())
+		passwd = hashlib.sha512(hashlib.sha512(password).hexdigest() + self.challenge).hexdigest()
 		#@log.debug(login, password, passwd)
 		try:
 			apply(IProxy('login', None, self), (login, passwd, self.hostID))
@@ -93,6 +93,7 @@ class IClient:
 		return apply(IProxy('reloadAccounts', None, self), ())
 
 	def createAccount(self, login, password, nick, email):
+		password = hashlib.sha512(password).hexdigest()
 		return apply(IProxy('createAccount', None, self), (login, password, nick, email))
 
 	def exportAccounts(self):
