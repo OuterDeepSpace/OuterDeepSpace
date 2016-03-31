@@ -52,6 +52,11 @@ class IAIMutantPlayer(IPlayer):
 	def processINITPhase(self, tran, obj, data):
 		IPlayer.processINITPhase(self, tran, obj, data)
 		obj.lastLogin = time.time()
+
+		if (len(obj.techs) == 0):
+			log.warning('Mutant player in INIT phase without techs; granting again')
+			self.cmd(obj).update(tran, obj) #grant the techs because something screwed up
+
 		# delete itself if there are no fleets and planets
 		if not obj.fleets and not obj.planets:
 			self.cmd(obj).delete(tran, obj)

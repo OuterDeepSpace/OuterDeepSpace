@@ -51,6 +51,11 @@ class IAIRenegadePlayer(IPlayer):
 
 	def processINITPhase(self, tran, obj, data):
 		IPlayer.processINITPhase(self, tran, obj, data)
+
+		if (len(obj.techs) == 0):
+			log.warning('Renegade player in INIT phase without techs; granting again')
+			self.cmd(obj).update(tran, obj) #grant the techs because something screwed up
+
 		obj.lastLogin = time.time()
 		# delete itself if there are no fleets and planets
 		if not obj.fleets and not obj.planets:
