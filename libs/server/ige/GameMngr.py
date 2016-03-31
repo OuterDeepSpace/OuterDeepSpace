@@ -54,7 +54,7 @@ class GameMngr:
 			self.metaserver = xmlrpclib.ServerProxy(config.metaserver.url)
 			# login
 			self.metaserverSID, challenge = self.metaserver.metasrvr.hello()
-			rsp = bcrypt.hashpw(config.metaserver.password + challenge, bcrypt.getsalt())
+			rsp = hashlib.sha512(config.metaserver.password + challenge).hexdigest()
 			self.metaserver.metasrvr.login(self.metaserverSID, config.metaserver.login, rsp)
 			log.message("METASERVER - logged in, announcing game")
 			# announce game
