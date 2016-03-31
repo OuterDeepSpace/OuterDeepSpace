@@ -1,9 +1,10 @@
 *.pyc
 *.py~
+*.spec~
 *.txt~
-client-pygame/build
-client-pygame/dist
 *.data
 *.timestamp
-client-pygame/techviewer/*.ini
+*_techtree.*
+dist/
 shared/var/db_data
+shared/var/token
