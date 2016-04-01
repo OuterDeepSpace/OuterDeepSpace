@@ -20,12 +20,13 @@
 
 import string
 from pygame.locals import *
-import pygame.scrap
 from Const import *
 from WordUtils import *
 from Widget import Widget, registerWidget
 from Fonts import *
 import pygame.key
+
+from ige import log
 
 # keys mapping
 mapping = {
@@ -53,9 +54,15 @@ class Text(Widget):
 		parent.registerWidget(self)
 
 	def toClipboard(self):
-		copied = string.join(self.text, "\n")
-		pygame.scrap.put("STRING", copied)
-		pygame.scrap.put("STRING", copied)
+		try:
+			from Tkinter import Tk
+			window = Tk()
+			window.withdraw()
+			window.clipboard_clear()
+			window.clipboard_append(string.join(self.text, "\n"))
+			window.destroy()
+		except ImportError:
+			log.debug("Failed to write to clipboard -- Tkinter is not present on system.")
 
 	def draw(self, surface):
 		self.theme.drawText(surface, self)
