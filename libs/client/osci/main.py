@@ -20,7 +20,7 @@
 
 import time
 
-import pygame, pygame.image, pygame.font, pygame.time, pygame.version
+import pygame, pygame.image, pygame.font, pygame.time, pygame.version, pygame.scrap
 import pygame.transform
 from pygame.locals import *
 from config import Config
@@ -247,6 +247,8 @@ gdata.app = app
 import res
 
 res.initialize()
+
+pygame.scrap.init()
 
 # check for client updates
 import update as appUpdate

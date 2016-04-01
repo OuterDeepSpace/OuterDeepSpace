@@ -18,7 +18,9 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
+import string
 from pygame.locals import *
+import pygame.scrap
 from Const import *
 from WordUtils import *
 from Widget import Widget, registerWidget
@@ -49,6 +51,11 @@ class Text(Widget):
 		# flags
 		self.processKWArguments(kwargs)
 		parent.registerWidget(self)
+
+	def toClipboard(self):
+		copied = string.join(self.text, "\n")
+		pygame.scrap.put("STRING", copied)
+		pygame.scrap.put("STRING", copied)
 
 	def draw(self, surface):
 		self.theme.drawText(surface, self)
@@ -204,7 +211,7 @@ class Text(Widget):
 			else:
 				self.selStart = self.selEnd = None
 
-				
+
 		elif evt.key == K_RIGHT:
 			if evt.mod & KMOD_SHIFT:
 				if self.selStart == None:
@@ -289,7 +296,7 @@ class Text(Widget):
 
 			if self.cursorRow - self.offsetRow < 0:
 				self.vertScrollbar.onButton1(self, "", "")
-			
+
 			if evt.mod & KMOD_SHIFT:
 				self.selEnd = (self.cursorRow,self.cursorColumn)
 				if self.selStart == self.selEnd:
@@ -391,6 +398,3 @@ class Text(Widget):
 		return self.vertScrollbar.processMWDown(evt)
 
 registerWidget(Text, 'text')
-
-
-
