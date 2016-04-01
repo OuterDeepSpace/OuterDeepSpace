@@ -18,7 +18,9 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
+import sys
 import string
+import pygame.scrap
 from pygame.locals import *
 from Const import *
 from WordUtils import *
@@ -54,15 +56,21 @@ class Text(Widget):
 		parent.registerWidget(self)
 
 	def toClipboard(self):
-		try:
-			from Tkinter import Tk
-			window = Tk()
-			window.withdraw()
-			window.clipboard_clear()
-			window.clipboard_append(string.join(self.text, "\n"))
-			window.destroy()
-		except ImportError:
-			log.debug("Failed to write to clipboard -- Tkinter is not present on system.")
+		payload = string.join(self.text, "\n")
+
+		if ("linux" in sys.platform):
+			pygame.scrap.put("STRING", payload)
+			pygame.scrap.put("STRING", payload)
+		else:
+			try:
+				from Tkinter import Tk
+				window = Tk()
+				window.withdraw()
+				window.clipboard_clear()
+				window.clipboard_append(payload)
+				window.destroy()
+			except ImportError:
+				log.debug("Failed to write to clipboard -- Tkinter is not present on system.")
 
 	def draw(self, surface):
 		self.theme.drawText(surface, self)
