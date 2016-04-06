@@ -750,7 +750,44 @@
 			researchRequires="BIONICTL3-5"
 			researchRaces="B"
 		/>
-		<preresearch>A theoretical research in the field of biology, which allows us to access advanced biology and biotechnology related technologies. Research in this field will raise our dependency on biomatter and lower our dependency on minerals eventually. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+		<preresearch>A theoretical research in the field of biology, which allows us to access advanced biology and biotechnology related technologies. Research in this field will raise our dependency on biomatter and lower our dependency on minerals eventually. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL4 technologies:
+    [Structures: Defense]
+        Ultimate Comm/Scan Center
+        Primitive Star Gate
+    [Structures: Morale]
+        Eudaimonic Education Facility
+    [Structures: Other/Multi-role]
+        Crew Training Facility
+
+Bionic TL4 technologies:
+    [Ship Techs: Structural]
+        Live Medium Hull
+        Living Bridge
+    [Ship Techs: Weapons]
+        Spine Cannon
+        Twin Spine Turret
+        Pearl Launcher
+        A-P Spore Torpedo
+        Quill Pod
+        Lichen Spreader
+        Metalivoric Symbiote
+    [Ship Techs: Defense]
+        Rigid Scale Armor
+    [Ship Techs: Other]
+        Terraforming Pod
+    [Structures: Construction]
+        Chrome Factory
+            (requires strategic resource)
+    [Structures: Research]
+        Research Network
+            (requires strategic resource)
+    [Structures: Defense]
+        Photo-absorbant Lichen Shield
+    [Structures: Other/Multi-role]
+        Hive
+            (requires strategic resource)</preresearch>
 	</technology>
 	<technology id="3991" symbol="HUMANTL4" name="Mind Linking">
 		<discovery
@@ -762,7 +799,48 @@
 			researchRequires="HUMANTL3-5"
 			researchRaces="H"
 		/>
-		<preresearch>A theoretical research of the human mind and thinking processes can lead to improvements in research and cooperation, which in turn will lead to access to the more advanced energy and research related technologies. Our dependencies on resources will remain on the same level as they are now. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+		<preresearch>A theoretical research of the human mind and thinking processes can lead to improvements in research and cooperation, which in turn will lead to access to the more advanced energy and research related technologies. Our dependencies on resources will remain on the same level as they are now. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL4 technologies:
+    [Structures: Defense]
+        Ultimate Comm/Scan Center
+        Primitive Star Gate
+    [Structures: Morale]
+        Eudaimonic Education Facility
+    [Structures: Other/Multi-role]
+        Crew Training Facility
+
+Human TL4 technologies:
+    [Ship Techs: Structural]
+        Advanced Medium Hull
+        Mind-linked Bridge
+    [Ship Techs: Weapons]
+        Sweep Maser
+        Twin Maser Turret
+        Plasma Bolter
+        Charge Driver
+        Laser Pod
+        Ion Cannon
+        H-I MiniBolter        
+    [Ship Techs: Defense]
+        Laminated Armor Plating
+        Defense Shield
+        Adv. Defense Shield
+    [Ship Techs: Other]
+        Auto Repair
+    [Structures: Construction]
+        Chrome Factory
+            (requires strategic resource)
+    [Structures: Research]
+        Sci-City
+            (requires strategic resource)
+    [Structures: Defense]
+        Planetary Shield
+    [Structures: Other/Multi-role]
+        Space City
+            (requires strategic resource)
+        Orbital Lab Complex
+        Solar Factory</preresearch>
 	</technology>
 	<technology id="3992" symbol="ROBOTTL4" name="Artificial Inteligence">
 		<discovery
@@ -774,6 +852,43 @@
 			researchRequires="ROBOTTL3-5"
 			researchRaces="C"
 		/>
-		<preresearch>A theoretical research in the field of robotics will allow us to access more advanced production and AI technologies in the future. Research in this field will raise our dependency on minerals and lower our dependency on biomatter eventually. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+		<preresearch>A theoretical research in the field of robotics will allow us to access more advanced production and AI technologies in the future. Research in this field will raise our dependency on minerals and lower our dependency on biomatter eventually. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL4 technologies:
+    [Structures: Defense]
+        Ultimate Comm/Scan Center
+        Primitive Star Gate
+    [Structures: Morale]
+        Eudaimonic Education Facility
+    [Structures: Other/Multi-role]
+        Crew Training Facility
+
+Cyborg TL4 technologies:
+    [Ship Techs: Structural]
+        Advanced Medium Hull
+        Computerised Bridge
+    [Ship Techs: Weapons]
+        Gamma Cannon
+        Twin Gamma Turret
+        Coil Destabilizer
+        Compact Grav Pulser
+        Nova Burst Pod
+        Graviton Beam
+        Gravity Surge Mortar		
+    [Ship Techs: Defense]
+        Laminated Armor Plating
+        Defense Shield
+        Battle Tag
+    [Structures: Construction]
+        MegaFactory
+            (requires strategic resource)
+    [Structures: Research]
+        Research Network
+            (requires strategic resource)
+    [Structures: Defense]
+        Planetary Shield
+    [Structures: Other/Multi-role]
+        Space City
+            (requires strategic resource)</preresearch>
 	</technology>
 </techtree>

@@ -422,7 +422,52 @@
 			researchRequires="RESCENTRE1-5"
 			researchDisables="HUMANTL2,ROBOTTL2"
 		/>
-		<preresearch>A theoretical research in the field of biology, which allows us to access advanced biology and biotechnology related technologies. Research in this field will raise our dependency on biomatter and lower our dependency on minerals eventually. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+		<preresearch>A theoretical research in the field of biology, which allows us to access advanced biology and biotechnology related technologies. Research in this field will raise our dependency on biomatter and lower our dependency on minerals eventually. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL2 technologies:
+    [Ship Techs: Structural]
+        Medium Hull
+        Bridge
+        Titanium Small Hull
+            (requires strategic resource)
+    [Ship Techs: Engines/Fuel]
+        Fuel Tank
+    [Ship Techs: Weapons]
+        EM Cannon
+        Twin EM Cannon Turret
+        SS Missile
+    [Ship Techs: Defense]
+        Steel Armor
+    [Ship Techs: Other]
+        Colony Module
+    [Structures: Energy]
+        Nuclear Power Plant
+            (requires strategic resource)
+    [Structures: Construction]
+        Ti-factory
+            (requires strategic resource)
+    [Structures: Morale]
+        Entertainment Center
+    [Structures: Other/Multi-role]
+        Space Docks
+    [Projects]
+        Produce Research Equipment
+        Nuclear Fusion - Titanium
+            (requires strategic resource)
+        Nuclear Fusion - Uranium
+            (requires strategic resource)
+
+Bionic TL2 technologies:
+    [Structures: Biomatter]
+        Greenhouse Farm
+    [Structures: Defense]
+        S-P Flak Battery
+    [Structures: Other/Multi-role]
+        Mutagen Dispenser
+            (requires strategic resource)
+    [Projects]
+        Mutagen Synthesis
+        Improve Environment</preresearch>
 	</technology>
 	<technology id="1991" symbol="HUMANTL2" name="Human Brain Improvements">
 		<discovery
@@ -434,7 +479,46 @@
 			researchRequires="RESCENTRE1-5"
 			researchDisables="BIONICTL2,ROBOTTL2"
 		/>
-		<preresearch>A theoretical research of the human mind and thinking processes can lead to improvements in research and cooperation, which in turn will lead to access to the more advanced energy and research related technologies. Our dependencies on resources will remain on the same level as they are now. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+		<preresearch>A theoretical research of the human mind and thinking processes can lead to improvements in research and cooperation, which in turn will lead to access to the more advanced energy and research related technologies. Our dependencies on resources will remain on the same level as they are now. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL2 technologies:
+    [Ship Techs: Structural]
+        Medium Hull
+        Bridge
+        Titanium Small Hull
+            (requires strategic resource)
+    [Ship Techs: Engines/Fuel]
+        Fuel Tank
+    [Ship Techs: Weapons]
+        EM Cannon
+        Twin EM Cannon Turret
+        SS Missile
+    [Ship Techs: Defense]
+        Steel Armor
+    [Ship Techs: Other]
+        Colony Module
+    [Structures: Energy]
+        Nuclear Power Plant
+            (requires strategic resource)
+    [Structures: Construction]
+        Ti-factory
+            (requires strategic resource)
+    [Structures: Morale]
+        Entertainment Center
+    [Structures: Other/Multi-role]
+        Space Docks
+    [Projects]
+        Produce Research Equipment
+        Nuclear Fusion - Titanium
+            (requires strategic resource)
+        Nuclear Fusion - Uranium
+            (requires strategic resource)
+
+Human TL2 technologies:
+    [Structures: Biomatter]
+        Hydroponics Farm
+    [Structures: Defense]
+        Flak Battery</preresearch>
 	</technology>
 	<technology id="1992" symbol="ROBOTTL2" name="Advanced Robotics">
 		<discovery
@@ -446,6 +530,45 @@
 			researchRequires="RESCENTRE1-5"
 			researchDisables="HUMANTL2,BIONICTL2"
 		/>
-		<preresearch>A theoretical research in the field of robotics will allow us to access more advanced production and AI technologies in the future. Research in this field will raise our dependency on minerals and lower our dependency on biomatter eventually. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+				<preresearch>A theoretical research in the field of robotics will allow us to access more advanced production and AI technologies in the future. Research in this field will raise our dependency on minerals and lower our dependency on biomatter eventually. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL2 technologies:
+    [Ship Techs: Structural]
+        Medium Hull
+        Bridge
+        Titanium Small Hull
+            (requires strategic resource)
+    [Ship Techs: Engines/Fuel]
+        Fuel Tank
+    [Ship Techs: Weapons]
+        EM Cannon
+        Twin EM Cannon Turret
+        SS Missile
+    [Ship Techs: Defense]
+        Steel Armor
+    [Ship Techs: Other]
+        Colony Module
+    [Structures: Energy]
+        Nuclear Power Plant
+            (requires strategic resource)
+    [Structures: Construction]
+        Ti-factory
+            (requires strategic resource)
+    [Structures: Morale]
+        Entertainment Center
+    [Structures: Other/Multi-role]
+        Space Docks
+    [Projects]
+        Produce Research Equipment
+        Nuclear Fusion - Titanium
+            (requires strategic resource)
+        Nuclear Fusion - Uranium
+            (requires strategic resource)
+
+Cyborg TL2 technologies:
+    [Structures: Biomatter]
+        Food Synthesis Facility
+    [Structures: Defense]
+        Flak Battery</preresearch>
 	</technology>
 </techtree>

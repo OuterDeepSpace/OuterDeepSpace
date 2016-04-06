@@ -1455,7 +1455,40 @@
             researchRaces="B"
             maxImprovement="3"
         />
-        <preresearch>A theoretical research in the field of biology toward the ultimate goal: spore colonization of the galaxy.</preresearch>
+        <preresearch>A theoretical research in the field of biology toward the ultimate goal: spore colonization of the galaxy.
+
+Universally available TL6 technologies:
+    [Ship Techs: Other]
+        Planetary Condensing Pod
+        Planetary Assembly Pod
+        Advanced Colony Module
+    [Structures: Morale]
+        Monarchal Citadel
+        Supreme Council
+    [Structures: Other/Multi-role]
+        Advanced Outpost
+
+Bionic TL6 technologies:
+    [Ship Techs: Structural]
+        Swarm Small Hull
+    [Ship Techs: Engines/Fuel]
+        RCS Drive
+            (disables: High Energy Fuel Pods)
+        High Energy Fuel Pods
+            (disables: RCS Drive)
+    [Ship Techs: Weapons]
+        Devouring Leech
+    [Ship Techs: Other]
+        Spacial Scanner
+        Spore Colony
+        Planetary Alignment Pod
+    [Structures: Biomatter]
+        Subterranean Farm
+            (disables: Gaia Farm)
+        Gaia Farm
+            (disables: Subterranean Farm)
+    [Structures: Energy]
+        Advanced Bio Power Plant</preresearch>
     </technology>
     <technology id="5991" symbol="HUMANTL6" name="Mental Chameleonism">
         <discovery
@@ -1468,7 +1501,48 @@
             researchRaces="H"
             maxImprovement="3"
         />
-        <preresearch>A theoretical research of the human mind and thinking processes that will raise our telepathic, telekentic, stealth, and innovative abilities.</preresearch>
+        <preresearch>A theoretical research of the human mind and thinking processes that will raise our telepathic, telekentic, stealth, and innovative abilities.
+
+Universally available TL6 technologies:
+    [Ship Techs: Other]
+        Planetary Condensing Pod
+        Planetary Assembly Pod
+        Advanced Colony Module
+    [Structures: Morale]
+        Monarchal Citadel
+        Supreme Council
+    [Structures: Other/Multi-role]
+        Advanced Outpost
+
+Human TL6 technologies:
+    [Ship Techs: Structural]
+        Metamorph Medium Hull
+            (disables: Stealth Hull)
+        Stealth Hull
+            (disables: Metamorph Medium Hull)
+    [Ship Techs: Engines/Fuel]
+    [Ship Techs: Weapons]
+    [Ship Techs: Defense]
+        Active ECM
+        Battle Scanner
+        Advanced Amplified Shield
+            (disables: Hard Shield)
+        Hard Shield
+            (disables: Advanced Amplified Shield)
+    [Ship Techs: Other]
+        Advanced Auto Repair
+        Mass Reduction Module
+    [Structures: Biomatter]
+    [Structures: Energy]
+    [Structures: Construction]
+    [Structures: Research]
+    [Structures: Defense]
+        High Energy Comm/Scan Center
+        Advanced Planetary Shield
+    [Structures: Morale]
+    [Structures: Other/Multi-role]
+        Fleet Command
+            (requires strategic resource)</preresearch>
     </technology>
     <technology id="5992" symbol="ROBOTTL6" name="High Energy Robotic Brains">
         <discovery
@@ -1481,6 +1555,44 @@
             researchRaces="C"
             maxImprovement="3"
         />
-        <preresearch>A theoretical research in the field of robotics that will allow us to power even more powerful systems than before.</preresearch>
+        <preresearch>A theoretical research in the field of robotics that will allow us to power even more powerful systems than before.
+
+Universally available TL6 technologies:
+    [Ship Techs: Other]
+        Planetary Condensing Pod
+        Planetary Assembly Pod
+        Advanced Colony Module
+    [Structures: Morale]
+        Monarchal Citadel
+        Supreme Council
+    [Structures: Other/Multi-role]
+        Advanced Outpost
+
+Cyborg TL6 technologies:
+    [Ship Techs: Structural]
+        Mobile Planet (Hull)
+            (requires strategic resource)
+    [Ship Techs: Engines/Fuel]
+        Devastator Drive
+            (disables: Expansion Pods)
+    [Ship Techs: Weapons]
+        Chaos Cannon
+        Penetrating Missile
+        Planet Cracker
+            (requires strategic resource)
+    [Ship Techs: Defense]
+        Nanoweb Armor
+		Psionic Beacon
+    [Ship Techs: Other]
+        Expansion Pods
+            (disables: Devastator Drive)
+    [Structures: Construction]
+        Strip Mine
+    [Structures: Defense]
+        Supernova Mine Field Control
+    [Structures: Other/Multi-role]
+        Defense Satellite
+        Battle Platform
+        Fleet Platform</preresearch>
     </technology>
 </techtree>

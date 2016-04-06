@@ -474,7 +474,60 @@
 			researchRequires="BIONICTL2-5"
 			researchRaces="B"
 		/>
-		<preresearch>A theoretical research in the field of biology, which allows us to access advanced biology and biotechnology related technologies. Research in this field will raise our dependency on biomatter and lower our dependency on minerals eventually. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+		<preresearch>A theoretical research in the field of biology, which allows us to access advanced biology and biotechnology related technologies. Research in this field will raise our dependency on biomatter and lower our dependency on minerals eventually. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL3 technologies:
+    [Ship Techs: Structural]
+        Large Hull
+        Command Deck
+    [Ship Techs: Engines/Fuel]
+        Enh. FTL Engine
+    [Ship Techs: Weapons]
+        Laser Cannon
+        Twin Laser Cannon Turret
+        Adv. SS Missile
+        Torpedo
+        Plasma Bomb
+    [Ship Techs: Defense]
+        Enh. Steel Armor
+    [Ship Techs: Other]
+        Enh. Active Scanner Module
+        Enh. Passive Scanner Module
+    [Structures: Defense]
+        Enh. Comm/Scan Center
+    [Structures: Morale]
+        Emperor's Palace
+            (disables: Parliament)
+        Parliament
+            (disables: Emperor's Palace)
+    [Structures: Other/Multi-role]
+        Military Space Docks
+            (disables: Civilian Space Docks)
+        Civilian Space Docks
+            (disables: Military Space Docks)
+    [Projects]
+        Planetary Engineering
+        Habitable Surface Expansion
+
+Bionic TL3 technologies:
+    [Ship Techs: Structural]
+        Live Small Hull
+        Living Cockpit
+    [Ship Techs: Other]
+        Mutagen Dispenser Pod
+            (requires strategic resource)
+    [Structures: Energy]
+        Bio Power Plant
+        Enh. Solar Power Plant
+    [Structures: Construction]
+        BioFactory
+    [Structures: Research]
+        Research Hub
+    [Structures: Other/Multi-role]
+        Solar Shield
+        Thermal Generator
+    [Projects]
+        Terraforming</preresearch>
 	</technology>
 	<technology id="2991" symbol="HUMANTL3" name="Brain Enhancements">
 		<discovery
@@ -486,7 +539,57 @@
 			researchRequires="HUMANTL2-5"
 			researchRaces="H"
 		/>
-		<preresearch>A theoretical research of the human mind and thinking processes can lead to improvements in research and cooperation, which in turn will lead to access to the more advanced energy and research related technologies. Our dependencies on resources will remain on the same level as they are now. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+		<preresearch>A theoretical research of the human mind and thinking processes can lead to improvements in research and cooperation, which in turn will lead to access to the more advanced energy and research related technologies. Our dependencies on resources will remain on the same level as they are now. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL3 technologies:
+    [Ship Techs: Structural]
+        Large Hull
+        Command Deck
+    [Ship Techs: Engines/Fuel]
+        Enh. FTL Engine
+    [Ship Techs: Weapons]
+        Laser Cannon
+        Twin Laser Cannon Turret
+        Adv. SS Missile
+        Torpedo
+        Plasma Bomb
+    [Ship Techs: Defense]
+        Enh. Steel Armor
+    [Ship Techs: Other]
+        Enh. Active Scanner Module
+        Enh. Passive Scanner Module
+    [Structures: Defense]
+        Enh. Comm/Scan Center
+    [Structures: Morale]
+        Emperor's Palace
+            (disables: Parliament)
+        Parliament
+            (disables: Emperor's Palace)
+    [Structures: Other/Multi-role]
+        Military Space Docks
+            (disables: Civilian Space Docks)
+        Civilian Space Docks
+            (disables: Military Space Docks)
+    [Projects]
+        Planetary Engineering
+        Habitable Surface Expansion
+
+Human TL3 technologies:
+    [Ship Techs: Structural]
+        Advanced Small Hull
+        Mind-linked Cockpit
+    [Ship Techs: Defense]
+        ECM Module
+        Stealth Module
+    [Structures: Energy]
+        Enh. Oil Power Plant
+        Solar Convertor
+    [Structures: Construction]
+        High-Tech Factory
+    [Structures: Research]
+        Lab Complex
+    [Projects]
+        Terraforming</preresearch>
 	</technology>
 	<technology id="2992" symbol="ROBOTTL3" name="Cyber Implants">
 		<discovery
@@ -498,6 +601,52 @@
 			researchRequires="ROBOTTL2-5"
 			researchRaces="C"
 		/>
-		<preresearch>A theoretical research in the field of robotics will allow us to access more advanced production and AI technologies in the future. Research in this field will raise our dependency on minerals and lower our dependency on biomatter eventually. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+		<preresearch>A theoretical research in the field of robotics will allow us to access more advanced production and AI technologies in the future. Research in this field will raise our dependency on minerals and lower our dependency on biomatter eventually. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL3 technologies:
+    [Ship Techs: Structural]
+        Large Hull
+        Command Deck
+    [Ship Techs: Engines/Fuel]
+        Enh. FTL Engine
+    [Ship Techs: Weapons]
+        Laser Cannon
+        Twin Laser Cannon Turret
+        Adv. SS Missile
+        Torpedo
+        Plasma Bomb
+    [Ship Techs: Defense]
+        Enh. Steel Armor
+    [Ship Techs: Other]
+        Enh. Active Scanner Module
+        Enh. Passive Scanner Module
+    [Structures: Defense]
+        Enh. Comm/Scan Center
+    [Structures: Morale]
+        Emperor's Palace
+            (disables: Parliament)
+        Parliament
+            (disables: Emperor's Palace)
+    [Structures: Other/Multi-role]
+        Military Space Docks
+            (disables: Civilian Space Docks)
+        Civilian Space Docks
+            (disables: Military Space Docks)
+    [Projects]
+        Planetary Engineering
+        Habitable Surface Expansion
+
+Cyborg TL3 technologies:
+    [Ship Techs: Structural]
+        Advanced Small Hull
+        Computerised Cockpit
+    [Ship Techs: Defense]
+        ECM Module
+    [Structures: Energy]
+        Enh. Oil Power Plant
+    [Structures: Construction]
+        Factory Complex
+    [Structures: Research]
+        Research Hub</preresearch>
 	</technology>
 </techtree>

@@ -1057,7 +1057,58 @@
             researchRequires="BIONICTL4-5"
             researchRaces="B"
         />
-        <preresearch>A theoretical research in the field of biology, which allows us to access advanced biology and biotechnology related technologies. Research in this field will raise our dependency on biomatter and lower our dependency on minerals eventually. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+        <preresearch>A theoretical research in the field of biology, which allows us to access advanced biology and biotechnology related technologies. Research in this field will raise our dependency on biomatter and lower our dependency on minerals eventually. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL5 technologies:
+    [Structures: Defense]
+        Star Gate
+    [Structures: Other/Multi-role]
+        Pilot Academy
+    [Projects]
+        Planetary Condensation
+        Planet Assembling
+        Decrease Orbit Radius
+        Increase Orbit Radius
+
+Bionic TL5 technologies:
+    [Ship Techs: Structural]
+        Live Large Hull
+        Living Command Deck
+        Biometric Controller
+            (requires strategic resource)
+            (disables: Suppression Missile Bank)
+    [Ship Techs: Engines/Fuel]
+        Long-range FTL Engine
+        Antimatter Fuel Pod
+            (requires strategic resource)
+            (disables: Carboneum Synthesis)
+    [Ship Techs: Weapons]
+        Virus Injector
+        Virus Injector Turret
+        Parasite Missile
+        Devouring Worm Torpedo
+        Barb Pod
+        Bile Launcher
+        Emesis Projector
+        Leech Missile
+        Suppression Missile Bank
+            (requires strategic resource)
+            (disables: Biometric Controller)
+    [Structures: Defense]
+        Self Aware Mine Field
+    [Structures: Other/Multi-role]
+        Advanced Mutagen Dispenser
+            (requires strategic resource)
+        Generator Complex
+            (requires strategic resource)
+            (disables: Ecosystem Catalyst)
+    [Projects]
+        Ecosystem Catalyst
+            (requires strategic resource)
+            (disables: Ecosystem Catalyst)
+        Carboneum Synthesis
+            (requires strategic resources)
+            (disables: Carboneum Synthesis)</preresearch>
     </technology>
     <technology id="4991" symbol="HUMANTL5" name="Super Human">
         <discovery
@@ -1069,7 +1120,63 @@
             researchRequires="HUMANTL4-5"
             researchRaces="H"
         />
-        <preresearch>A theoretical research of the human mind and thinking processes can lead to improvements in research and cooperation, which in turn will lead to access to the more advanced energy and research related technologies. Our dependencies on resources will remain on the same level as they are now. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+        <preresearch>A theoretical research of the human mind and thinking processes can lead to improvements in research and cooperation, which in turn will lead to access to the more advanced energy and research related technologies. Our dependencies on resources will remain on the same level as they are now. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL5 technologies:
+    [Structures: Defense]
+        Star Gate
+    [Structures: Other/Multi-role]
+        Pilot Academy
+    [Projects]
+        Planetary Condensation
+        Planet Assembling
+        Decrease Orbit Radius
+        Increase Orbit Radius
+
+Human TL5 technologies:
+    [Ship Techs: Structural]
+        Advanced Large Hull
+        Mind-linked Command Deck
+    [Ship Techs: Engines/Fuel]
+        Discreet FTL Engine
+        Inertial Drive
+    [Ship Techs: Weapons]
+        Particle Beam Cannon
+        Particle Beam Turret
+        C-A Plasma Bolter
+        Adv. Charge Driver
+        Maser Pod
+        Plasma Beam Cannon
+        Neutron Accelerator        
+    [Ship Techs: Defense]
+        Advanced Stealth Module
+        Amplified Shield
+    [Ship Techs: Other]
+    [Structures: Biomatter]
+    [Structures: Energy]
+        Antimatter Reaction Facility
+            (requires strategic resource)
+            (disables: Silicium Synthesis)
+    [Structures: Construction]
+    [Structures: Research]
+    [Structures: Defense]
+        High Power Star Gate
+        Swarm Mind Field Control
+        Planetary Defense Installation
+            (requires strategic resource)
+            (disables: Starbase)
+        Starbase
+            (requires strategic resource)
+            (disables: Planetary Defense Installation)
+    [Structures: Morale]
+    [Structures: Other/Multi-role]
+        Virtual Battle Simulator
+        Engineering Complex
+    [Projects]
+        Asteroid Mining
+        Silicium Synthesis
+            (requires strategic resources)
+            (disables: Antimatter Reaction Facility)</preresearch>
     </technology>
     <technology id="4992" symbol="ROBOTTL5" name="Artificial Brain Software">
         <discovery
@@ -1081,6 +1188,62 @@
             researchRequires="ROBOTTL4-5"
             researchRaces="C"
         />
-        <preresearch>A theoretical research in the field of robotics will allow us to access more advanced production and AI technologies in the future. Research in this field will raise our dependency on minerals and lower our dependency on biomatter eventually. When we improve this technology enough, we can advance to the next technological level.</preresearch>
+        <preresearch>A theoretical research in the field of robotics will allow us to access more advanced production and AI technologies in the future. Research in this field will raise our dependency on minerals and lower our dependency on biomatter eventually. When we improve this technology enough, we can advance to the next technological level.
+
+Universally available TL5 technologies:
+    [Structures: Defense]
+        Star Gate
+    [Structures: Other/Multi-role]
+        Pilot Academy
+    [Projects]
+        Planetary Condensation
+        Planet Assembling
+        Decrease Orbit Radius
+        Increase Orbit Radius
+
+Cyborg TL5 technologies:
+    [Ship Techs: Structural]
+        Advanced Large Hull
+        Computerised Command Deck
+        Huge Hull
+            (requires strategic resource)
+            (disables: Bunker Module)
+    [Ship Techs: Engines/Fuel]
+        Augmented FTL Engine
+        Slug Drive
+        Fission FTL Drive
+            (requires strategic resource)
+            (disables: Thermonuclear Power Plant)
+    [Ship Techs: Weapons]
+        Nanoblaster
+        Twin Nanoblaster Turret
+        MGS Array
+        Pulse Discharger
+        Supernova Burst Pod
+        Adv. Graviton Beam
+        Plutonium Mortar
+            (requires strategic resource)
+            (disables: Battle Tracker)
+        Antimatter Bomb
+            (requires strategic resource)
+            (disables: Chromium Synthesis)
+    [Ship Techs: Defense]
+        Battle Tracker
+            (requires strategic resource)
+            (disables: Plutonium Mortar)
+    [Ship Techs: Other]
+        Bunker Module
+            (requires strategic resource)
+            (disables: Huge Hull)
+    [Structures: Energy]
+        Thermonuclear Power Plant
+            (requires strategic resource)
+            (disables: Fission FTL Drive)
+    [Structures: Defense]
+        Robotic Mine Field Control
+    [Projects]
+        Chromium Synthesis
+            (requires strategic resources)
+            (disables: Antimatter Bomb)</preresearch>
     </technology>
 </techtree>
