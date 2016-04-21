@@ -24,10 +24,13 @@ from MainGameDlg import MainGameDlg
 from NewAccDlg import NewAccDlg
 from ConfirmDlg import ConfirmDlg
 from OptionsDlg import OptionsDlg
+from MessageBoxDlg import MessageBoxDlg
 import binascii
 from ige import log
 from ige.ospace import Rules
 import os
+
+import osci.client
 
 class LoginDlg:
 
@@ -35,6 +38,7 @@ class LoginDlg:
 		self.app = app
 		self.newAccDlg = NewAccDlg(app)
 		self.confirmDlg = ConfirmDlg(app)
+		self.messageDlg = MessageBoxDlg(app)
 		self.firstlogin = True
 		self.createUI()
 
@@ -63,6 +67,8 @@ class LoginDlg:
 		self.win.vMessage.text = message
 		#if gdata.config.game.autologin != 'yes':	# enable this to disable auto-login after change in options
 		#	self.firstlogin = false
+
+		self.win.vTargetServer.text = gdata.config.game.server
 		self.win.show()
 
 	def hide(self):
@@ -87,6 +93,27 @@ class LoginDlg:
 		self.doLogin(gameID,login,password)
 
 	def doLogin(self,gameID,login,password):
+		# Check if vTargetServer is empty
+		self.win.vTargetServer.text = self.win.vTargetServer.text.strip().rstrip()
+
+		if (len(self.win.vTargetServer.text) != 0):
+			server_info = self.win.vTargetServer.text.split(":")
+
+			server_port = 9080
+			if (len(server_info) == 2):
+				try:
+					server_port = int(server_info[1])
+				except ValueError:
+					self.messageDlg.display("The custom server specified doesn't appear to be valid.", "OK")
+					return
+			elif(len(server_info) > 2):
+				self.messageDlg.display("The custom server specified doesn't appear to be valid.", "OK")
+				return
+
+			server_host = server_info[0]
+			gdata.config.game.server = "%s:%u" % (server_host, server_port)
+			client.server = gdata.config.game.server
+
 		result = client.login(gameID, login, password)
 		self.win.hide()
 		if result == 1:
@@ -139,12 +166,12 @@ class LoginDlg:
 			self.app.exit()
 
 	def onContinueWithOld(self):
-			# show main dialog
-			self.win.hide()
-			if not gdata.mainGameDlg:
-				gdata.mainGameDlg = MainGameDlg(self.app)
-				gdata.mainGameDlg.display()
-			client.updateDatabase()
+		# show main dialog
+		self.win.hide()
+		if not gdata.mainGameDlg:
+			gdata.mainGameDlg = MainGameDlg(self.app)
+			gdata.mainGameDlg.display()
+		client.updateDatabase()
 
 	def onCreateAccount(self, widget, action, data):
 		self.win.hide()
@@ -161,7 +188,7 @@ class LoginDlg:
 			modal = 1,
 			movable = 0,
 			title = _('Outer Space Login'),
-			rect = ui.Rect((w - 424) / 2, (h - 124) / 2, 424, 124),
+			rect = ui.Rect((w - 424) / 2, (h - 124) / 2, 424, 145),
 			layoutManager = ui.SimpleGridLM(),
 			tabChange = True,
 		)
@@ -187,11 +214,23 @@ class LoginDlg:
 			layout = (11, 1, 10, 1),
 			orderNo = 2
 		)
-		ui.Button(self.win, layout = (11, 2, 10, 1), text = _("Options"), action = "onOptions", id = "vOptions")
-		ui.Button(self.win, layout = (11, 3, 10, 1), text = _("New account"),
+
+		# Add a target server entry
+		ui.Label(self.win,
+			text = _('Server'),
+			align = ui.ALIGN_E,
+			layout = (5, 2, 6, 1),
+		)
+		ui.Entry(self.win, id = 'vTargetServer',
+			align = ui.ALIGN_W,
+			layout = (11, 2, 10, 1),
+			orderNo = 3
+		)
+		ui.Button(self.win, layout = (11, 3, 10, 1), text = _("Options"), action = "onOptions", id = "vOptions")
+		ui.Button(self.win, layout = (11, 4, 10, 1), text = _("New account"),
 			action = "onCreateAccount", id = "vCreate")
-		ui.Title(self.win, layout = (0, 4, 11, 1), id = 'vMessage', align = ui.ALIGN_W)
-		ui.TitleButton(self.win, layout = (11, 4, 5, 1), text = _('Exit'), action = 'onCancel')
-		loginBtn = ui.TitleButton(self.win, layout = (16, 4, 5, 1), text = _('Login'), action = 'onLogin')
+		ui.Title(self.win, layout = (0, 5, 11, 1), id = 'vMessage', align = ui.ALIGN_W)
+		ui.TitleButton(self.win, layout = (11, 5, 5, 1), text = _('Exit'), action = 'onCancel')
+		loginBtn = ui.TitleButton(self.win, layout = (16, 5, 5, 1), text = _('Login'), action = 'onLogin')
 		ui.Label(self.win, layout = (0, 0, 5, 4), icons = ((res.loginLogoImg, ui.ALIGN_W),))
 		self.win.acceptButton = loginBtn
