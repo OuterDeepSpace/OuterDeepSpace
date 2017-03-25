@@ -10,6 +10,7 @@ The new development team are the following:
 
   * Malxe Yhhsom'aa (Malxe)
   * Andrea Yhhsom'aa (Atma)
+  * Aaryna Irwin (Delsorou)
 
 The original developers/contributors for Outer Space are the following:
 
