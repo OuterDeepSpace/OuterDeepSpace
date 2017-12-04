@@ -18,12 +18,18 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-try:
-    import versiondata
-    version = versiondata.version
-    revision = versiondata.revision
-    versionString = ("%d.%d.%d%s" % version) + " [Revision %s]" % revision
-except ImportError:
-    revision = 0
-    version = (0, 0, 0, 'a')
-    versionString = ("%d.%d.%d%s" % version) + " [Work In Progress]"
+import sys
+import subprocess
+
+revision = 0
+version = (0, 0, 0, 'a')
+versionString = ("%d.%d.%d%s" % version) + " [Work In Progress]"
+
+# Here, we check if we're running as a packaged dist
+if not getattr(sys, "frozen", False):
+    try:
+        result = subprocess.check_output(["git", "log", "-n", "1"]).split()
+        versionString = result[1]
+    except OSError:
+        # Require GIT
+        versionString = "<Unknown Version>"
