@@ -660,7 +660,14 @@ class TechViewer(wx.Frame):
 				fce = fceD
 			if fce != None and fce in dir(self.finishHandlers):
 				i = getattr(self.finishHandlers, fce)(i, tech)
-
+                                
+		if getattr(tech, "prodSciMod", None) != None:
+			b, m, e, d = tech.prodSciMod
+			self.prodSci.SetEnv(b)
+			self.prodSci.SetMineral(m)
+			self.prodSci.SetEnergy(e)
+			self.prodSci.SetNothing(d)
+                        
 		if getattr(tech, "prodProdMod", None) != None:
 			b, m, e, d = tech.prodProdMod
 			self.prodCon.SetEnv(b)
