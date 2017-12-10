@@ -19,6 +19,7 @@
 #
 
 from ConfigParser import ConfigParser
+import os
 
 class Config:
 	"""Encapsulation of ConfigParser class.

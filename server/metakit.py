@@ -1,7 +1,7 @@
 """
 metakit.py -- Utility code for the Python interface to Metakit
-$Id: metakit.py,v 1.10 2005/11/22 19:12:28 jcw Exp $
-This is part of Metakit, see http://www.equi4.com/metakit/
+$Id: metakit.py 1669 2007-06-16 00:23:25Z jcw $
+This is part of Metakit, see http://www.equi4.com/metakit.html
 
 This wraps the raw Mk4py compiled extension interface.
 To use Metakit through this interface, simply do:
@@ -13,7 +13,7 @@ both metakit.py and Mk4py.{dll,so} can be found by Python.
 
 _oldname = __name__
 __name__ = "metakit"
-__version__ = "2.4.9.5"
+__version__ = "2.4.9.7"
 __description__ = "Python bindings to the Metakit database library"
 __author__ = "Gordon McMillan / Jean-Claude Wippler"
 __email__ = "jcw@equi4.com"
