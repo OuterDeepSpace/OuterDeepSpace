@@ -5,6 +5,10 @@
 *.data
 *.timestamp
 *_techtree.*
+*.spf
 dist/
 shared/var/db_data
 shared/var/token
+shared/var/logs
+sphinx/_build
+checksum
