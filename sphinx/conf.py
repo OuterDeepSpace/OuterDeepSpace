@@ -18,15 +18,14 @@
 #
 import os
 import sys
-sys.path.append('/home/delsorou/Work/OuterDeepSpace/libs')
-sys.path.append('/home/delsorou/Work/OuterDeepSpace/oslauncher')
-sys.path.append('/home/delsorou/Work/OuterDeepSpace/server')
-sys.path.append('/home/delsorou/Work/OuterDeepSpace/techtree')
-sys.path.append('/home/delsorou/Work/OuterDeepSpace/client-pygame')
-sys.path.append('/home/delsorou/Work/OuterDeepSpace/documentation')
-sys.path.append('/home/delsorou/Work/OuterDeepSpace/messager')
-sys.path.append('/home/delsorou/Work/OuterDeepSpace/generators')
-sys.path.append('/home/delsorou/Work/OuterDeepSpace/techviewer')
+sys.path.append(os.path.abspath('../libs'))
+sys.path.append(os.path.abspath('../oslauncher'))
+sys.path.append(os.path.abspath('../server'))
+sys.path.append(os.path.abspath('../techtree'))
+sys.path.append(os.path.abspath('../client-pygame'))
+sys.path.append(os.path.abspath('../messager'))
+sys.path.append(os.path.abspath('../generators'))
+sys.path.append(os.path.abspath('../techviewer'))
 
 # -- General configuration ------------------------------------------------
 
