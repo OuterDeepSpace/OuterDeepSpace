@@ -10,6 +10,14 @@ Welcome to OuterDeepSpace's documentation!
    :maxdepth: 4
    :caption: Contents:
 
+   libs
+   oslauncher
+   server
+   techtree
+   client-pygame
+   messager
+   generators
+   techviewer
 
 
 Indices and tables
